@@ -1,5 +1,5 @@
 from dotenv import load_dotenv, find_dotenv
-from langchain import PromptTemplate
+from prompt_templates import *
 from langchain.chains import LLMChain
 from models import get_llm_model
 from document_loader import load_document
@@ -7,31 +7,24 @@ import asyncio
 import re
 load_dotenv(find_dotenv(), override=True)
 
-def get_prompt_template(num_flashcards):
-    prompt = PromptTemplate(
-        template=f"""You are an expert at creating flashcards or question-answer pairs based on a given text. Design the flash cards to test my understanding of the key concepts, facts, and ideas discussed in the text above. Keep each flash card simple and clear, focusing on the most important information. Questions on the front should be specific and unambiguous, helping me recall precise details or concepts. The content generated should be about the core concept of the text and not trivial things.
-Generate a total of {num_flashcards} question-answer pairs.
+async def get_recommended_courses(user_courses, remaining_courses):
+    llm = get_llm_model(repo_id="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B", temperature=0.9)
+    prompt = course_recommendation_prompt_template()
+    qa_chain = LLMChain(prompt=prompt, llm=llm)
+    answer = await qa_chain.ainvoke({"user_courses": user_courses, "remaining_courses": remaining_courses})
+    answer = format_course_recommendation_answer(answer['text'])
+    return answer
 
-        FORMAT THE OUTPUT LIKE THIS:
-        Q1: Where is the Dead Sea located?;;;A1: on the border between Israel and Jordan
-		Q2: What is the lowest point on the Earth's surface?;;;A2: The Dead Sea shoreline
-
-        The text is: {{text}}
-        """,
-        input_variables=["text"],
-    )
-    return prompt
-
-async def get_generated_text(num_flashcards, file):
+async def get_flashcards(num_flashcards, file):
     llm = get_llm_model(repo_id="mistralai/Mistral-7B-Instruct-v0.2")
-    prompt = get_prompt_template(num_flashcards)
+    prompt = flash_cards_prompt_template(num_flashcards)
     qa_chain = LLMChain(prompt=prompt, llm=llm)
     text = await asyncio.to_thread(load_document, file)
     answer = await qa_chain.ainvoke({"text": text})
-    answer = format_answer(answer['text'], num_flashcards)
+    answer = format_flashcard_answer(answer['text'], num_flashcards)
     return answer
 
-def format_answer(answer, num_flashcards):
+def format_flashcard_answer(answer, num_flashcards):
     print(answer)
     split_text = answer.split("\n")
     print(split_text)
@@ -63,3 +56,11 @@ def format_answer(answer, num_flashcards):
     #     })
     #     pair_counter += 1
     return pairs
+
+def format_course_recommendation_answer(answer):
+    courses_whitespace = answer.split("</think>")[1]
+    print(courses_whitespace)
+    courses = [c.strip() for c in courses_whitespace.split("\n") if c.strip()]
+    print(courses)
+    return courses
+

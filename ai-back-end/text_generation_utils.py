@@ -16,7 +16,7 @@ async def get_recommended_courses(user_courses, remaining_courses):
     return answer
 
 async def get_flashcards(num_flashcards, file):
-    llm = get_llm_model(repo_id="mistralai/Mistral-7B-Instruct-v0.2")
+    llm = get_llm_model(repo_id="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B")
     prompt = flash_cards_prompt_template(num_flashcards)
     qa_chain = LLMChain(prompt=prompt, llm=llm)
     text = await asyncio.to_thread(load_document, file)
@@ -25,6 +25,8 @@ async def get_flashcards(num_flashcards, file):
     return answer
 
 def format_flashcard_answer(answer, num_flashcards):
+    if ("</think>" in answer):
+        answer = answer.split("</think>")[1]
     print(answer)
     split_text = answer.split("\n")
     print(split_text)

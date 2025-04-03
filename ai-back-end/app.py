@@ -28,13 +28,10 @@ async def recommend_courses(request: CourseRecommendationRequst):
     # remaining_courses_str = "\n".join(request.remaining_courses)
     taken_courses_str = "\n".join(["Algorithms and data structures", "Databases", "Object oriented programming"])
     remaining_courses_str = "\n".join(["Machine learning", "Calculus", "Biology 1", "Astronomy", "Physics", "Statistics"])
-    # print(taken_courses_str)
-    # print(remaining_courses_str)
     recommended_courses = await get_recommended_courses(user_courses=taken_courses_str, remaining_courses=remaining_courses_str)
     print(recommended_courses)
-    # return JSONResponse(content={"taken": taken_courses_str, "remaining": remaining_courses_str})
     return JSONResponse(content={"recommended_courses": recommended_courses})
 
 
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="localhost", port=8000, reload=True)
+    uvicorn.run("app:app", host="localhost", port=8080, reload=True)

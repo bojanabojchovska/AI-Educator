@@ -26,7 +26,7 @@ def course_recommendation_prompt_template():
         The user's taken courses are:
         {{user_courses}}
 
-        Choose a course from the following list:
+        Choose MAXIMUM of 3 courses from the following list:
         {{remaining_courses}}
 
         DO NOT add any extra text, explanations.

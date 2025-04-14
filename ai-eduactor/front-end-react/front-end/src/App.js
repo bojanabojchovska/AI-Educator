@@ -5,6 +5,7 @@ import RegisterPage from "./components/RegisterPage";
 import Admin from './components/Admin';
 import HomePage from './components/HomePage';  // Don't forget to import the HomePage component
 import SemesterPage from "./components/SemesterPage";
+import SubjectReviews from "./components/SubjectReviews";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
@@ -18,6 +19,7 @@ function App() {
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/semester-planning" element={<SemesterPage/>}/>
+                    <Route path="/subject-reviews" element={<SubjectReviews />} />
                 </Routes>
             </div>
         </Router>

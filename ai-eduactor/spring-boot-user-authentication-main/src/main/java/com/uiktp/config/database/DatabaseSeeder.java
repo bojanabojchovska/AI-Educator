@@ -3,7 +3,7 @@ package com.uiktp.config.database;
 import com.uiktp.model.Course;
 import com.uiktp.model.Semester;
 import com.uiktp.model.User;
-import com.uiktp.model.UserRole;
+import com.uiktp.model.enumerations.UserRole;
 import com.uiktp.repository.CourseRepository;
 import com.uiktp.repository.SemesterRepository;
 import com.uiktp.repository.UserRepository;
@@ -16,14 +16,17 @@ import java.util.List;
 @Component
 public class DatabaseSeeder implements CommandLineRunner {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private SemesterRepository semesterRepository;
+    private final SemesterRepository semesterRepository;
 
-    @Autowired
-    private CourseRepository courseRepository;
+    private final CourseRepository courseRepository;
+
+    public DatabaseSeeder(UserRepository userRepository, SemesterRepository semesterRepository, CourseRepository courseRepository) {
+        this.userRepository = userRepository;
+        this.semesterRepository = semesterRepository;
+        this.courseRepository = courseRepository;
+    }
 
     @Override
     public void run(String... args) throws Exception {

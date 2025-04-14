@@ -35,7 +35,7 @@ public class RatingServiceImpl implements RatingService {
 
         Rating rating = new Rating();
         rating.setRatingValue(dto.getRatingValue());
-        rating.setUser(user);
+        rating.setStudent(user);
         rating.setCourse(course);
         rating.setDate(LocalDate.now());
 

@@ -33,7 +33,7 @@ public class CommentServiceImpl implements CommentService {
 
         Comment comment = new Comment();
         comment.setCommentBody(dto.getCommentBody());
-        comment.setUser(user);
+        comment.setStudent(user);
         comment.setCourse(course);
         comment.setDate(LocalDate.now());
 

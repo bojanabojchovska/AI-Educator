@@ -1,5 +1,6 @@
 package com.uiktp.model;
 
+import com.uiktp.model.enumerations.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

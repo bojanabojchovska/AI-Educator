@@ -21,8 +21,8 @@ public class Rating {
     private int ratingValue;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "student_id")
+    private User student;
 
     @ManyToOne
     @JoinColumn(name = "course_id")

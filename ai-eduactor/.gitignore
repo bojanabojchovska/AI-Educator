@@ -13,4 +13,4 @@ target/
 *.tmp
 
 #Ignore personal configuration files
-ai-eduactor/spring-boot-user-authentication-main/src/main/resources/application.properties
+spring-boot-user-authentication-main/src/main/resources/application.properties

@@ -11,3 +11,6 @@ target/
 # Ignore logs and temp files
 *.log
 *.tmp
+
+#Ignore personal configuration files
+ai-eduactor/spring-boot-user-authentication-main/src/main/resources/application.properties

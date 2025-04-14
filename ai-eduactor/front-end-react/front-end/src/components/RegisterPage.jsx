@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { GraduationCap } from "lucide-react";
 import "./RegisterPage.css";
 import axios from "axios";
-import { API_URL } from "../repository/api";
+import {AUTH_BASE_URL} from "../repository/api"
 import Notification from "../components/Notification"; // Import the Notification component
 
 const RegisterPage = () => {
@@ -23,7 +23,7 @@ const RegisterPage = () => {
         }
     
         try {
-            const response = await axios.post(`${API_URL}/auth/register`, 
+            const response = await axios.post(`${AUTH_BASE_URL}/register`, 
                 { name, email, password }, 
                 { headers: { "Content-Type": "application/json" } }
             );

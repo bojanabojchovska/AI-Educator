@@ -25,3 +25,14 @@
 .nav-register-btn:hover {
     background-color: #1f060d;
 }
+
+.nav-hello-msg {
+    margin-right: 10px;
+    font-weight: bold;
+    align-self: center;
+}
+
+.nav-logout-btn {
+    background-color: #dc3545;
+}
+

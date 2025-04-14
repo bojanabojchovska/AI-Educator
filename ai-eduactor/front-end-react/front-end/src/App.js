@@ -4,6 +4,8 @@ import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
 import Admin from './components/Admin';
 import HomePage from './components/HomePage';  // Don't forget to import the HomePage component
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 function App() {
     return (

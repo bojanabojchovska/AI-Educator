@@ -74,7 +74,7 @@ const CourseReviewPage = () => {
             <div className="course-review-container">
                 <button
                     className="back-button"
-                    onClick={() => navigate('/courses')}
+                    onClick={() => navigate('/course-reviews')}
                 >
                     &larr; Back to Courses
                 </button>

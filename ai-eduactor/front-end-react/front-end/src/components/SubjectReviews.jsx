@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import './SubjectReviews.css';
 import CustomNavbar from './CustomNavbar';
 import { FaStar } from 'react-icons/fa';
+import { getEnrolledSubjects, submitSubjectReview } from '../repository/api';
 
 const SubjectReviews = () => {
     const [subjects, setSubjects] = useState([]);
@@ -17,15 +17,11 @@ const SubjectReviews = () => {
 
     const fetchEnrolledSubjects = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/api/subjects/enrolled', {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
-            });
-            setSubjects(response.data);
+            const data = await getEnrolledSubjects();
+            setSubjects(data);
             setError(null);
         } catch (err) {
-            setError('Failed to fetch subjects');
+            setError('Failed to fetch subjects. Please try again later.');
             console.error('Error fetching subjects:', err);
         }
     };
@@ -56,16 +52,11 @@ const SubjectReviews = () => {
         }
 
         try {
-            await axios.post(`http://localhost:8080/api/subjects/${subjectId}/reviews`, {
+            await submitSubjectReview(subjectId, {
                 rating: review.rating,
-                feedback: review.feedback || '',
-            }, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
+                feedback: review.feedback || ''
             });
             
-            // Clear the review form after successful submission
             setReviews(prev => ({
                 ...prev,
                 [subjectId]: { rating: 0, feedback: '' }
@@ -128,3 +119,4 @@ const SubjectReviews = () => {
 };
 
 export default SubjectReviews;
+

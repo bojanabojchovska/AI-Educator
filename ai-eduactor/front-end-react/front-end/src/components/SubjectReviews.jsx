@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './SubjectReviews.css';
 import CustomNavbar from './CustomNavbar';
 import { FaStar } from 'react-icons/fa';
@@ -8,18 +9,25 @@ const SubjectReviews = () => {
     const [reviews, setReviews] = useState({});
     const [hoveredRating, setHoveredRating] = useState({});
     const [searchQuery, setSearchQuery] = useState('');
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        //TODO: Add actuual axios call to fetch enrolled subjects
         fetchEnrolledSubjects();
     }, []);
 
     const fetchEnrolledSubjects = async () => {
-        setSubjects([
-            { id: 1, name: "Mathematics" },
-            { id: 2, name: "Physics" },
-            { id: 3, name: "Computer Science" }
-        ]);
+        try {
+            const response = await axios.get('http://localhost:8080/api/subjects/enrolled', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            setSubjects(response.data);
+            setError(null);
+        } catch (err) {
+            setError('Failed to fetch subjects');
+            console.error('Error fetching subjects:', err);
+        }
     };
 
     const filteredSubjects = subjects.filter(subject =>
@@ -41,9 +49,33 @@ const SubjectReviews = () => {
     };
 
     const submitReview = async (subjectId) => {
-        //TODO: Add actual axios call to submit review
         const review = reviews[subjectId];
-        console.log('Submitting review:', { subjectId, review });
+        if (!review || !review.rating) {
+            alert('Please provide at least a rating');
+            return;
+        }
+
+        try {
+            await axios.post(`http://localhost:8080/api/subjects/${subjectId}/reviews`, {
+                rating: review.rating,
+                feedback: review.feedback || '',
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            
+            // Clear the review form after successful submission
+            setReviews(prev => ({
+                ...prev,
+                [subjectId]: { rating: 0, feedback: '' }
+            }));
+            
+            alert('Review submitted successfully!');
+        } catch (err) {
+            alert('Failed to submit review. Please try again.');
+            console.error('Error submitting review:', err);
+        }
     };
 
     return (
@@ -51,6 +83,7 @@ const SubjectReviews = () => {
             <CustomNavbar />
             <div className="subject-reviews-container">
                 <h1>Subject Reviews</h1>
+                {error && <div className="error-message">{error}</div>}
                 <div className="search-container">
                     <input
                         type="text"

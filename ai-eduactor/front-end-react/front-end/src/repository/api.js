@@ -166,27 +166,44 @@ export const createSemester = async (semesterData) => {
   }
 };
 
+
 export const submitSubjectReview = async (courseId, reviewData) => {
   try {
-    // Submit rating
-    await axios.post(`${API_URL}/courses/${courseId}/ratings`, {
-      rating: reviewData.rating
-    });
+    const token = localStorage.getItem('token');
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
 
-    // Submit comment if feedback exists
-    if (reviewData.feedback.trim()) {
-      await axios.post(`${API_URL}/courses/${courseId}/comments`, {
-        content: reviewData.feedback
-      });
+    const requests = [];
+
+    // Submit rating
+    if (reviewData.rating) {
+      requests.push(
+          axios.post(`${API_URL}/courses/${courseId}/ratings`, {
+            courseId: parseInt(courseId), // Include courseId
+            ratingValue: parseInt(reviewData.rating)
+          }, { headers })
+      );
     }
 
+    // Submit comment
+    if (reviewData.feedback && reviewData.feedback.trim()) {
+      requests.push(
+          axios.post(`${API_URL}/courses/${courseId}/comments`, {
+            courseId: parseInt(courseId), // Include courseId
+            commentBody: reviewData.feedback.trim()
+          }, { headers })
+      );
+    }
+
+    await Promise.all(requests);
     return { success: true };
   } catch (error) {
     console.error('Error submitting review:', error);
-    throw error;
+    throw error.response?.data || error.message || 'Failed to submit review';
   }
 };
-
 export const getSubjectReviews = async (courseId) => {
   try {
     const [commentsResponse, ratingResponse] = await Promise.all([
@@ -203,4 +220,3 @@ export const getSubjectReviews = async (courseId) => {
     throw error;
   }
 };
-

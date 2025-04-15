@@ -166,30 +166,41 @@ export const createSemester = async (semesterData) => {
   }
 };
 
-export const getEnrolledSubjects = async () => {
+export const submitSubjectReview = async (courseId, reviewData) => {
   try {
-    const response = await axios.get(`${API_URL}/subjects/enrolled`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
+    // Submit rating
+    await axios.post(`${API_URL}/courses/${courseId}/ratings`, {
+      rating: reviewData.rating
     });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching enrolled subjects:', error);
-    throw error;
-  }
-};
 
-export const submitSubjectReview = async (subjectId, reviewData) => {
-  try {
-    const response = await axios.post(`${API_URL}/subjects/${subjectId}/review`, reviewData, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-    return response.data;
+    // Submit comment if feedback exists
+    if (reviewData.feedback.trim()) {
+      await axios.post(`${API_URL}/courses/${courseId}/comments`, {
+        content: reviewData.feedback
+      });
+    }
+
+    return { success: true };
   } catch (error) {
     console.error('Error submitting review:', error);
     throw error;
   }
 };
+
+export const getSubjectReviews = async (courseId) => {
+  try {
+    const [commentsResponse, ratingResponse] = await Promise.all([
+      axios.get(`${API_URL}/courses/${courseId}/comments`),
+      axios.get(`${API_URL}/courses/${courseId}/ratings/average`)
+    ]);
+
+    return {
+      comments: commentsResponse.data,
+      averageRating: ratingResponse.data
+    };
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    throw error;
+  }
+};
+

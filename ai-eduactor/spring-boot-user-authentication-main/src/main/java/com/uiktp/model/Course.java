@@ -24,7 +24,7 @@ public class Course {
     @ManyToMany(mappedBy = "courses")
     private List<Semester> semesters;
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "course")
     private List<Rating> ratings;
 
     @OneToMany(mappedBy = "course")

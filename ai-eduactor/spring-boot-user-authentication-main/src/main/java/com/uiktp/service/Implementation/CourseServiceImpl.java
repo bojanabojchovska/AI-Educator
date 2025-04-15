@@ -1,7 +1,10 @@
 package com.uiktp.service.Implementation;
 
 import com.uiktp.model.Course;
+import com.uiktp.model.dtos.CourseRecommendationRequestDTO;
+import com.uiktp.model.dtos.CourseRecommendationResponseDTO;
 import com.uiktp.model.dtos.CreateCourseDto;
+import com.uiktp.model.exceptions.CourseRecommendationException;
 import com.uiktp.repository.CourseRepository;
 import com.uiktp.service.Interface.CourseService;
 import org.apache.poi.ss.usermodel.Row;
@@ -9,7 +12,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
@@ -17,13 +25,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseServiceImpl implements CourseService {
-
 
     private final CourseRepository courseRepository;
 
@@ -99,7 +108,8 @@ public class CourseServiceImpl implements CourseService {
 
         List<Course> courses = new ArrayList<>();
 
-        if (rowIterator.hasNext()) rowIterator.next();
+        if (rowIterator.hasNext())
+            rowIterator.next();
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
 
@@ -115,5 +125,32 @@ public class CourseServiceImpl implements CourseService {
         workbook.close();
 
         courseRepository.saveAll(courses);
+    }
+
+    @Override
+    public List<String> getRecommendations() {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            CourseRecommendationRequestDTO request = new CourseRecommendationRequestDTO();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            List<String> allCourseNames = courseRepository.findAll().stream().map(c -> c.getTitle())
+                    .collect(Collectors.toList());
+            Collections.shuffle(allCourseNames);
+            List<String> random10Courses = allCourseNames.stream().limit(10).collect(Collectors.toList());
+            request.setRemaining_courses(random10Courses);
+            request.setTaken_courses(
+                    List.of("Business and Managment", "Structural Programming", "Discrete Mathematics",
+                            "Object oriented programming", "Introduction to computer science")); // getCoursesByUser
+
+            HttpEntity<CourseRecommendationRequestDTO> entity = new HttpEntity<>(request, headers);
+            ResponseEntity<CourseRecommendationResponseDTO> response = restTemplate.postForEntity(
+                    "http://localhost:8000/recommend_courses", entity, CourseRecommendationResponseDTO.class);
+            return response.getBody().getRecommended_courses();
+        } catch (Exception e) {
+            throw new CourseRecommendationException("There was an error while generating the courses!");
+        }
+
     }
 }

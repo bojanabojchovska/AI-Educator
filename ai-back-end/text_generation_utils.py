@@ -7,11 +7,13 @@ import asyncio
 import re
 load_dotenv(find_dotenv(), override=True)
 
-async def get_recommended_courses(user_courses, remaining_courses):
+async def get_recommended_courses(request):
+    taken_courses_str = "\n".join(request.taken_courses)
+    remaining_courses_str = "\n".join(request.remaining_courses)
     llm = get_llm_model(repo_id="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B")
     prompt = course_recommendation_prompt_template()
     qa_chain = LLMChain(prompt=prompt, llm=llm)
-    answer = await qa_chain.ainvoke({"user_courses": user_courses, "remaining_courses": remaining_courses})
+    answer = await qa_chain.ainvoke({"user_courses": taken_courses_str, "remaining_courses": remaining_courses_str})
     answer = format_course_recommendation_answer(answer['text'])
     return answer
 

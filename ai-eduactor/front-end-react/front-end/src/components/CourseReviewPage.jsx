@@ -2,22 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
 import CustomNavbar from './CustomNavbar';
-import { getSubjectReviews, submitSubjectReview } from '../repository/api';
-import './CourseReviewPage.css'; // Make sure to create this CSS file
+import { getSubjectReviews, submitSubjectReview, getCourses } from '../repository/api';
+import './CourseReviewPage.css';
 
 const CourseReviewPage = () => {
     const { courseId } = useParams();
     const navigate = useNavigate();
+    const [courseName, setCourseName] = useState('');
     const [reviews, setReviews] = useState({ comments: [], averageRating: 0 });
     const [newReview, setNewReview] = useState({ rating: 0, feedback: '' });
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [courseName, setCourseName] = useState('');
 
     useEffect(() => {
+        fetchCourseData();
         fetchReviews();
     }, [courseId]);
+
+    const fetchCourseData = async () => {
+        try {
+            const courses = await getCourses();
+            const course = courses.find(c =>
+                String(c.courseId) === String(courseId) ||
+                String(c.id) === String(courseId)
+            );
+            if (course) {
+                setCourseName(course.courseName || course.name || course.title);
+            }
+        } catch (err) {
+            console.error('Error fetching course:', err);
+        }
+    };
 
     const fetchReviews = async () => {
         try {
@@ -80,7 +96,7 @@ const CourseReviewPage = () => {
                 </button>
 
                 <div className="review-section">
-                    <h2>{courseName || `Course Reviews (ID: ${courseId})`}</h2>
+                    <h2>{courseName}</h2>
                     <div className="average-rating">
                         <p>Average Rating:
                             <span className="rating-value">

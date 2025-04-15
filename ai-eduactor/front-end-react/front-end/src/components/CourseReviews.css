@@ -6,7 +6,7 @@
 
 .subject-reviews-container h1 {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem; /* Reduced margin */
     color: #333;
 }
 
@@ -19,16 +19,33 @@
     margin-bottom: 1.5rem;
 }
 
+.header-section {
+    width: 100%;
+    padding: 2rem 0;
+    text-align: center;
+    background-color: white;
+    border-bottom: 1px solid #eee;
+}
+
+.header-section h1 {
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
 .search-container {
-    margin-bottom: 2rem;
+    width: 40%;
+    margin: 0 auto;
 }
 
 .search-input {
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
+    height: 50px;
+    padding: 0 20px;
+    border: 2px solid #ddd;
+    border-radius: 25px;
+    font-size: 16px;
+    outline: none;
+    box-sizing: border-box;
 }
 
 .subjects-grid {

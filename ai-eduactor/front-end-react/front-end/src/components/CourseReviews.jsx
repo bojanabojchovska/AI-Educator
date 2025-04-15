@@ -123,12 +123,9 @@ const CourseReviews = () => {
 
     return (
         <>
-            <CustomNavbar />
-            <div className="subject-reviews-container">
+            <CustomNavbar/>
+            <div className="header-section">
                 <h1>Course Reviews</h1>
-
-                {error && <div className="global-error-message">{error}</div>}
-
                 <div className="search-container">
                     <input
                         type="text"
@@ -138,6 +135,11 @@ const CourseReviews = () => {
                         className="search-input"
                     />
                 </div>
+            </div>
+
+            {error && <div className="global-error-message">{error}</div>}
+
+            <div className="subject-reviews-container">
 
                 <div className="subjects-grid">
                     {filteredSubjects.length > 0 ? (
@@ -186,7 +188,7 @@ const CourseReviews = () => {
 
                                     <button
                                         className="view-all-btn"
-                                        onClick={() => handleViewAllReviews(subject.id)}
+                                        onClick={() => handleViewAllReviews(subject.id, subject.name)}
                                     >
                                         View All Reviews
                                     </button>

@@ -166,4 +166,30 @@ export const createSemester = async (semesterData) => {
   }
 };
 
+export const getEnrolledSubjects = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/subjects/enrolled`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching enrolled subjects:', error);
+    throw error;
+  }
+};
 
+export const submitSubjectReview = async (subjectId, reviewData) => {
+  try {
+    const response = await axios.post(`${API_URL}/subjects/${subjectId}/review`, reviewData, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error submitting review:', error);
+    throw error;
+  }
+};

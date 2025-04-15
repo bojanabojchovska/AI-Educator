@@ -2,7 +2,7 @@ package com.uiktp.service.Implementation;
 
 import com.uiktp.model.Course;
 import com.uiktp.model.Semester;
-import com.uiktp.model.exceptions.SemesterNotFoundException;
+import com.uiktp.model.exceptions.resource.SemesterNotFoundException;
 import com.uiktp.repository.SemesterRepository;
 import com.uiktp.service.Interface.SemesterService;
 import org.springframework.stereotype.Service;

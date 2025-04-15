@@ -24,6 +24,12 @@ public class Course {
     @ManyToMany(mappedBy = "courses")
     private List<Semester> semesters;
 
+    @OneToMany(mappedBy = "student")
+    private List<Rating> ratings;
+
+    @OneToMany(mappedBy = "course")
+    private List<Comment> comments;
+
     public Course(String title, String description){
         this.title = title;
         this.description = description;

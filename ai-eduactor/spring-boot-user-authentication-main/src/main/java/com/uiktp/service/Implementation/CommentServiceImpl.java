@@ -4,6 +4,7 @@ import com.uiktp.model.Comment;
 import com.uiktp.model.Course;
 import com.uiktp.model.User;
 import com.uiktp.model.dtos.CommentDTO;
+import com.uiktp.model.exceptions.general.ResourceNotFoundException;
 import com.uiktp.repository.CommentRepository;
 import com.uiktp.repository.CourseRepository;
 import com.uiktp.repository.UserRepository;
@@ -11,6 +12,9 @@ import com.uiktp.service.Interface.CommentService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -25,26 +29,43 @@ public class CommentServiceImpl implements CommentService {
         this.courseRepository = courseRepository;
     }
 
-    public Comment addComment(CommentDTO dto) {
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("Student not found"));
-        Course course = courseRepository.findById(dto.getCourseId())
-                .orElseThrow(() -> new RuntimeException("Subject not found"));
+    @Override
+    public List<Comment> getAllCommentsForCourse(Long courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId));
+
+        return commentRepository.findByCourseId(courseId);
+    }
+
+    public Comment addCommentToCourse(Long courseId, CommentDTO dto) {
+        User user = userRepository.findById(dto.getStudentId())
+                .orElseThrow(() -> new ResourceNotFoundException(User.class, dto.getStudentId()));
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId));
 
         Comment comment = new Comment();
         comment.setCommentBody(dto.getCommentBody());
         comment.setStudent(user);
         comment.setCourse(course);
-        comment.setDate(LocalDate.now());
+        comment.setDate(LocalDateTime.now());
 
         return commentRepository.save(comment);
     }
 
+    @Override
+    public Comment editComment(Long commentId, CommentDTO dto) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException(Comment.class, commentId));
+        comment.setCommentBody(dto.getCommentBody());
+        comment.setDate(LocalDateTime.now());
 
-//    public Comment approveComment(Long id) {
-//        Comment comment = commentRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("Comment not found"));
-//        comment.setApproved(true);
-//        return commentRepository.save(comment);
-//    }
+        return commentRepository.save(comment);
+    }
+
+    @Override
+    public void deleteComment(Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException(Comment.class, commentId));
+        commentRepository.delete(comment);
+    }
 }

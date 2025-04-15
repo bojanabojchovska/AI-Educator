@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -21,12 +22,12 @@ public class Rating {
     private int ratingValue;
 
     @ManyToOne
-    @JoinColumn(name = "student_id")
+    @JoinColumn(name = "user_id")
     private User student;
 
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
 
-    private LocalDate date;
+    private LocalDateTime date;
 }

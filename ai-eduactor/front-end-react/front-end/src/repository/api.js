@@ -166,4 +166,14 @@ export const createSemester = async (semesterData) => {
   }
 };
 
+export const getCourseTitles = async () => {
+  const response = await axios.get(`${API_URL}/courses/titles`);
+  return response.data;
+};
+
+export const getCourseRecommendations = async () => {
+  const response = await axios.post(`${API_URL}/courses/recommend`);
+  return response.data;
+};
+
 

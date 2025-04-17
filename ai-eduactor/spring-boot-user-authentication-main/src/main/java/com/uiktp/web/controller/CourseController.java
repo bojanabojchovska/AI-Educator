@@ -5,6 +5,7 @@ import com.uiktp.model.dtos.CourseRecommendationRequestDTO;
 import com.uiktp.model.dtos.CourseRecommendationResponseDTO;
 import com.uiktp.model.dtos.CreateCourseDto;
 import com.uiktp.model.exceptions.CourseRecommendationException;
+import com.uiktp.model.exceptions.NoTakenCoursesException;
 import com.uiktp.service.Interface.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -66,6 +67,10 @@ public class CourseController {
             Map<String, String> error = new HashMap<>();
             error.put("error", ex.getMessage());
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(error);
+        } catch (NoTakenCoursesException ex) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", ex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
     }
 

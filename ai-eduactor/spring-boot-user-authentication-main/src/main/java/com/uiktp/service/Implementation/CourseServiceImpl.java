@@ -5,6 +5,7 @@ import com.uiktp.model.dtos.CourseRecommendationRequestDTO;
 import com.uiktp.model.dtos.CourseRecommendationResponseDTO;
 import com.uiktp.model.dtos.CreateCourseDto;
 import com.uiktp.model.exceptions.CourseRecommendationException;
+import com.uiktp.model.exceptions.NoTakenCoursesException;
 import com.uiktp.repository.CourseRepository;
 import com.uiktp.service.Interface.CourseService;
 import org.apache.poi.ss.usermodel.Row;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -144,10 +146,15 @@ public class CourseServiceImpl implements CourseService {
                     List.of("Business and Managment", "Structural Programming", "Discrete Mathematics",
                             "Object oriented programming", "Introduction to computer science")); // getCoursesByUser
 
+            if (request.getTaken_courses() == null || request.getTaken_courses().isEmpty()) {
+                throw new NoTakenCoursesException("You have not taken any courses yet!");
+            }
             HttpEntity<CourseRecommendationRequestDTO> entity = new HttpEntity<>(request, headers);
             ResponseEntity<CourseRecommendationResponseDTO> response = restTemplate.postForEntity(
                     "http://localhost:8000/recommend_courses", entity, CourseRecommendationResponseDTO.class);
             return response.getBody().getRecommended_courses();
+        } catch (NoTakenCoursesException e) {
+            throw e;
         } catch (Exception e) {
             throw new CourseRecommendationException("There was an error while generating the courses!");
         }

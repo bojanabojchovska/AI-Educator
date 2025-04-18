@@ -26,5 +26,5 @@ public interface CourseService {
 
     void importCoursesFromExcel(MultipartFile file) throws IOException;
 
-    List<String> getRecommendations();
+    List<Course> getRecommendations();
 }

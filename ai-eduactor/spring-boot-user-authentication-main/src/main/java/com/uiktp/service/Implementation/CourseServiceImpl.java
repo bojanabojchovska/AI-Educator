@@ -3,6 +3,7 @@ package com.uiktp.service.Implementation;
 import com.uiktp.model.Course;
 import com.uiktp.model.dtos.CourseRecommendationRequestDTO;
 import com.uiktp.model.dtos.CourseRecommendationResponseDTO;
+import com.uiktp.model.dtos.CourseTitlesResponseDTO;
 import com.uiktp.model.dtos.CreateCourseDto;
 import com.uiktp.model.exceptions.CourseRecommendationException;
 import com.uiktp.model.exceptions.NoTakenCoursesException;
@@ -130,7 +131,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<String> getRecommendations() {
+    public List<Course> getRecommendations() {
         try {
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
@@ -150,9 +151,15 @@ public class CourseServiceImpl implements CourseService {
                 throw new NoTakenCoursesException("You have not taken any courses yet!");
             }
             HttpEntity<CourseRecommendationRequestDTO> entity = new HttpEntity<>(request, headers);
-            ResponseEntity<CourseRecommendationResponseDTO> response = restTemplate.postForEntity(
-                    "http://localhost:8000/recommend_courses", entity, CourseRecommendationResponseDTO.class);
-            return response.getBody().getRecommended_courses();
+            ResponseEntity<CourseTitlesResponseDTO> response = restTemplate.postForEntity(
+                    "http://localhost:8000/recommend_courses", entity, CourseTitlesResponseDTO.class);
+
+            List<String> recommendedTitles = response.getBody().getRecommended_courses();
+            List<String> lowercaseTitles = recommendedTitles.stream().map(i -> i.toLowerCase())
+                    .collect(Collectors.toList());
+            List<Course> recommendedCourses = courseRepository.findByTitleInIgnoreCase(lowercaseTitles);
+            return recommendedCourses;
+
         } catch (NoTakenCoursesException e) {
             throw e;
         } catch (Exception e) {

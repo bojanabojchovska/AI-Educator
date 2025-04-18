@@ -59,7 +59,7 @@ public class CourseController {
     @PostMapping("/recommend")
     public ResponseEntity<?> recommendCourses() {
         try {
-            List<String> courses = courseService.getRecommendations();
+            List<Course> courses = courseService.getRecommendations();
             CourseRecommendationResponseDTO response = new CourseRecommendationResponseDTO();
             response.setRecommended_courses(courses);
             return ResponseEntity.ok(response);

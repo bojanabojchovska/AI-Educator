@@ -29,7 +29,7 @@ async def recommend_courses(request: CourseRecommendationRequst):
     # print(request.remaining_courses)
     # print("======================")
     # recommended_courses = await get_recommended_courses(request)
-    return JSONResponse(content={"recommended_courses": ["Course 1", "Course 2", "Course 3"]})
+    return JSONResponse(content={"recommended_courses": ["calculus", "idk?", "discrete Mathematics"]})
 
 
 if __name__ == "__main__":

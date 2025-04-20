@@ -32,16 +32,17 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<Comment> getAllCommentsForCourse(Long courseId) {
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId));
+                .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId.toString()));
 
         return commentRepository.findByCourseId(courseId);
     }
 
     public Comment addCommentToCourse(Long courseId, CommentDTO dto) {
-        User user = userRepository.findById(dto.getStudentId())
-                .orElseThrow(() -> new ResourceNotFoundException(User.class, dto.getStudentId()));
+        User user = userRepository.findByEmail(dto.getStudentEmail())
+                .orElseThrow(() -> new ResourceNotFoundException(User.class, dto.getStudentEmail()));
+
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId));
+                .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId.toString()));
 
         Comment comment = new Comment();
         comment.setCommentBody(dto.getCommentBody());
@@ -55,7 +56,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment editComment(Long commentId, CommentDTO dto) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new ResourceNotFoundException(Comment.class, commentId));
+                .orElseThrow(() -> new ResourceNotFoundException(Comment.class, commentId.toString()));
         comment.setCommentBody(dto.getCommentBody());
         comment.setDate(LocalDateTime.now());
 
@@ -65,7 +66,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteComment(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new ResourceNotFoundException(Comment.class, commentId));
+                .orElseThrow(() -> new ResourceNotFoundException(Comment.class, commentId.toString()));
         commentRepository.delete(comment);
     }
 }

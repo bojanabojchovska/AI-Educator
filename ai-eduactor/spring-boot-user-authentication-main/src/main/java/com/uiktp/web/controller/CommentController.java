@@ -1,10 +1,12 @@
 package com.uiktp.web.controller;
 
 import com.uiktp.model.Comment;
+import com.uiktp.model.User;
 import com.uiktp.model.dtos.CommentDTO;
 import com.uiktp.service.Interface.CommentService;
 import com.uiktp.service.Interface.CourseService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

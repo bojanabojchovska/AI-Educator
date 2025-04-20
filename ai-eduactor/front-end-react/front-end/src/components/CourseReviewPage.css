@@ -1,5 +1,5 @@
 .course-review-container {
-    max-width: 1000px;
+    max-width: 1500px;
     margin: 2rem auto;
     padding: 0 1rem;
 }
@@ -74,6 +74,7 @@
     padding: 1.5rem;
     border-radius: 6px;
     margin-bottom: 2rem;
+    width: 50%;
 }
 
 .new-review-form h3 {
@@ -156,9 +157,11 @@ textarea {
 }
 
 .reviews-list h3 {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-bottom: 1px solid #ddd;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid #eee;
 }
 
 .review-item {
@@ -183,4 +186,60 @@ textarea {
 .no-reviews {
     color: #757575;
     font-style: italic;
+}
+
+.forms-container {
+    display: flex;
+    gap: 20px;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.review-card {
+    padding: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    margin-bottom: 1.25rem;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+
+.review-user {
+    display: flex;
+    align-items: center;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.student-name {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.user-email {
+    font-size: 0.875rem;
+    color: #777;
+}
+
+.review-body {
+    padding-top: 0.5rem;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #333;
+}
+
+.comment-buttons{
+    width: 12%;
+    display: flex;
+    justify-content: space-between;
 }

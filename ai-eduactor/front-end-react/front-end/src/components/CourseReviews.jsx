@@ -2,8 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CourseReviews.css';
 import CustomNavbar from './CustomNavbar';
-import { getCourses, submitSubjectReview } from '../repository/api';
-import { FaStar } from 'react-icons/fa';
+import {
+    addCourseToFavorites,
+    getCourses,
+    getFavoriteCourses,
+    removeCourseFromFavorites,
+    submitSubjectReview
+} from '../repository/api';
+import {FaStar} from 'react-icons/fa';
+import {FaHeart, FaRegHeart} from "react-icons/fa6";
+
 
 const CourseReviews = () => {
     const [subjects, setSubjects] = useState([]);
@@ -13,18 +21,21 @@ const CourseReviews = () => {
     const [successMessages, setSuccessMessages] = useState({});
     const [isSubmitting, setIsSubmitting] = useState({});
     const navigate = useNavigate();
+    const [favorites, setFavorites] = useState({});
 
     useEffect(() => {
         fetchCourses();
+        fetchFavorites();
     }, []);
 
     const fetchCourses = async () => {
         try {
             setError(null);
             const data = await getCourses();
+            console.log(data);
             const formattedCourses = data.map(course => ({
-                id: course.courseId || course.id,
-                name: course.courseName || course.name || course.title,
+                id: course.id,
+                name: course.title,
             }));
             setSubjects(formattedCourses);
         } catch (err) {
@@ -32,6 +43,21 @@ const CourseReviews = () => {
             console.error('Error fetching courses:', err);
         }
     };
+
+    const fetchFavorites = async () => {
+    try {
+        const data = await getFavoriteCourses();
+        const favoriteMap = {};
+
+        data.forEach(course => {
+            favoriteMap[course.id] = true;
+        });
+
+        setFavorites(favoriteMap);
+    } catch (err) {
+        console.error('Error fetching favorites:', err);
+    }
+};
 
     const handleSubmitReview = async (courseId) => {
         const review = reviews[courseId];
@@ -121,6 +147,25 @@ const CourseReviews = () => {
         navigate(`/course/${courseId}/reviews`);
     };
 
+    const handleToggleFavorite = async (courseId) => {
+        try {
+            const isCurrentlyFavorite = favorites[courseId];
+
+            if (isCurrentlyFavorite) {
+                await removeCourseFromFavorites(courseId);
+            } else {
+                await addCourseToFavorites(courseId);
+            }
+
+            setFavorites(prev => ({
+                ...prev,
+                [courseId]: !isCurrentlyFavorite
+            }));
+        } catch (err) {
+            console.error('Error updating favorite:', err);
+        }
+    };
+
     return (
         <>
             <CustomNavbar/>
@@ -145,7 +190,20 @@ const CourseReviews = () => {
                     {filteredSubjects.length > 0 ? (
                         filteredSubjects.map(subject => (
                             <div key={subject.id} className="subject-box">
-                                <h3>{subject.name}</h3>
+                                <div className="subject-title-row">
+                                    <h3>{subject.name}</h3>
+                                    <button
+                                        className="heart-button"
+                                        onClick={() => handleToggleFavorite(subject.id)}
+                                        aria-label="Toggle Favorite"
+                                    >
+                                        {favorites[subject.id] ? (
+                                            <FaHeart  className={"subject-heart-icon"}/>
+                                        ) : (
+                                            <FaRegHeart  className={"subject-heart-icon"}/>
+                                        )}
+                                    </button>
+                                </div>
 
                                 {/* Show success message if applicable */}
                                 {successMessages[subject.id] && (

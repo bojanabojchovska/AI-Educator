@@ -50,7 +50,7 @@ public class SemesterServiceImpl implements SemesterService {
     @Override
     public Semester addCourseToSemester(Long id, Long courseId) {
 
-        Semester semester = semesterRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Semester.class, id));
+        Semester semester = semesterRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Semester.class, id.toString()));
         List<Course> courses = semester.getCourses();
         if (courses.size() >= 5) {
             throw new IllegalStateException("A semester can have a maximum of 5 courses.");

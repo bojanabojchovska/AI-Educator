@@ -30,11 +30,19 @@ public class RatingServiceImpl implements RatingService {
         this.courseRepository = courseRepository;
         }
     public Rating addRating(Long courseId, RatingDTO dto) {
-        User user = userRepository.findById(dto.getStudentId())
-                .orElseThrow(() -> new ResourceNotFoundException(User.class, dto.getStudentId()));
+        User user = userRepository.findByEmail(dto.getStudentEmail())
+                .orElseThrow(() -> new ResourceNotFoundException(User.class, dto.getStudentEmail()));
 
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId));
+                .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId.toString()));
+
+        Rating existingRating = ratingRepository.findRatingByStudentAndCourse(user, course);
+
+        if(existingRating != null){
+            existingRating.setRatingValue(dto.getRatingValue());
+            existingRating.setDate(LocalDateTime.now());
+            return ratingRepository.save(existingRating);
+        }
 
         Rating rating = new Rating();
         rating.setRatingValue(dto.getRatingValue());
@@ -47,7 +55,7 @@ public class RatingServiceImpl implements RatingService {
 
     public double getAverageRating(Long courseId) {
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId));
+                .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId.toString()));
         List<Rating> ratings = ratingRepository.findByCourseId(course.getId());
 
         return ratings.stream().mapToInt(Rating::getRatingValue).average().orElse(0.0);

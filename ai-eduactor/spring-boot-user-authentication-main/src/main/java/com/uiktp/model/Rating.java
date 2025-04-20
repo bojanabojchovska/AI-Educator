@@ -1,5 +1,7 @@
 package com.uiktp.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -27,10 +29,12 @@ public class Rating {
 
     @ManyToOne
     @JoinColumn(name = "student_id")
+    @JsonManagedReference
     private User student;
 
     @ManyToOne
     @JoinColumn(name = "course_id")
+    @JsonBackReference
     private Course course;
 
     private LocalDateTime date;

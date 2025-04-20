@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 public class RatingDTO {
     private int ratingValue;
-    private Long studentId;
+    private String studentEmail;
     public RatingDTO() {}
 
 }

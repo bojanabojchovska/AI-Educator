@@ -170,3 +170,30 @@
     color: #757575;
     font-style: italic;
 }
+
+.subject-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+.heart-button {
+    all: unset;
+    background: none !important;
+    cursor: pointer;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    z-index: 2;
+    padding: 5px;
+}
+
+.heart-button:hover{
+    background: none !important;
+}
+
+.subject-heart-icon {
+    all: unset;
+    font-size: 24px;
+    cursor: pointer;
+}

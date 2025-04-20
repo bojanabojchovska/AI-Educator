@@ -167,18 +167,18 @@ export const createSemester = async (semesterData) => {
   }
 };
 
-export const getCourseTitles = async () => {
-  const response = await axios.get(`${API_URL}/courses/titles`);
+export const getCourses = async () => {
+  const response = await axios.get(`${API_URL}/courses`);
   return response.data;
 };
 
-export const getCourseRecommendations = async (selectedSubjects) => {
+export const getCourseRecommendations = async (takenSubjects, remainingSubjects = []) => {
   const response = await axios.post(`${API_URL}/courses/recommend`, {
-    selectedSubjects: selectedSubjects,
+    taken_courses: takenSubjects,
+    remaining_courses: remainingSubjects
   });
   return response.data;
 };
-
 
 export const submitSubjectReview = async (courseId, reviewData) => {
   try {

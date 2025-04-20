@@ -171,8 +171,10 @@ export const getCourseTitles = async () => {
   return response.data;
 };
 
-export const getCourseRecommendations = async () => {
-  const response = await axios.post(`${API_URL}/courses/recommend`);
+export const getCourseRecommendations = async (selectedSubjects) => {
+  const response = await axios.post(`${API_URL}/courses/recommend`, {
+    selectedSubjects: selectedSubjects,
+  });
   return response.data;
 };
 

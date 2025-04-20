@@ -35,7 +35,7 @@ const SubjectRecommendation = () => {
         setLoading(true);
         setError('');
         try {
-            const data = await getCourseRecommendations();
+            const data = await getCourseRecommendations(selectedSubjects);
             setRecommendedSubjects(data.recommended_courses || []);
         } catch (err) {
             console.error(err);
@@ -77,6 +77,18 @@ const SubjectRecommendation = () => {
                             ))}
                         </ul>
                     </div>
+
+                    {/* This is the part where you show the currently selected subjects */}
+                    {selectedSubjects.length > 0 && (
+                        <div className="selected-box">
+                            <h4>Currently selected subjects:</h4>
+                            <ul>
+                                {selectedSubjects.map((subj, idx) => (
+                                    <li key={idx}>{subj}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
 
                     <div className="list-box">
                         <h4>AI recommended subjects for you</h4>

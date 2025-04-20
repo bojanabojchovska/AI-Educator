@@ -4,6 +4,7 @@ import com.uiktp.model.Comment;
 import com.uiktp.model.Course;
 import com.uiktp.model.User;
 import com.uiktp.model.dtos.CommentDTO;
+import com.uiktp.model.exceptions.custom.UserCannotDeleteCommentException;
 import com.uiktp.model.exceptions.general.ResourceNotFoundException;
 import com.uiktp.repository.CommentRepository;
 import com.uiktp.repository.CourseRepository;
@@ -64,9 +65,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteComment(Long commentId) {
-        Comment comment = commentRepository.findById(commentId)
+    public void deleteComment(Long courseId, Long commentId, String email) {
+        Comment comment = commentRepository.findByCourseId(courseId)
+                .stream().filter(c -> c.getId().equals(commentId))
+                .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException(Comment.class, commentId.toString()));
+
+        if(!comment.getStudent().getEmail().equals(email)){
+            throw new UserCannotDeleteCommentException(email, commentId);
+        }
+
         commentRepository.delete(comment);
     }
 }

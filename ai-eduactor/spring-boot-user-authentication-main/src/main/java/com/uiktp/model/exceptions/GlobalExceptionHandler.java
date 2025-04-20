@@ -2,6 +2,7 @@ package com.uiktp.model.exceptions;
 
 import com.uiktp.model.exceptions.custom.CourseAlreadyLikedByStudentException;
 import com.uiktp.model.exceptions.custom.CourseNotLikedByStudentException;
+import com.uiktp.model.exceptions.custom.UserCannotDeleteCommentException;
 import com.uiktp.model.exceptions.general.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +30,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(CourseNotLikedByStudentException.class)
-    public ResponseEntity<String> handleCourseAlreadyLiked(CourseNotLikedByStudentException ex) {
+    public ResponseEntity<String> handleCourseNotLiked(CourseNotLikedByStudentException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(UserCannotDeleteCommentException.class)
+    public ResponseEntity<String> handleDeleteCommentNoPrivileges(UserCannotDeleteCommentException ex){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
 }

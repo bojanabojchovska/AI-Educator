@@ -12,5 +12,5 @@ public interface CommentService {
     List<Comment> getAllCommentsForCourse(Long courseId);
     Comment addCommentToCourse(Long courseId, CommentDTO dto);
     Comment editComment(Long commentId, CommentDTO dto);
-    void deleteComment(Long commentId);
+    void deleteComment(Long courseId, Long commentId, String email);
 }

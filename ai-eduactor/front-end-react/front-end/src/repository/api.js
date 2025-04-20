@@ -316,7 +316,19 @@ export const getFavoriteCourses = async () => {
 
 export const deleteComment = async (courseId, commentId) => {
   try {
-    const response = await axios.delete(`${API_URL}/courses/${courseId}/comments/${commentId}`);
+    const token = localStorage.getItem('token');
+    const email = localStorage.getItem('email');
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+
+    const response = await axios.delete(`${API_URL}/courses/${courseId}/comments/${commentId}`, {}, {
+      headers,
+      params: {
+        email: email
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error deleting course:', error);

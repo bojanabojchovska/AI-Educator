@@ -6,6 +6,7 @@ import Admin from './components/Admin';
 import HomePage from './components/HomePage';  // Don't forget to import the HomePage component
 import SemesterPage from "./components/SemesterPage";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import SubjectRecommendation from "./components/SubjectRecommendation";
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/semester-planning" element={<SemesterPage/>}/>
+                    <Route path="/recommendation" element={<SubjectRecommendation />} />
                 </Routes>
             </div>
         </Router>

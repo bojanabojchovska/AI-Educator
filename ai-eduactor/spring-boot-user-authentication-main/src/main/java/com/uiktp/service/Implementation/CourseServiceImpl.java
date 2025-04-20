@@ -173,6 +173,7 @@ public class CourseServiceImpl implements CourseService {
         } catch (Exception e) {
             throw new CourseRecommendationException("There was an error while generating the courses!");
         }
+    }
 
     public Course markAsFavorite(Long courseId, String email) {
         User student = userRepository.findByEmail(email)
@@ -181,11 +182,11 @@ public class CourseServiceImpl implements CourseService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId.toString()));
 
-        if(course.getLikedBy() == null){
+        if (course.getLikedBy() == null) {
             course.setLikedBy(new ArrayList<>());
         }
 
-        if(course.getLikedBy().contains(student)){
+        if (course.getLikedBy().contains(student)) {
             throw new CourseAlreadyLikedByStudentException(courseId, student.getId());
         }
 
@@ -202,11 +203,11 @@ public class CourseServiceImpl implements CourseService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId.toString()));
 
-        if(course.getLikedBy() == null || course.getLikedBy().isEmpty()){
+        if (course.getLikedBy() == null || course.getLikedBy().isEmpty()) {
             throw new CourseNotLikedByStudentException(courseId, student.getId());
         }
 
-        if(course.getLikedBy().contains(student)){
+        if (course.getLikedBy().contains(student)) {
             course.getLikedBy().remove(student);
         }
 

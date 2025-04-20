@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './SubjectRecommendation.css';
-import { getCourseTitles, getCourseRecommendations } from '../repository/api';
+import {  getCourses, getCourseRecommendations } from '../repository/api';
 
 const SubjectRecommendation = () => {
     const [allSubjects, setAllSubjects] = useState([]);
@@ -12,7 +12,7 @@ const SubjectRecommendation = () => {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const data = await getCourseTitles();
+                const data = await getCourses();
                 setAllSubjects(data);
             } catch (err) {
                 console.error('Error fetching courses:', err);

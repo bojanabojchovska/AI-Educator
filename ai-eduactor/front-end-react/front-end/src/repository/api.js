@@ -323,7 +323,8 @@ export const deleteComment = async (courseId, commentId) => {
       'Content-Type': 'application/json'
     };
 
-    const response = await axios.delete(`${API_URL}/courses/${courseId}/comments/${commentId}`, {}, {
+    // Remove the empty object {} from the delete request, had an error with it
+    const response = await axios.delete(`${API_URL}/courses/${courseId}/comments/${commentId}`, {
       headers,
       params: {
         email: email
@@ -331,7 +332,7 @@ export const deleteComment = async (courseId, commentId) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error deleting course:', error);
+    console.error('Error deleting comment:', error);
     throw error;
   }
 }

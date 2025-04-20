@@ -9,9 +9,8 @@ import {
     removeCourseFromFavorites,
     submitSubjectReview
 } from '../repository/api';
-import {FaStar} from 'react-icons/fa';
-import {FaHeart, FaRegHeart} from "react-icons/fa6";
-
+import { FaHeart, FaRegHeart } from "react-icons/fa6";
+import StarRatings from 'react-star-ratings';
 
 const CourseReviews = () => {
     const [subjects, setSubjects] = useState([]);
@@ -45,19 +44,19 @@ const CourseReviews = () => {
     };
 
     const fetchFavorites = async () => {
-    try {
-        const data = await getFavoriteCourses();
-        const favoriteMap = {};
+        try {
+            const data = await getFavoriteCourses();
+            const favoriteMap = {};
 
-        data.forEach(course => {
-            favoriteMap[course.id] = true;
-        });
+            data.forEach(course => {
+                favoriteMap[course.id] = true;
+            });
 
-        setFavorites(favoriteMap);
-    } catch (err) {
-        console.error('Error fetching favorites:', err);
-    }
-};
+            setFavorites(favoriteMap);
+        } catch (err) {
+            console.error('Error fetching favorites:', err);
+        }
+    };
 
     const handleSubmitReview = async (courseId) => {
         const review = reviews[courseId];
@@ -127,7 +126,7 @@ const CourseReviews = () => {
     const handleRatingClick = (courseId, rating) => {
         setReviews(prev => ({
             ...prev,
-            [courseId]: { ...prev[courseId], rating, error: null }
+            [courseId]: { ...prev[courseId], rating: parseFloat(rating), error: null }
         }));
     };
 
@@ -168,7 +167,7 @@ const CourseReviews = () => {
 
     return (
         <>
-            <CustomNavbar/>
+            <CustomNavbar />
             <div className="header-section">
                 <h1>Course Reviews</h1>
                 <div className="search-container">
@@ -198,9 +197,9 @@ const CourseReviews = () => {
                                         aria-label="Toggle Favorite"
                                     >
                                         {favorites[subject.id] ? (
-                                            <FaHeart  className={"subject-heart-icon"}/>
+                                            <FaHeart className={"subject-heart-icon"} />
                                         ) : (
-                                            <FaRegHeart  className={"subject-heart-icon"}/>
+                                            <FaRegHeart className={"subject-heart-icon"} />
                                         )}
                                     </button>
                                 </div>
@@ -217,15 +216,18 @@ const CourseReviews = () => {
 
                                 <div className="rating-container">
                                     <label>Your Rating:</label>
-                                    <div className="stars">
-                                        {[1, 2, 3, 4, 5].map(star => (
-                                            <FaStar
-                                                key={star}
-                                                className={`star ${(reviews[subject.id]?.rating || 0) >= star ? 'active' : ''}`}
-                                                onClick={() => handleRatingClick(subject.id, star)}
-                                            />
-                                        ))}
-                                    </div>
+                                    <StarRatings
+                                        rating={reviews[subject.id]?.rating || 0}
+                                        starRatedColor="#ffc107"
+                                        changeRating={(rating) => handleRatingClick(subject.id, rating)}
+                                        numberOfStars={5}
+                                        name={`rating-${subject.id}`}
+                                        starDimension="25px"
+                                        starSpacing="2px"
+                                        starHoverColor="#ffc107"
+                                        starEmptyColor="#ddd"
+                                        isHalf={true} // Enable half-star ratings
+                                    />
                                 </div>
 
                                 <textarea
@@ -263,3 +265,4 @@ const CourseReviews = () => {
 };
 
 export default CourseReviews;
+

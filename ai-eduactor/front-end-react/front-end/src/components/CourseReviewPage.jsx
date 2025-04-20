@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
 import CustomNavbar from './CustomNavbar';
+import StarRatings from 'react-star-ratings';
 import {
     getSubjectReviews,
     submitSubjectReview,
@@ -121,7 +122,7 @@ const CourseReviewPage = () => {
     };
 
     const handleRatingClick = (rating) => {
-        setNewReview(prev => ({...prev, rating}));
+        setNewReview(prev => ({ ...prev, rating: Number(rating) }));
     };
 
     const handleDeleteButton = async (commentId) => {
@@ -158,17 +159,20 @@ const CourseReviewPage = () => {
                     <div className="average-rating">
                         <p>Average Rating:
                             <span className="rating-value">
-                                {reviews.averageRating ? reviews.averageRating.toFixed(1) : 'No ratings yet'}
-                            </span>
+    {reviews.averageRating ? Number(reviews.averageRating).toFixed(1) : 'No ratings yet'}
+</span>
                             {reviews.averageRating > 0 && (
-                                <span className="stars-display">
-                                    {[1, 2, 3, 4, 5].map(star => (
-                                        <FaStar
-                                            key={star}
-                                            className={reviews.averageRating >= star ? 'star filled' : 'star empty'}
-                                        />
-                                    ))}
-                                </span>
+                                <StarRatings
+                                    rating={Number(reviews.averageRating) || 0}  // Ensure it's a number
+                                    starRatedColor="#ffc107"
+                                    numberOfStars={5}
+                                    name="average-rating"
+                                    starDimension="25px"
+                                    starSpacing="2px"
+                                    starEmptyColor="#ddd"
+                                    isSelectable={false}  // Add this since it's display only
+                                    isHalf={true}
+                                />
                             )}
                         </p>
                     </div>
@@ -179,15 +183,19 @@ const CourseReviewPage = () => {
 
                             <div className="rating-selection">
                                 <label>Your Rating:</label>
-                                <div className="stars-container">
-                                    {[1, 2, 3, 4, 5].map(star => (
-                                        <FaStar
-                                            key={star}
-                                            className={`star ${newReview.rating >= star ? 'active' : ''}`}
-                                            onClick={() => handleRatingClick(star)}
-                                        />
-                                    ))}
-                                </div>
+                                <StarRatings
+                                    rating={newReview.rating}
+                                    starRatedColor="#ffc107"
+                                    changeRating={handleRatingClick}
+                                    numberOfStars={5}
+                                    name="new-rating"
+                                    starDimension="25px"
+                                    starSpacing="2px"
+                                    starEmptyColor="#ddd"
+                                    isHalf={true}
+                                    isSelectable={true}  // Add this
+                                    starHoverColor="#ffc107"
+                                />
                             </div>
 
                             <div className="feedback-container">
@@ -275,3 +283,4 @@ const CourseReviewPage = () => {
 };
 
 export default CourseReviewPage;
+

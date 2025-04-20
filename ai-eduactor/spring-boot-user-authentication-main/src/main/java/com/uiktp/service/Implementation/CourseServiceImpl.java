@@ -7,7 +7,13 @@ import com.uiktp.model.dtos.CourseTitlesResponseDTO;
 import com.uiktp.model.dtos.CreateCourseDto;
 import com.uiktp.model.exceptions.CourseRecommendationException;
 import com.uiktp.model.exceptions.NoTakenCoursesException;
+import com.uiktp.model.User;
+import com.uiktp.model.dtos.CreateCourseDto;
+import com.uiktp.model.exceptions.custom.CourseAlreadyLikedByStudentException;
+import com.uiktp.model.exceptions.custom.CourseNotLikedByStudentException;
+import com.uiktp.model.exceptions.general.ResourceNotFoundException;
 import com.uiktp.repository.CourseRepository;
+import com.uiktp.repository.UserRepository;
 import com.uiktp.service.Interface.CourseService;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -38,9 +44,11 @@ import java.util.stream.Collectors;
 public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
 
-    public CourseServiceImpl(CourseRepository courseRepository) {
+    public CourseServiceImpl(CourseRepository courseRepository, UserRepository userRepository) {
         this.courseRepository = courseRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -166,5 +174,50 @@ public class CourseServiceImpl implements CourseService {
             throw new CourseRecommendationException("There was an error while generating the courses!");
         }
 
+    public Course markAsFavorite(Long courseId, String email) {
+        User student = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(User.class, email));
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId.toString()));
+
+        if(course.getLikedBy() == null){
+            course.setLikedBy(new ArrayList<>());
+        }
+
+        if(course.getLikedBy().contains(student)){
+            throw new CourseAlreadyLikedByStudentException(courseId, student.getId());
+        }
+
+        course.getLikedBy().add(student);
+
+        return courseRepository.save(course);
+    }
+
+    @Override
+    public void removeCourseFromFavorites(Long courseId, String email) {
+        User student = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(User.class, email));
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId.toString()));
+
+        if(course.getLikedBy() == null || course.getLikedBy().isEmpty()){
+            throw new CourseNotLikedByStudentException(courseId, student.getId());
+        }
+
+        if(course.getLikedBy().contains(student)){
+            course.getLikedBy().remove(student);
+        }
+
+        courseRepository.save(course);
+    }
+
+    @Override
+    public List<Course> getStudentFavorites(String email) {
+        User student = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(User.class, email));
+
+        return student.getFavoriteCourses();
     }
 }

@@ -1,4 +1,4 @@
-package com.uiktp.model;
+package com.uiktp.model.enumerations;
 
 public enum UserRole {
     ADMIN("admin"),

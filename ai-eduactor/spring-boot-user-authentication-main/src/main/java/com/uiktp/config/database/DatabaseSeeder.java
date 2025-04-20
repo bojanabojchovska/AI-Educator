@@ -3,11 +3,10 @@ package com.uiktp.config.database;
 import com.uiktp.model.Course;
 import com.uiktp.model.Semester;
 import com.uiktp.model.User;
-import com.uiktp.model.UserRole;
+import com.uiktp.model.enumerations.UserRole;
 import com.uiktp.repository.CourseRepository;
 import com.uiktp.repository.SemesterRepository;
 import com.uiktp.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -16,18 +15,21 @@ import java.util.List;
 @Component
 public class DatabaseSeeder implements CommandLineRunner {
 
-        @Autowired
-        private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-        @Autowired
-        private SemesterRepository semesterRepository;
+    private final SemesterRepository semesterRepository;
 
-        @Autowired
-        private CourseRepository courseRepository;
+    private final CourseRepository courseRepository;
 
-        @Override
-        public void run(String... args) throws Exception {
-                User student = new User("Example Student", "student@gmail.com", "student123", UserRole.USER, "211123");
+    public DatabaseSeeder(UserRepository userRepository, SemesterRepository semesterRepository, CourseRepository courseRepository) {
+        this.userRepository = userRepository;
+        this.semesterRepository = semesterRepository;
+        this.courseRepository = courseRepository;
+    }
+
+    @Override
+    public void run(String... args){
+        User student = new User("Example Student", "student@gmail.com", "student123", UserRole.USER, "211123");
 
                 if (!userRepository.existsByEmail("student@gmail.com")) {
                         userRepository.save(student);
@@ -41,7 +43,6 @@ public class DatabaseSeeder implements CommandLineRunner {
                                 semesterRepository.save(semester);
                         }
                 }
-
                 List<Course> courses = List.of(
                                 new Course(null,
                                                 "Business and Management",

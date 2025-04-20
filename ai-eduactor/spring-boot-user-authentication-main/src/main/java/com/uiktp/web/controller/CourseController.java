@@ -74,4 +74,19 @@ public class CourseController {
         }
     }
 
+    @PutMapping("{id}/favorite/add")
+    public ResponseEntity<Course> markAsFavorite(@PathVariable Long id, @RequestParam String email){
+        return  ResponseEntity.ok(courseService.markAsFavorite(id, email));
+    }
+
+    @PutMapping("{id}/favorite/remove")
+    public ResponseEntity<Void> removeFromFavorites(@PathVariable Long id, @RequestParam String email){
+        courseService.removeCourseFromFavorites(id, email);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/favorites")
+    public ResponseEntity<List<Course>> getStudentFavorites(@RequestParam String email){
+        return ResponseEntity.ok(courseService.getStudentFavorites(email));
+    }
 }

@@ -1,12 +1,11 @@
 package com.uiktp.service.Implementation;
 
 import com.uiktp.model.User;
-import com.uiktp.model.UserRole;
+import com.uiktp.model.enumerations.UserRole;
 import com.uiktp.model.dtos.RegisterDTO;
-import com.uiktp.model.exceptions.InvalidArgumentsException;
-import com.uiktp.model.exceptions.*;
+import com.uiktp.model.exceptions.general.InvalidArgumentsException;
+import com.uiktp.model.exceptions.credentials.InvalidUserCredentialsException;
 import com.uiktp.repository.UserRepository;
-import com.uiktp.config.security.TokenService;
 import com.uiktp.service.Interface.AuthenticationService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

@@ -1,12 +1,23 @@
 package com.uiktp.web.controller;
 
 import com.uiktp.model.Course;
+import com.uiktp.model.dtos.CourseRecommendationRequestDTO;
+import com.uiktp.model.dtos.CourseRecommendationResponseDTO;
 import com.uiktp.model.dtos.CreateCourseDto;
+import com.uiktp.model.exceptions.CourseRecommendationException;
+import com.uiktp.model.exceptions.NoTakenCoursesException;
 import com.uiktp.service.Interface.CourseService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/courses")
@@ -43,6 +54,24 @@ public class CourseController {
     public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
         courseService.deleteCourse(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/recommend")
+    public ResponseEntity<?> recommendCourses() {
+        try {
+            List<Course> courses = courseService.getRecommendations();
+            CourseRecommendationResponseDTO response = new CourseRecommendationResponseDTO();
+            response.setRecommended_courses(courses);
+            return ResponseEntity.ok(response);
+        } catch (CourseRecommendationException ex) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", ex.getMessage());
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(error);
+        } catch (NoTakenCoursesException ex) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", ex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
     }
 
     @PutMapping("{id}/favorite/add")

@@ -8,6 +8,7 @@ import SemesterPage from "./components/SemesterPage";
 import CourseReviews from "./components/CourseReviews";
 import CourseReviewPage from './components/CourseReviewPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import SubjectRecommendation from "./components/SubjectRecommendation";
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/semester-planning" element={<SemesterPage/>}/>
+                    <Route path="/recommendation" element={<SubjectRecommendation />} />
                     <Route path="/course-reviews" element={<CourseReviews />} />
                     <Route path="/course/:courseId/reviews" element={<CourseReviewPage />} />
                 </Routes>

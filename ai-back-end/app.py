@@ -24,14 +24,13 @@ async def generate_flashcards(file: UploadFile = File(...), num_flashcards: int 
 
 @app.post("/recommend_courses")
 async def recommend_courses(request: CourseRecommendationRequst):
-    # taken_courses_str = "\n".join(request.taken_courses)
-    # remaining_courses_str = "\n".join(request.remaining_courses)
-    taken_courses_str = "\n".join(["Algorithms and data structures", "Databases", "Object oriented programming"])
-    remaining_courses_str = "\n".join(["Machine learning", "Calculus", "Biology 1", "Astronomy", "Physics", "Statistics"])
-    recommended_courses = await get_recommended_courses(user_courses=taken_courses_str, remaining_courses=remaining_courses_str)
-    print(recommended_courses)
-    return JSONResponse(content={"recommended_courses": recommended_courses})
+    # print("======================")
+    # print(request.taken_courses)
+    # print(request.remaining_courses)
+    # print("======================")
+    # recommended_courses = await get_recommended_courses(request)
+    return JSONResponse(content={"recommended_courses": ["calculus", "idk?", "discrete Mathematics"]})
 
 
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="localhost", port=8080, reload=True)
+    uvicorn.run("app:app", host="localhost", port=8000, reload=True)

@@ -1,6 +1,7 @@
 package com.uiktp.service.Interface;
 
 import com.uiktp.model.Course;
+import com.uiktp.model.dtos.CourseRecommendationRequestDTO;
 import com.uiktp.model.dtos.CreateCourseDto;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,16 +10,23 @@ import java.util.List;
 
 public interface CourseService {
 
-    //CRUD
+    // CRUD
     List<Course> getAllCourses();
+
     Course getCourseById(Long id);
+
     Course addCourse(CreateCourseDto dto);
+
     Course updateCourse(Long id, Course course);
+
     void deleteCourse(Long id);
 
-    //OTHER
+    // OTHER
     void importCoursesFromCSV(MultipartFile file) throws IOException;
+
     void importCoursesFromExcel(MultipartFile file) throws IOException;
+
+    List<Course> getRecommendations();
     Course markAsFavorite(Long courseId, String email);
     void removeCourseFromFavorites(Long courseId, String email);
     List<Course> getStudentFavorites(String email);

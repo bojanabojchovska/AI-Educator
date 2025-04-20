@@ -1,6 +1,12 @@
 package com.uiktp.service.Implementation;
 
 import com.uiktp.model.Course;
+import com.uiktp.model.dtos.CourseRecommendationRequestDTO;
+import com.uiktp.model.dtos.CourseRecommendationResponseDTO;
+import com.uiktp.model.dtos.CourseTitlesResponseDTO;
+import com.uiktp.model.dtos.CreateCourseDto;
+import com.uiktp.model.exceptions.CourseRecommendationException;
+import com.uiktp.model.exceptions.NoTakenCoursesException;
 import com.uiktp.model.User;
 import com.uiktp.model.dtos.CreateCourseDto;
 import com.uiktp.model.exceptions.custom.CourseAlreadyLikedByStudentException;
@@ -14,7 +20,13 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
@@ -22,13 +34,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseServiceImpl implements CourseService {
-
 
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
@@ -106,7 +119,8 @@ public class CourseServiceImpl implements CourseService {
 
         List<Course> courses = new ArrayList<>();
 
-        if (rowIterator.hasNext()) rowIterator.next();
+        if (rowIterator.hasNext())
+            rowIterator.next();
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
 
@@ -125,6 +139,42 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public List<Course> getRecommendations() {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            CourseRecommendationRequestDTO request = new CourseRecommendationRequestDTO();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            List<String> allCourseNames = courseRepository.findAll().stream().map(c -> c.getTitle())
+                    .collect(Collectors.toList());
+            Collections.shuffle(allCourseNames);
+            List<String> random10Courses = allCourseNames.stream().limit(10).collect(Collectors.toList());
+            request.setRemaining_courses(random10Courses);
+            request.setTaken_courses(
+                    List.of("Business and Managment", "Structural Programming", "Discrete Mathematics",
+                            "Object oriented programming", "Introduction to computer science")); // getCoursesByUser
+
+            if (request.getTaken_courses() == null || request.getTaken_courses().isEmpty()) {
+                throw new NoTakenCoursesException("You have not taken any courses yet!");
+            }
+            HttpEntity<CourseRecommendationRequestDTO> entity = new HttpEntity<>(request, headers);
+            ResponseEntity<CourseTitlesResponseDTO> response = restTemplate.postForEntity(
+                    "http://localhost:8000/recommend_courses", entity, CourseTitlesResponseDTO.class);
+
+            List<String> recommendedTitles = response.getBody().getRecommended_courses();
+            List<String> lowercaseTitles = recommendedTitles.stream().map(i -> i.toLowerCase())
+                    .collect(Collectors.toList());
+            List<Course> recommendedCourses = courseRepository.findByTitleInIgnoreCase(lowercaseTitles);
+            return recommendedCourses;
+
+        } catch (NoTakenCoursesException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new CourseRecommendationException("There was an error while generating the courses!");
+        }
+    }
+
     public Course markAsFavorite(Long courseId, String email) {
         User student = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException(User.class, email));
@@ -132,11 +182,11 @@ public class CourseServiceImpl implements CourseService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId.toString()));
 
-        if(course.getLikedBy() == null){
+        if (course.getLikedBy() == null) {
             course.setLikedBy(new ArrayList<>());
         }
 
-        if(course.getLikedBy().contains(student)){
+        if (course.getLikedBy().contains(student)) {
             throw new CourseAlreadyLikedByStudentException(courseId, student.getId());
         }
 
@@ -153,11 +203,11 @@ public class CourseServiceImpl implements CourseService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId.toString()));
 
-        if(course.getLikedBy() == null || course.getLikedBy().isEmpty()){
+        if (course.getLikedBy() == null || course.getLikedBy().isEmpty()) {
             throw new CourseNotLikedByStudentException(courseId, student.getId());
         }
 
-        if(course.getLikedBy().contains(student)){
+        if (course.getLikedBy().contains(student)) {
             course.getLikedBy().remove(student);
         }
 

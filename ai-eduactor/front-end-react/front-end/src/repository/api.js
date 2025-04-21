@@ -147,9 +147,18 @@ export const createFlashCard = async (flashCardData) => {
 };
 
 
-export const getSemesters = async () => {
+export const getSemesters = async (email, token) => {
   try {
-    const response = await axios.get(`${API_URL}/semesters`);
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+
+    const response = await axios.get(`${API_URL}/semesters`, {
+      headers,
+      params: { email }
+    });
+
     return response.data;
   } catch (error) {
     console.error('Error fetching semesters:', error);

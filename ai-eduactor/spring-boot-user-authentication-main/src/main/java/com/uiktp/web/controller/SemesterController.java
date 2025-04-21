@@ -28,8 +28,8 @@ public class SemesterController {
     }
 
     @GetMapping
-    public List<Semester> getAllSemesters() {
-        return semesterService.getAllSemesters();
+    public List<Semester> getAllSemesters(@RequestParam String email) {
+        return semesterService.getAllSemesters(email);
     }
 
     @GetMapping("/{id}")

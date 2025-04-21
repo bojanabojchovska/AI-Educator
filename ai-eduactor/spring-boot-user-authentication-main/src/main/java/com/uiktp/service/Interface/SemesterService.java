@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface SemesterService {
 
     //CRUD
-    List<Semester> getAllSemesters();
+    List<Semester> getAllSemesters(String email);
     Optional<Semester> getSemesterById(Long id);
     Semester addSemester(Semester semester);
     Semester updateSemester(Long id, Semester semester);

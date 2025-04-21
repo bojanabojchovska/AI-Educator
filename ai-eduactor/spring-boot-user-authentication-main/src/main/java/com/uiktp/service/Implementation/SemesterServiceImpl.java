@@ -2,8 +2,10 @@ package com.uiktp.service.Implementation;
 
 import com.uiktp.model.Course;
 import com.uiktp.model.Semester;
+import com.uiktp.model.User;
 import com.uiktp.model.exceptions.general.ResourceNotFoundException;
 import com.uiktp.repository.SemesterRepository;
+import com.uiktp.repository.UserRepository;
 import com.uiktp.service.Interface.SemesterService;
 import org.springframework.stereotype.Service;
 
@@ -16,14 +18,19 @@ public class SemesterServiceImpl implements SemesterService {
     private final SemesterRepository semesterRepository;
     private final CourseServiceImpl courseService;
 
-    public SemesterServiceImpl(SemesterRepository semesterRepository, CourseServiceImpl courseService) {
+    private final UserRepository userRepository;
+
+    public SemesterServiceImpl(SemesterRepository semesterRepository, CourseServiceImpl courseService, UserRepository userRepository) {
         this.semesterRepository = semesterRepository;
         this.courseService = courseService;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public List<Semester> getAllSemesters() {
-        return semesterRepository.findAll();
+    public List<Semester> getAllSemesters(String email) {
+        User student = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(User.class, email));
+        return semesterRepository.findSemestersByStudent(student);
     }
 
     @Override

@@ -2,10 +2,10 @@ package com.uiktp.web.controller;
 
 import com.uiktp.model.Semester;
 import com.uiktp.model.User;
-import com.uiktp.repository.SemesterRepository;
+import com.uiktp.model.dtos.SemesterCreateUpdateDTO;
 import com.uiktp.repository.UserRepository;
 import com.uiktp.service.Interface.SemesterService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +28,7 @@ public class SemesterController {
     }
 
     @GetMapping
-    public List<Semester> getAllSemesters(@RequestParam String email) {
+    public List<SemesterCreateUpdateDTO> getAllSemesters(@RequestParam String email) {
         return semesterService.getAllSemesters(email);
     }
 
@@ -37,9 +37,10 @@ public class SemesterController {
         return semesterService.getSemesterById(id);
     }
 
-    @PostMapping
-    public ResponseEntity<Semester> createSemester(@RequestBody Semester semester) {
-        return new ResponseEntity<>(semesterService.addSemester(semester), HttpStatus.CREATED);
+    @PostMapping("/createOrUpdate")
+    public ResponseEntity<String> createSemester(@RequestBody SemesterCreateUpdateDTO dto, @RequestParam String email) {
+        semesterService.createOrUpdateSemester(dto,email);
+        return ResponseEntity.ok("Semester created successfully");
     }
 
     @PutMapping("/{id}")
@@ -49,8 +50,14 @@ public class SemesterController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSemester(@PathVariable Long id) {
-        semesterService.deleteSemester(id);
-        return ResponseEntity.noContent().build();
+        try {
+            semesterService.deleteSemester(id);
+            return ResponseEntity.noContent().build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     public Semester enrollStudentInSemester(Long studentId, Long semesterId) {

@@ -46,7 +46,7 @@ const CustomNavbar = () => {
                     <Nav.Link onClick={() => handleNavigate('/semester-planning')}>Semesters</Nav.Link>
                     <Nav.Link onClick={() => handleNavigate('/flash-cards')}>Flash Cards</Nav.Link>
                     <Nav.Link onClick={() => handleNavigate('/subject-recommendation')}>Subject Recommendation</Nav.Link>
-                    <Nav.Link onClick={() => handleNavigate('/comments')}>Comments</Nav.Link>
+                    <Nav.Link onClick={() => handleNavigate('/course-reviews')}>Reviews</Nav.Link>
                 </Nav>
 
                 <Nav>

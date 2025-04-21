@@ -2,26 +2,32 @@ import React, { useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import CustomNavbar from './CustomNavbar';
 import './HomePage.css';
-import './SemesterPage.css'; // You can create custom styles here
-import { getSemesters, getCourses } from '../repository/api'; // Adjust the path if needed
+import './SemesterPage.css';
+import { getSemesters, getCourses, createSemester, deleteSemester } from '../repository/api';
 import { useNavigate } from 'react-router-dom';
+import Notification from './Notification';
 
 const SemesterPage = () => {
-    const [semesters, setSemesters] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
-
-    const [showModal, setShowModal] = useState(false);
+const [semesters, setSemesters] = useState([]);
+const [loading, setLoading] = useState(true);
+const navigate = useNavigate();
+const [showModal, setShowModal] = useState(false);
 const [semesterName, setSemesterName] = useState('');
 const [availableSubjects, setAvailableSubjects] = useState([]);
 const [chosenSubjects, setChosenSubjects] = useState([]);
 const [selectedAvailable, setSelectedAvailable] = useState([]);
 const [selectedChosen, setSelectedChosen] = useState([]);
+const [notification, setNotification] = useState({ message: '', type: '' });
 
 const fetchCourses = async () => {
     try {
-        const courses = await getCourses();
-        setAvailableSubjects(courses.map(course => course.title));
+        const response = await getCourses();
+        console.log("Fetched courses:", response);
+        if (Array.isArray(response)) {
+            setAvailableSubjects(response.map(course => course.title));
+        } else {
+            console.error('Fetched courses is not an array:', response);
+        }
     } catch (error) {
         console.error('Error fetching courses:', error);
     }
@@ -50,20 +56,25 @@ const moveToAvailable = () => {
 };
 
 
+const fetchSemesters = async () => {
+    try {
+        const email = localStorage.getItem('email');
+        const token = localStorage.getItem('token');
 
-    const fetchSemesters = async () => {
-        try {
-            const email = localStorage.getItem('email');
-            const token = localStorage.getItem('token');
+        const response = await getSemesters(email, token);
+        console.log("Fetched semesters:", response);
 
-            const response = await getSemesters(email, token); // pass both
+        if (Array.isArray(response)) {
             setSemesters(response);
-        } catch (error) {
-            console.error('Failed to fetch semesters:', error);
-        } finally {
-            setLoading(false);
+        } else {
+            console.error('Response is not an array:', response);
         }
-    };
+    } catch (error) {
+        console.error('Failed to fetch semesters:', error);
+    } finally {
+        setLoading(false);
+    }
+};
 
     useEffect(() => {
         fetchSemesters();
@@ -75,10 +86,24 @@ const moveToAvailable = () => {
         navigate(`/edit-semester/${id}`);
     };
 
-    const handleDelete = (id) => {
-        // Add delete logic here
-        console.log('Delete semester with id:', id);
+    const handleDelete = async (id) => {
+        try {
+
+            await deleteSemester(id);
+            await fetchSemesters();
+            setNotification({
+                message: 'Semester deleted successfully.',
+                type: 'success',
+            });
+        } catch (error) {
+
+            setNotification({
+                message: 'Failed to delete semester. Please try again.',
+                type: 'error',
+            });
+        }
     };
+    
 
     const isSaveDisabled = semesterName.trim() === '' || chosenSubjects.length === 0;
 
@@ -86,6 +111,13 @@ const moveToAvailable = () => {
     return (
         <>
             <CustomNavbar />
+            {notification.message && (
+            <Notification
+                message={notification.message}
+                type={notification.type}
+                onClose={() => setNotification({ message: '', type: '' })}
+            />
+        )}
             <div className="homepage-container">
                 <header className="hero-header">
                     <div className="hero-title">
@@ -112,12 +144,12 @@ const moveToAvailable = () => {
                             <div key={semester.id} className="semester-card">
                                 <h3>{semester.name}</h3>
                                 <ul>
-                                    {semester.subjects && semester.subjects.length > 0 ? (
-                                        semester.subjects.map((subject, index) => (
-                                            <li key={index}>{subject}</li>
+                                    {semester.courses && semester.courses.length > 0 ? (
+                                        semester.courses.map((course, index) => (
+                                            <li key={index}>{course}</li>
                                         ))
                                     ) : (
-                                        <li>No subjects added.</li>
+                                        <li>No courses added.</li>
                                     )}
                                 </ul>
                                 <div className="card-buttons">
@@ -210,7 +242,23 @@ const moveToAvailable = () => {
     <button
         className="btn btn-primary"
         disabled={isSaveDisabled}
-        onClick={() => {/* save logic */}}
+        onClick={async () => {
+            const email = localStorage.getItem("email");
+            const semesterData = {
+                id: null,
+              name: semesterName,
+              courses: chosenSubjects,
+            };
+          
+            try {
+              await createSemester(semesterData, email);
+              await fetchSemesters();
+              closeModal();
+            } catch (error) {
+              console.error('Failed to create semester:', error);
+            }
+          }}
+          
     >
         Save
     </button>

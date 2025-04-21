@@ -1,6 +1,7 @@
 package com.uiktp.web.controller;
 
 import com.uiktp.model.Course;
+import com.uiktp.model.dtos.CourseDTO;
 import com.uiktp.model.dtos.CourseRecommendationRequestDTO;
 import com.uiktp.model.dtos.CourseRecommendationResponseDTO;
 import com.uiktp.model.dtos.CreateCourseDto;
@@ -31,7 +32,7 @@ public class CourseController {
     }
 
     @GetMapping
-    public List<Course> getAllCourses() {
+    public List<CourseDTO> getAllCourses() {
         return courseService.getAllCourses();
     }
 

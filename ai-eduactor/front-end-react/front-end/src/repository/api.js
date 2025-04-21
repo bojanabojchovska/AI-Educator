@@ -159,21 +159,42 @@ export const getSemesters = async (email, token) => {
       params: { email }
     });
 
-    return response.data;
+    console.log('Fetched semesters:', response.data);  // Log the response data
+    return response.data;  // Make sure this is an array
   } catch (error) {
     console.error('Error fetching semesters:', error);
     throw error;
   }
 };
 
-export const createSemester = async (semesterData) => {
+
+export const createSemester = async (semesterData, email) => {
   try {
-    const response = await axios.post(`${API_URL}/semesters`, semesterData);
+    const response = await axios.post(`${API_URL}/semesters/createOrUpdate?email=${email}`, semesterData);
     return response.data;
   } catch (error) {
     console.error('Error creating semester:', error);
     throw error;
   }
+};
+
+export const deleteSemester = async ( id) => {
+  try {
+    const response = await fetch(`${API_URL}/semesters/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+    });
+
+    if (response.ok) {
+        console.log('Semester deleted successfully');
+    } else {
+        console.error('Failed to delete semester');
+    }
+} catch (error) {
+    console.error('Error deleting semester:', error);
+}
 };
 
 // export const getCourses = async () => {

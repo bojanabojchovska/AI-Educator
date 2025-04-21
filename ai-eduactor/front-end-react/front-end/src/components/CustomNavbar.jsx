@@ -18,11 +18,21 @@ const CustomNavbar = () => {
         navigate(path);
     };
 
-    const handleLogout = () => {
-        localStorage.clear();
-        setName(null); // update state manually
-        navigate('/login');
+    const handleLogout = async () => {
+        try {
+            await fetch('http://localhost:8080/auth/logout', {
+                method: 'POST',
+                credentials: 'include',
+            });
+    
+            localStorage.clear(); 
+            setName(null); 
+            navigate('/login'); 
+        } catch (error) {
+            console.error("Error logging out:", error);
+        }
     };
+    
 
     return (
         <Navbar bg="light" expand="lg">

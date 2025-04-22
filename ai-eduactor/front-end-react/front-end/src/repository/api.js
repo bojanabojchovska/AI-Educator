@@ -178,30 +178,6 @@ export const createSemester = async (semesterData, email) => {
   }
 };
 
-export const deleteSemester = async ( id) => {
-  try {
-    const response = await fetch(`${API_URL}/semesters/${id}`, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-    });
-
-    if (response.ok) {
-        console.log('Semester deleted successfully');
-    } else {
-        console.error('Failed to delete semester');
-    }
-} catch (error) {
-    console.error('Error deleting semester:', error);
-}
-};
-
-// export const getCourses = async () => {
-//   const response = await axios.get(`${API_URL}/courses`);
-//   return response.data;
-// };
-
 export const getCourseRecommendations = async (takenSubjects, remainingSubjects = []) => {
   const response = await axios.post(`${API_URL}/courses/recommend`, {
     taken_courses: takenSubjects,

@@ -58,9 +58,9 @@ public class CourseController {
     }
 
     @PostMapping("/recommend")
-    public ResponseEntity<?> recommendCourses() {
+    public ResponseEntity<?> recommendCourses(@RequestBody List<String> takenCourses) {
         try {
-            List<Course> courses = courseService.getRecommendations();
+            List<CourseDTO> courses = courseService.getRecommendations(takenCourses);
             CourseRecommendationResponseDTO response = new CourseRecommendationResponseDTO();
             response.setRecommended_courses(courses);
             return ResponseEntity.ok(response);
@@ -74,6 +74,7 @@ public class CourseController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
     }
+
 
     @PutMapping("{id}/favorite/add")
     public ResponseEntity<Course> markAsFavorite(@PathVariable Long id, @RequestParam String email){

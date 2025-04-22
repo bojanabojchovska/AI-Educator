@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './SubjectRecommendation.css';
 import {  getCourses, getCourseRecommendations } from '../repository/api';
+import CustomNavbar from './CustomNavbar';
 
 const SubjectRecommendation = () => {
     const [allSubjects, setAllSubjects] = useState([]);
@@ -35,31 +36,24 @@ const SubjectRecommendation = () => {
         setLoading(true);
         setError('');
         try {
-            const data = await getCourseRecommendations(selectedSubjects);
-            setRecommendedSubjects(data.recommended_courses || []);
+            const response = await getCourseRecommendations(selectedSubjects);
+            console.log('Recommended Courses:', response);
+            
+            // Make sure to access the `recommended_courses` field
+            setRecommendedSubjects(response.recommended_courses || []); // Fallback to empty array if it's not available
         } catch (err) {
-            console.error(err);
+            console.error('Error fetching recommendations:', err);
             setError('Failed to fetch recommendations.');
         } finally {
             setLoading(false);
         }
     };
+    
 
     return (
         <div className="recommendation-page">
-            <header className="navbar">
-                <nav>
-                    <ul>
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/">Semesters</a></li>
-                        <li><a href="/">Flash cards</a></li>
-                        <li><a href="/">Subject Recommendation</a></li>
-                        <li><a href="/">Comments</a></li>
-                    </ul>
-                </nav>
-                <button className="logout-button">Log out</button>
-            </header>
-
+            <CustomNavbar />
+            
             <main className="recommendation-main">
                 <h2>Subject Recommendation for Students</h2>
                 <p>Select subjects you know best and get AI-generated suggestions based on your profile.</p>
@@ -68,13 +62,14 @@ const SubjectRecommendation = () => {
                     <div className="list-box">
                         <h4>Select subjects you know best</h4>
                         <ul>
-                            {allSubjects.map((item, index) => (
-                                <li key={index} onClick={() => handleSubjectToggle(item)}>
-                                    <span className="avatar">{item[0]}</span>
-                                    <span className="item-text">{item}</span>
-                                    <input type="checkbox" checked={selectedSubjects.includes(item)} readOnly />
-                                </li>
-                            ))}
+                        {allSubjects.map((item, index) => (
+    <li key={item.id} onClick={() => handleSubjectToggle(item.title)}>
+        <span className="avatar">{item.title[0]}</span>
+        <span className="item-text">{item.title}</span>
+        <input type="checkbox" checked={selectedSubjects.includes(item.title)} readOnly />
+    </li>
+))}
+
                         </ul>
                     </div>
 
@@ -90,24 +85,29 @@ const SubjectRecommendation = () => {
                         </div>
                     )}
 
-                    <div className="list-box">
-                        <h4>AI recommended subjects for you</h4>
-                        {loading ? (
-                            <p>Loading recommendations...</p>
-                        ) : error ? (
-                            <p className="error">{error}</p>
-                        ) : (
-                            <ul>
-                                {recommendedSubjects.map((item, index) => (
-                                    <li key={index}>
-                                        <span className="avatar">{item[0]}</span>
-                                        <span className="item-text">{item}</span>
-                                        <input type="checkbox" checked readOnly />
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
+<div className="list-box">
+    <h4>AI recommended subjects for you</h4>
+    {loading ? (
+        <p>Loading recommendations...</p>
+    ) : error ? (
+        <p className="error">{error}</p>
+    ) : (
+        <ul>
+            {recommendedSubjects && recommendedSubjects.length > 0 ? (
+                recommendedSubjects.map((item, index) => (
+                    <li key={index}>
+                        <span className="avatar">{item[0]}</span>
+                        <span className="item-text">{item}</span>
+                        <input type="checkbox" checked readOnly />
+                    </li>
+                ))
+            ) : (
+                <p>No recommendations available at the moment.</p>
+            )}
+        </ul>
+    )}
+</div>
+
                 </div>
 
                 <button className="submit-button" onClick={fetchRecommendations}>

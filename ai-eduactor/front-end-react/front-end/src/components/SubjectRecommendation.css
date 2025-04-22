@@ -4,7 +4,7 @@ body, h2, h4, p, ul {
 }
 
 
-.navbar {
+/* .navbar {
     display: flex;
     justify-content: space-between;
     padding: 20px 40px;
@@ -30,7 +30,7 @@ body, h2, h4, p, ul {
     padding: 6px 12px;
     border-radius: 4px;
     cursor: pointer;
-}
+} */
 
 
 .recommendation-main {

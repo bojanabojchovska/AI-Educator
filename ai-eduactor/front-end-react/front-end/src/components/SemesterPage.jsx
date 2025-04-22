@@ -18,6 +18,8 @@ const [chosenSubjects, setChosenSubjects] = useState([]);
 const [selectedAvailable, setSelectedAvailable] = useState([]);
 const [selectedChosen, setSelectedChosen] = useState([]);
 const [notification, setNotification] = useState({ message: '', type: '' });
+const [editingSemesterId, setEditingSemesterId] = useState(null);
+
 
 const fetchCourses = async () => {
     try {
@@ -41,7 +43,10 @@ const closeModal = () => {
     setShowModal(false);
     setSemesterName('');
     setChosenSubjects([]);
+    setEditingSemesterId(null);
+    fetchCourses(); // To reset availableSubjects
 };
+
 
 const moveToChosen = () => {
     setAvailableSubjects(prev => prev.filter(sub => !selectedAvailable.includes(sub)));
@@ -83,8 +88,19 @@ const fetchSemesters = async () => {
     
 
     const handleEdit = (id) => {
-        navigate(`/edit-semester/${id}`);
-    };
+    const semesterToEdit = semesters.find(s => s.id === id);
+    if (semesterToEdit) {
+        setEditingSemesterId(semesterToEdit.id);
+        setSemesterName(semesterToEdit.name);
+        setChosenSubjects(semesterToEdit.courses || []);
+        const remainingSubjects = availableSubjects.filter(
+            course => !semesterToEdit.courses.includes(course)
+        );
+        setAvailableSubjects(remainingSubjects);
+        setShowModal(true);
+    }
+};
+
 
     const handleDelete = async (id) => {
         try {
@@ -153,9 +169,14 @@ const fetchSemesters = async () => {
                                     )}
                                 </ul>
                                 <div className="card-buttons">
-                                    <button className="btn" onClick={() => handleEdit(semester.id)}>Edit</button>
-                                    <button className="btn" onClick={() => handleDelete(semester.id)}>Delete</button>
-                                </div>
+    <button className="btn me-3" onClick={() => handleEdit(semester.id)}>
+        <i className="fas fa-pen me-1"></i> Edit
+    </button>
+    <button className="btn" onClick={() => handleDelete(semester.id)}>
+        <i className="fas fa-trash-alt me-1"></i> Delete
+    </button>
+</div>
+
                             </div>
                         ))
                     ) : (
@@ -167,7 +188,7 @@ const fetchSemesters = async () => {
 
                 <Modal show={showModal} onHide={closeModal} centered>
     <Modal.Header closeButton>
-        <Modal.Title>CREATE SEMESTER</Modal.Title>
+        <Modal.Title>{editingSemesterId ? 'EDIT SEMESTER' : 'CREATE SEMESTER'}</Modal.Title>
     </Modal.Header>
     <Modal.Body>
     <label>Semester Name:</label>
@@ -240,28 +261,28 @@ const fetchSemesters = async () => {
 </Modal.Body>
 <Modal.Footer className="d-flex justify-content-center">
     <button
-        className="btn btn-primary"
-        disabled={isSaveDisabled}
-        onClick={async () => {
-            const email = localStorage.getItem("email");
-            const semesterData = {
-                id: null,
-              name: semesterName,
-              courses: chosenSubjects,
-            };
-          
-            try {
-              await createSemester(semesterData, email);
-              await fetchSemesters();
-              closeModal();
-            } catch (error) {
-              console.error('Failed to create semester:', error);
-            }
-          }}
-          
-    >
-        Save
-    </button>
+    className="btn btn-primary"
+    disabled={isSaveDisabled}
+    onClick={async () => {
+        const email = localStorage.getItem("email");
+        const semesterData = {
+            id: editingSemesterId,
+            name: semesterName,
+            courses: chosenSubjects,
+        };
+
+        try {
+            await createSemester(semesterData, email); // This handles both create/update
+            await fetchSemesters();
+            closeModal();
+        } catch (error) {
+            console.error('Failed to save semester:', error);
+        }
+    }}
+>
+    Save
+</button>
+
 </Modal.Footer>
 </Modal>
 

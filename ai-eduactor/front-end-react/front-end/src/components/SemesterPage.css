@@ -36,6 +36,15 @@
     margin-top: 1rem;
   }
 
+  .card-buttons .btn{
+    color: white !important;
+  }
+
+  .semester-card ul {
+    list-style-type: none; /* Remove bullets */
+    padding-left: 0; /* Remove default padding */
+}
+
   /* Modal styling */
 .modal {
     max-width: 100%;

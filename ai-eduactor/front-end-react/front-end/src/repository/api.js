@@ -34,6 +34,24 @@ export const logout = async () => {
   }
 };
 
+export const deleteSemester = async ( id) => {
+  try {
+    const response = await fetch(`${API_URL}/semesters/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+    });
+
+    if (response.ok) {
+        console.log('Semester deleted successfully');
+    } else {
+        console.error('Failed to delete semester');
+    }
+} catch (error) {
+    console.error('Error deleting semester:', error);
+}
+};
 
 export const getCourses = async () => {
   try {

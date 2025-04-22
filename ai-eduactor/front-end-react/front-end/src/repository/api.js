@@ -147,19 +147,30 @@ export const createFlashCard = async (flashCardData) => {
 };
 
 
-export const getSemesters = async () => {
+export const getSemesters = async (email, token) => {
   try {
-    const response = await axios.get(`${API_URL}/semesters`);
-    return response.data;
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+
+    const response = await axios.get(`${API_URL}/semesters`, {
+      headers,
+      params: { email }
+    });
+
+    console.log('Fetched semesters:', response.data);  // Log the response data
+    return response.data;  // Make sure this is an array
   } catch (error) {
     console.error('Error fetching semesters:', error);
     throw error;
   }
 };
 
-export const createSemester = async (semesterData) => {
+
+export const createSemester = async (semesterData, email) => {
   try {
-    const response = await axios.post(`${API_URL}/semesters`, semesterData);
+    const response = await axios.post(`${API_URL}/semesters/createOrUpdate?email=${email}`, semesterData);
     return response.data;
   } catch (error) {
     console.error('Error creating semester:', error);

@@ -1,10 +1,7 @@
 package com.uiktp.service.Implementation;
 
 import com.uiktp.model.Course;
-import com.uiktp.model.dtos.CourseRecommendationRequestDTO;
-import com.uiktp.model.dtos.CourseRecommendationResponseDTO;
-import com.uiktp.model.dtos.CourseTitlesResponseDTO;
-import com.uiktp.model.dtos.CreateCourseDto;
+import com.uiktp.model.dtos.*;
 import com.uiktp.model.exceptions.CourseRecommendationException;
 import com.uiktp.model.exceptions.NoTakenCoursesException;
 import com.uiktp.model.User;
@@ -52,9 +49,16 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<Course> getAllCourses() {
-        return courseRepository.findAll();
+    public List<CourseDTO> getAllCourses() {
+        return courseRepository.findAll().stream().map(course -> {
+            CourseDTO dto = new CourseDTO();
+            dto.setId(course.getId());
+            dto.setTitle(course.getTitle());
+            dto.setDescription(course.getDescription());
+            return dto;
+        }).toList();
     }
+
 
     @Override
     public Course getCourseById(Long id) {
@@ -220,5 +224,13 @@ public class CourseServiceImpl implements CourseService {
                 .orElseThrow(() -> new ResourceNotFoundException(User.class, email));
 
         return student.getFavoriteCourses();
+    }
+
+    @Override
+    public List<Course> getCoursesByTitleIn(List<String> titles) {
+        List<String> lowerCaseTitles = titles.stream()
+                .map(String::toLowerCase)
+                .toList();
+        return courseRepository.findByTitleInIgnoreCase(lowerCaseTitles);
     }
 }

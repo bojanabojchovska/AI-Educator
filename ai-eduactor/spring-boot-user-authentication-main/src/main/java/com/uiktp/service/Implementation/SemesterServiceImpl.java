@@ -2,28 +2,45 @@ package com.uiktp.service.Implementation;
 
 import com.uiktp.model.Course;
 import com.uiktp.model.Semester;
+import com.uiktp.model.User;
+import com.uiktp.model.dtos.SemesterCreateUpdateDTO;
 import com.uiktp.model.exceptions.general.ResourceNotFoundException;
 import com.uiktp.repository.SemesterRepository;
+import com.uiktp.repository.UserRepository;
 import com.uiktp.service.Interface.SemesterService;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class SemesterServiceImpl implements SemesterService {
 
     private final SemesterRepository semesterRepository;
     private final CourseServiceImpl courseService;
 
-    public SemesterServiceImpl(SemesterRepository semesterRepository, CourseServiceImpl courseService) {
+    private final UserRepository userRepository;
+
+    public SemesterServiceImpl(SemesterRepository semesterRepository, CourseServiceImpl courseService, UserRepository userRepository) {
         this.semesterRepository = semesterRepository;
         this.courseService = courseService;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public List<Semester> getAllSemesters() {
-        return semesterRepository.findAll();
+    public List<SemesterCreateUpdateDTO> getAllSemesters(String email) {
+        User student = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(User.class, email));
+        return semesterRepository.findSemestersByStudent(student).stream().map(semester -> {
+            SemesterCreateUpdateDTO dto = new SemesterCreateUpdateDTO();
+            dto.setId(semester.getId());
+            dto.setName(semester.getName());
+            dto.setCourses(semester.getCourses().stream().map(Course::getTitle).toList());
+            return dto;
+        }).toList();
     }
 
     @Override
@@ -61,9 +78,30 @@ public class SemesterServiceImpl implements SemesterService {
         return semesterRepository.save(semester);
     }
 
-
     @Override
     public void deleteSemester(Long id) {
-        semesterRepository.deleteById(id);
+        Semester semester = semesterRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Semester not found with id: " + id));
+        semesterRepository.delete(semester);
+    }
+
+    @Override
+    public Semester createOrUpdateSemester(SemesterCreateUpdateDTO dto, String email) {
+        Semester semester;
+
+        if (dto.getId() != null) {
+            semester = semesterRepository.findById(dto.getId())
+                    .orElseThrow(() -> new RuntimeException("Semester not found with ID: " + dto.getId()));
+        } else {
+            semester = new Semester();
+        }
+
+        semester.setName(dto.getName());
+        List<Course> courses = courseService.getCoursesByTitleIn(dto.getCourses());
+        semester.setCourses(courses);
+        User student = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(User.class, email));
+        semester.setStudent(student);
+        return semesterRepository.save(semester);
     }
 }

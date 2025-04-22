@@ -18,11 +18,21 @@ const CustomNavbar = () => {
         navigate(path);
     };
 
-    const handleLogout = () => {
-        localStorage.clear();
-        setName(null); // update state manually
-        navigate('/login');
+    const handleLogout = async () => {
+        try {
+            await fetch('http://localhost:8080/auth/logout', {
+                method: 'POST',
+                credentials: 'include',
+            });
+    
+            localStorage.clear(); 
+            setName(null); 
+            navigate('/login'); 
+        } catch (error) {
+            console.error("Error logging out:", error);
+        }
     };
+    
 
     return (
         <Navbar bg="light" expand="lg">
@@ -36,7 +46,7 @@ const CustomNavbar = () => {
                     <Nav.Link onClick={() => handleNavigate('/semester-planning')}>Semesters</Nav.Link>
                     <Nav.Link onClick={() => handleNavigate('/flash-cards')}>Flash Cards</Nav.Link>
                     <Nav.Link onClick={() => handleNavigate('/subject-recommendation')}>Subject Recommendation</Nav.Link>
-                    <Nav.Link onClick={() => handleNavigate('/comments')}>Comments</Nav.Link>
+                    <Nav.Link onClick={() => handleNavigate('/course-reviews')}>Reviews</Nav.Link>
                 </Nav>
 
                 <Nav>

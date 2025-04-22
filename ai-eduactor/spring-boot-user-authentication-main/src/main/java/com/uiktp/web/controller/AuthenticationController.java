@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:3000")
-@Controller
+@RestController
 @RequestMapping( "/auth")
 public class AuthenticationController {
 
@@ -34,67 +34,6 @@ public class AuthenticationController {
         this.tokenService = tokenService;
         this.authenticationService = authenticationService;
     }
-
-    @GetMapping("/home")
-    public String homePage(Model model, HttpServletRequest request) {
-        String token = null;
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("jwt".equals(cookie.getName())) {
-                    token = cookie.getValue();
-                    break;
-                }
-            }
-        }
-        if (token != null) {
-            String userEmail = tokenService.validateToken(token);
-            if (userEmail != null) {
-                model.addAttribute("userEmail", userEmail);
-            }
-        }
-        return "home";
-    }
-
-    @GetMapping("/login")
-    public String showLoginPage() {
-        return "login";
-    }
-
-//    @PostMapping("/login")
-//    public String login(@ModelAttribute AuthenticationDTO data, HttpServletResponse response) {
-//        var authenticationToken = new UsernamePasswordAuthenticationToken(data.email(), data.password());
-//        var authentication = authenticationManager.authenticate(authenticationToken);
-//
-//        var user = (User) authentication.getPrincipal();
-//        var token = tokenService.generateToken(user);
-//
-//        Cookie jwtCookie = new Cookie("jwt", token);
-//        jwtCookie.setHttpOnly(true);
-//        jwtCookie.setPath("/");
-//        response.addCookie(jwtCookie);
-//        return "redirect:/auth/home";
-//    }
-
-//    @PostMapping("/login")
-//    public ResponseEntity<?> login(@RequestBody AuthenticationDTO data, HttpServletResponse response) {
-//        try {
-//            var authenticationToken = new UsernamePasswordAuthenticationToken(data.email(), data.password());
-//            var authentication = authenticationManager.authenticate(authenticationToken);
-//
-//            var user = (User) authentication.getPrincipal();
-//            var token = tokenService.generateToken(user);
-//
-//            Cookie jwtCookie = new Cookie("jwt", token);
-//            jwtCookie.setHttpOnly(true);
-//            jwtCookie.setPath("/");
-//            response.addCookie(jwtCookie);
-//
-//            return ResponseEntity.ok().body(Map.of("token", token));
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password.");
-//        }
-//    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationDTO data, HttpServletResponse response) {
@@ -119,7 +58,8 @@ public class AuthenticationController {
 
 
     @PostMapping("/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
+    @ResponseBody
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
@@ -135,7 +75,8 @@ public class AuthenticationController {
                 }
             }
         }
-        return "redirect:/auth/login?logout=true";
+
+        return ResponseEntity.ok(Map.of("message", "Logged out successfully."));
     }
 
     @PostMapping("/register")

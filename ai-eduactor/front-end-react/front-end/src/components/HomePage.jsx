@@ -32,11 +32,6 @@ const HomePage = () => {
                     </div>
                 </header>
 
-                {/* <div className="homepage-buttons">
-                    <button onClick={() => handleNavigate('/login')} className="btn">Login</button>
-                    <button onClick={() => handleNavigate('/register')} className="btn">Register</button>
-                    <button onClick={() => handleNavigate('/admin')} className="btn">Admin</button>
-                </div> */}
                 <div className="info-section">
     <img src={aiImage} alt="AI helping students" className="info-image" />
     <div className="info-text">

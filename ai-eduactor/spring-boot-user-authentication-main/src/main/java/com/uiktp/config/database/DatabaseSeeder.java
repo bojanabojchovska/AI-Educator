@@ -8,6 +8,7 @@ import com.uiktp.repository.CourseRepository;
 import com.uiktp.repository.SemesterRepository;
 import com.uiktp.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,17 +22,25 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         private final CourseRepository courseRepository;
 
+        private final PasswordEncoder passwordEncoder;
+
         public DatabaseSeeder(UserRepository userRepository, SemesterRepository semesterRepository,
-                        CourseRepository courseRepository) {
+                              CourseRepository courseRepository, PasswordEncoder passwordEncoder) {
                 this.userRepository = userRepository;
                 this.semesterRepository = semesterRepository;
                 this.courseRepository = courseRepository;
+            this.passwordEncoder = passwordEncoder;
         }
 
         @Override
         public void run(String... args) {
-                User student = new User("Example Student", "student@gmail.com", "student123", UserRole.USER, "211123");
-
+                User student = new User(
+                        "Example Student",
+                        "student@gmail.com",
+                        passwordEncoder.encode("student123"), 
+                        UserRole.USER,
+                        "211123"
+                );
                 if (!userRepository.existsByEmail("student@gmail.com")) {
                         userRepository.save(student);
                 }
@@ -44,6 +53,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                                 semesterRepository.save(semester);
                         }
                 }
+
                 List<Course> courses = List.of(
                                 new Course(
                                                 "Business and Management",

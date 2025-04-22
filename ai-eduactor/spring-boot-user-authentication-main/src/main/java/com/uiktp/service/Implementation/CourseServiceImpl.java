@@ -143,7 +143,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<Course> getRecommendations() {
+    public List<CourseDTO> getRecommendations(List<String> takenCourses) {
         try {
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
@@ -152,12 +152,13 @@ public class CourseServiceImpl implements CourseService {
 
             List<String> allCourseNames = courseRepository.findAll().stream().map(c -> c.getTitle())
                     .collect(Collectors.toList());
-            Collections.shuffle(allCourseNames);
-            List<String> random10Courses = allCourseNames.stream().limit(10).collect(Collectors.toList());
+            List<String> remainingCourses = allCourseNames.stream()
+                    .filter(title -> !takenCourses.contains(title))
+                    .collect(Collectors.toList());
+            Collections.shuffle(remainingCourses);
+            List<String> random10Courses = remainingCourses.stream().limit(10).collect(Collectors.toList());
             request.setRemaining_courses(random10Courses);
-            request.setTaken_courses(
-                    List.of("Business and Managment", "Structural Programming", "Discrete Mathematics",
-                            "Object oriented programming", "Introduction to computer science")); // getCoursesByUser
+            request.setTaken_courses(takenCourses);
 
             if (request.getTaken_courses() == null || request.getTaken_courses().isEmpty()) {
                 throw new NoTakenCoursesException("You have not taken any courses yet!");
@@ -170,7 +171,11 @@ public class CourseServiceImpl implements CourseService {
             List<String> lowercaseTitles = recommendedTitles.stream().map(i -> i.toLowerCase())
                     .collect(Collectors.toList());
             List<Course> recommendedCourses = courseRepository.findByTitleInIgnoreCase(lowercaseTitles);
-            return recommendedCourses;
+            List<CourseDTO> recommendedCourseDTOs = recommendedCourses.stream()
+                    .map(course -> new CourseDTO(course.getId(), course.getTitle(), course.getDescription()))
+                    .collect(Collectors.toList());
+
+            return recommendedCourseDTOs;
 
         } catch (NoTakenCoursesException e) {
             throw e;

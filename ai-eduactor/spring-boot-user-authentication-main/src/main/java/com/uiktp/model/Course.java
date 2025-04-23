@@ -34,15 +34,11 @@ public class Course {
     private List<Comment> comments;
 
     @ManyToMany
-    @JoinTable(
-            name = "user_favorite_courses",
-            joinColumns = @JoinColumn(name = "course_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @JoinTable(name = "user_favorite_courses", joinColumns = @JoinColumn(name = "course_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     @JsonManagedReference
     private List<User> likedBy;
 
-    public Course(String title, String description){
+    public Course(String title, String description) {
         this.title = title;
         this.description = description;
     }

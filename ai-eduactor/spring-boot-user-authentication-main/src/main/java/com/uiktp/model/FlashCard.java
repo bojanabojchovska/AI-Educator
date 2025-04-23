@@ -23,6 +23,6 @@ public class FlashCard {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @Lob
+    @Column(name = "attachment", columnDefinition = "BYTEA")
     private byte[] attachment;
 }

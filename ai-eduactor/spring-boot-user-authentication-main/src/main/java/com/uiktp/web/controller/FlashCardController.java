@@ -1,12 +1,21 @@
 package com.uiktp.web.controller;
 
 import com.uiktp.model.FlashCard;
+import com.uiktp.model.exceptions.custom.FlashCardGenerationException;
+import com.uiktp.model.exceptions.general.InvalidArgumentsException;
 import com.uiktp.service.Interface.FlashCardService;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/flashcards")
@@ -44,4 +53,20 @@ public class FlashCardController {
         flashCardService.deleteFlashCard(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/generate")
+    public ResponseEntity<?> generateFlashCard(
+            @RequestParam("course_id") Long courseId,
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("num_flashcards") int numFlashcards) {
+        try {
+            flashCardService.generateFlashCard(courseId, file, numFlashcards);
+        } catch (IOException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(error);
+        }
+        return ResponseEntity.noContent().build();
+    }
+
 }

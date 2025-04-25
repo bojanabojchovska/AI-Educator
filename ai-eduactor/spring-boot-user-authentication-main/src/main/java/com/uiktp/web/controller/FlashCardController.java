@@ -59,13 +59,7 @@ public class FlashCardController {
             @RequestParam("course_id") Long courseId,
             @RequestParam("file") MultipartFile file,
             @RequestParam("num_flashcards") int numFlashcards) {
-        try {
-            flashCardService.generateFlashCard(courseId, file, numFlashcards);
-        } catch (IOException e) {
-            Map<String, String> error = new HashMap<>();
-            error.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(error);
-        }
+        flashCardService.generateFlashCard(courseId, file, numFlashcards);
         return ResponseEntity.noContent().build();
     }
 

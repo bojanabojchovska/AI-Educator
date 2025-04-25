@@ -59,7 +59,6 @@ public class CourseServiceImpl implements CourseService {
         }).toList();
     }
 
-
     @Override
     public Course getCourseById(Long id) {
         return courseRepository.findById(id).orElseThrow();

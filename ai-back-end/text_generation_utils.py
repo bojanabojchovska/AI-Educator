@@ -18,24 +18,27 @@ async def get_recommended_courses(request):
     return answer
 
 async def get_flashcards(num_flashcards, file):
-    llm = get_llm_model(repo_id="mistralai/Mistral-7B-Instruct-v0.2")
+    llm = get_llm_model(repo_id="mistralai/Mistral-7B-Instruct-v0.3")
     prompt = flash_cards_prompt_template(num_flashcards)
     qa_chain = LLMChain(prompt=prompt, llm=llm)
     text = await asyncio.to_thread(format_document, file)
     answer = await qa_chain.ainvoke({"text": text})
     answer = answer['text']
-    answer = format_flashcard_answer(answer, num_flashcards)
+    print(answer)
+    answer = format_flashcard_answer(answer)
     return answer
 
 def format_flashcard_answer(answer):
     print(answer)
+    if "</think>" in answer:
+        answer = answer.split("</think>")[1].strip()
     split_text = answer.split("\n")
     print(split_text)
     split_text = [s.strip() for s in split_text if s.strip()]
     print(split_text)
     start_index = None
     for i, x in enumerate(split_text):
-        if x.startswith("Q1:"):
+        if x.lower().startswith("q1:"):
             start_index = i
             break
     if start_index is not None:
@@ -54,9 +57,10 @@ def format_flashcard_answer(answer):
     return pairs
 
 def format_course_recommendation_answer(answer):
-    courses_whitespace = answer.split("</think>")[1]
-    print(courses_whitespace)
-    courses = [c.strip() for c in courses_whitespace.split("\n") if c.strip()]
+    if "</think>" in answer:
+        answer = answer.split("</think>")[1].strip()
+    print(answer)
+    courses = [c.strip() for c in answer.split("\n") if c.strip()]
     print(courses)
     return courses
 

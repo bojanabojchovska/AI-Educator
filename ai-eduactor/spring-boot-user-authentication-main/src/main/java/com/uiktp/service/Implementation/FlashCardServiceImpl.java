@@ -2,6 +2,7 @@ package com.uiktp.service.Implementation;
 
 import com.uiktp.model.Course;
 import com.uiktp.model.FlashCard;
+import com.uiktp.model.dtos.FlashCardDTO;
 import com.uiktp.model.dtos.FlashCardResponseDTO;
 import com.uiktp.model.exceptions.custom.FlashCardGenerationException;
 import com.uiktp.model.exceptions.custom.PDFLoadingException;
@@ -9,8 +10,10 @@ import com.uiktp.model.exceptions.general.InvalidArgumentsException;
 import com.uiktp.repository.CourseRepository;
 import com.uiktp.repository.FlashCardRepository;
 import com.uiktp.service.Interface.FlashCardService;
+import jakarta.persistence.PersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -24,10 +27,8 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class FlashCardServiceImpl implements FlashCardService {
@@ -45,6 +46,35 @@ public class FlashCardServiceImpl implements FlashCardService {
         return flashCardRepository.findAll();
     }
 
+    @Override
+    public List<FlashCardDTO> getAllFlashCardsByCourseId(Long courseId) {
+        if (courseId == null) {
+            throw new IllegalArgumentException("Course ID cannot be null.");
+        }
+        try {
+            List<FlashCard> flashCards = flashCardRepository.findAllByCourse_Id(courseId);
+
+            if (flashCards.isEmpty()) {
+                throw new NoSuchElementException("No flashcards found for course ID: " + courseId);
+            }
+            List<FlashCardDTO> flashCardDTOs = flashCards.stream()
+                    .map(flashCard -> new FlashCardDTO(
+                            flashCard.getId(),
+                            flashCard.getQuestion(),
+                            flashCard.getAnswer(),
+                            flashCard.getCourse().getId(),
+                            flashCard.getCourse().getTitle()))
+                    .collect(Collectors.toList());
+
+            return flashCardDTOs;
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while fetching flashcards for course ID: " + courseId, e);
+        } catch (PersistenceException e) {
+            throw new RuntimeException("Persistence error while fetching flashcards for course ID: " + courseId, e);
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred while fetching flashcards for course ID: " + courseId, e);
+        }
+    }
     @Override
     public Optional<FlashCard> getFlashCardById(Long id) {
         return flashCardRepository.findById(id);

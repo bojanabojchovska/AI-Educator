@@ -163,7 +163,15 @@ export const createFlashCard = async (flashCardData) => {
     throw error;
   }
 };
-
+export const getFlashCardsByCourseId = async (courseId) => {
+  try {
+    const response = await axios.get(`${API_URL}/flashcards/${courseId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching flashcards:', error);
+    throw error;
+  }
+};
 
 export const getSemesters = async (email, token) => {
   try {

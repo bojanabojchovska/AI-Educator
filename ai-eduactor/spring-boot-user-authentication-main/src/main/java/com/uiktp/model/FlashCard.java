@@ -25,4 +25,10 @@ public class FlashCard {
 
     @Column(name = "attachment", columnDefinition = "BYTEA")
     private byte[] attachment;
+
+    public FlashCard(String question, String answer, Course course) {
+        this.question = question;
+        this.answer = answer;
+        this.course = course;
+    }
 }

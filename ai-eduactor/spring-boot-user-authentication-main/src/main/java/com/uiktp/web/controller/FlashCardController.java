@@ -1,6 +1,7 @@
 package com.uiktp.web.controller;
 
 import com.uiktp.model.FlashCard;
+import com.uiktp.model.dtos.FlashCardDTO;
 import com.uiktp.model.exceptions.custom.FlashCardGenerationException;
 import com.uiktp.model.exceptions.general.InvalidArgumentsException;
 import com.uiktp.service.Interface.FlashCardService;
@@ -10,10 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,9 +31,9 @@ public class FlashCardController {
         return flashCardService.getAllFlashCards();
     }
 
-    @GetMapping("/{id}")
-    public Optional<FlashCard> getFlashCardById(@PathVariable Long id) {
-        return flashCardService.getFlashCardById(id);
+    @GetMapping("/{courseId}")
+    public List<FlashCardDTO> getAllFlashCardsByCourseId(@PathVariable Long courseId) {
+        return flashCardService.getAllFlashCardsByCourseId(courseId);
     }
 
     @PostMapping
@@ -49,9 +47,18 @@ public class FlashCardController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFlashCard(@PathVariable Long id) {
-        flashCardService.deleteFlashCard(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> deleteFlashCard(@PathVariable Long id) {
+        try {
+            flashCardService.deleteFlashCard(id);
+            String message = "Flashcard with ID " + id + " has been successfully deleted.";
+            return ResponseEntity.status(HttpStatus.OK).body(message);
+        } catch (NoSuchElementException e) {
+            String errorMessage = "Flashcard with ID " + id + " not found.";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+        } catch (Exception e) {
+            String errorMessage = "An error occurred while deleting the flashcard.";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+        }
     }
 
     @PostMapping("/generate")

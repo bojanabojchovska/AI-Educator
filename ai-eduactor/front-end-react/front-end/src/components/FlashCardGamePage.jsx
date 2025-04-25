@@ -1,47 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";  // To get the courseId from URL
+import { getFlashCardsByCourseId } from "../repository/api"; // Import the API call
 import CustomNavbar from "./CustomNavbar";
 import "./FlashCardGamePage.css"; // We'll create this CSS file
 
 const FlashCardGamePage = () => {
-  // Sample flash cards data
-  const [cards, setCards] = useState([
-    {
-      id: 1,
-      front: {
-        title: "React",
-        content: "What is React?"
-      },
-      back: {
-        title: "React",
-        content: "A JavaScript library for building user interfaces"
-      },
-      flipped: false
-    },
-    {
-      id: 2,
-      front: {
-        title: "Components",
-        content: "What are React components?"
-      },
-      back: {
-        title: "Components",
-        content: "Independent and reusable bits of code that return React elements"
-      },
-      flipped: false
-    },
-    {
-      id: 3,
-      front: {
-        title: "JSX",
-        content: "What is JSX?"
-      },
-      back: {
-        title: "JSX",
-        content: "Syntax extension to JavaScript that allows writing HTML-like code in JavaScript"
-      },
-      flipped: false
-    }
-  ]);
+  const { courseId } = useParams();  // Get the courseId from URL parameters
+  const [cards, setCards] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch flashcards when the component is mounted
+  useEffect(() => {
+    const fetchFlashcards = async () => {
+      try {
+        const fetchedCards = await getFlashCardsByCourseId(courseId);
+        setCards(fetchedCards);
+        setLoading(false);  // Set loading to false after data is fetched
+      } catch (error) {
+        console.error("Error fetching flashcards:", error);
+        setLoading(false);  // Ensure loading is stopped even if there's an error
+      }
+    };
+
+    fetchFlashcards();
+  }, [courseId]);  // Fetch flashcards whenever courseId changes
+
+  if (loading) {
+    return <div>Loading flashcards...</div>;  // Show loading message while fetching
+  }
 
   const flipCard = (id) => {
     setCards(cards.map(card => 
@@ -57,7 +43,6 @@ const FlashCardGamePage = () => {
     setCards([cards[cards.length - 1], ...cards.slice(0, cards.length - 1)]);
   };
 
-  // Delete card function
   const deleteCard = (id) => {
     setCards(cards.filter(card => card.id !== id));
   };
@@ -89,10 +74,10 @@ const FlashCardGamePage = () => {
               >
                 <div className="flashcard-front">
                   <div className="flashcard-header">
-                    <h3>{card.front.title}</h3>
+                    <h3>Subject</h3>
                   </div>
                   <div className="flashcard-content">
-                    <p>{card.front.content}</p>
+                    <p>{card.question}</p>
                     <div className="hint">Click to flip</div>
                   </div>
                   {/* Delete button on the front side */}
@@ -108,10 +93,10 @@ const FlashCardGamePage = () => {
                 </div>
                 <div className="flashcard-back">
                   <div className="flashcard-header">
-                    <h3>{card.back.title}</h3>
+                    <h3>Subject</h3>
                   </div>
                   <div className="flashcard-content">
-                    <p>{card.back.content}</p>
+                    <p>{card.answer}</p>
                     <div className="hint">Click to flip back</div>
                   </div>
                 </div>

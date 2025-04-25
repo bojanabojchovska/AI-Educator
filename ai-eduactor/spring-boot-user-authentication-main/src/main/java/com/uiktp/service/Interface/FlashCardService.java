@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import com.uiktp.model.dtos.FlashCardDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface FlashCardService {
     List<FlashCard> getAllFlashCards();
+    List<FlashCardDTO> getAllFlashCardsByCourseId(Long courseId);
 
     Optional<FlashCard> getFlashCardById(Long id);
 

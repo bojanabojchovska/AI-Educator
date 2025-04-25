@@ -25,7 +25,7 @@ function App() {
                     <Route path="/subject-recommendation" element={<SubjectRecommendation />} />
                     <Route path="/course-reviews" element={<CourseReviews />} />
                     <Route path="/course/:courseId/reviews" element={<CourseReviewPage />} />
-                    <Route path="/flashcards/game" element={<FlashCardGamePage />} />
+                    <Route path="/flashcards/:courseId" element={<FlashCardGamePage />} />
                 </Routes>
             </div>
         </Router>

@@ -1,10 +1,12 @@
 package com.uiktp.config.database;
 
 import com.uiktp.model.Course;
+import com.uiktp.model.FlashCard;
 import com.uiktp.model.Semester;
 import com.uiktp.model.User;
 import com.uiktp.model.enumerations.UserRole;
 import com.uiktp.repository.CourseRepository;
+import com.uiktp.repository.FlashCardRepository;
 import com.uiktp.repository.SemesterRepository;
 import com.uiktp.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -22,13 +24,16 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         private final CourseRepository courseRepository;
 
+        private final FlashCardRepository flashCardRepository;
+
         private final PasswordEncoder passwordEncoder;
 
         public DatabaseSeeder(UserRepository userRepository, SemesterRepository semesterRepository,
-                              CourseRepository courseRepository, PasswordEncoder passwordEncoder) {
+                              CourseRepository courseRepository, FlashCardRepository flashCardRepository, PasswordEncoder passwordEncoder) {
                 this.userRepository = userRepository;
                 this.semesterRepository = semesterRepository;
                 this.courseRepository = courseRepository;
+            this.flashCardRepository = flashCardRepository;
             this.passwordEncoder = passwordEncoder;
         }
 
@@ -53,6 +58,14 @@ public class DatabaseSeeder implements CommandLineRunner {
                                 semesterRepository.save(semester);
                         }
                 }
+                if (!flashCardRepository.existsByQuestion("Test Question?")) {
+                        List<FlashCard> flashCards = List.of(
+                                new FlashCard("Test Question?", "Test Answer", courseRepository.findById(148L).get()),
+                                new FlashCard("Test Question Again?", "Test Answer Again", courseRepository.findById(148L).get())
+                        );
+                        flashCardRepository.saveAll(flashCards);
+                }
+
 
                 List<Course> courses = List.of(
                                 new Course(

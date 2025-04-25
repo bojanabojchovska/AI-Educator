@@ -55,8 +55,9 @@ const SubjectRecommendation = () => {
             <CustomNavbar />
             
             <main className="recommendation-main">
-                <h2>Subject Recommendation for Students</h2>
-                <p>Select subjects you know best and get AI-generated suggestions based on your profile.</p>
+                <h1>Subject Recommendation</h1>
+                <p>Select subjects you know best and get 
+                <br />AI-generated suggestions based on your profile.</p>
 
                 <div className="lists-container">
                     <div className="list-box">

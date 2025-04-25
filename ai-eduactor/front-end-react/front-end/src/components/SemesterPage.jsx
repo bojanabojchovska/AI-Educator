@@ -234,8 +234,8 @@ const fetchSemesters = async () => {
             </div>
 
             {/* Arrows */}
-            <div className="arrows d-flex flex-column justify-content-center mx-2">
-                <button className="btn arrow-btn mb-2" onClick={moveToChosen}>&larr;</button>
+            <div className="arrows d-flex flex-column justify-content-center mx-2" style={{ height: '250px' }}>
+                <button className="btn arrow-btn mb-2 mt-5" onClick={moveToChosen}>&larr;</button>
                 <button className="btn arrow-btn" onClick={moveToAvailable}>&rarr;</button>
             </div>
 

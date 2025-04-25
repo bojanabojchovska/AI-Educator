@@ -73,6 +73,16 @@
     margin-bottom: 1rem;
 }
 
+.modal-dialog {
+  max-width: 900px !important; /* Wider modal */
+  max-height: 90vh;            /* Taller modal */
+}
+
+.modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
 /* Dual List Container */
 .dual-list-container {
     width: 100%;
@@ -88,7 +98,7 @@
 /* Select Boxes */
 .dual-list-container select {
     width: 100% !important;
-    min-height: 120px;
+    min-height: 300px;
 }
 
 /* Arrow Buttons */

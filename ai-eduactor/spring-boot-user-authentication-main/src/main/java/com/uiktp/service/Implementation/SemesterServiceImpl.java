@@ -87,6 +87,9 @@ public class SemesterServiceImpl implements SemesterService {
 
     @Override
     public Semester createOrUpdateSemester(SemesterCreateUpdateDTO dto, String email) {
+        if (email == null || email.equals("null")) {
+            throw new IllegalArgumentException("Email cannot be null.");
+        }
         Semester semester;
 
         if (dto.getId() != null) {

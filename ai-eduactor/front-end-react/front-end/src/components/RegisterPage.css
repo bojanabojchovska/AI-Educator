@@ -28,9 +28,6 @@
     align-items: center;
     flex: 0 0 250px;
 }
-
-/* Remove the previous .graduation-cap styles as they're no longer needed */
-
 .logo-container h2 {
     margin-top: 20px;
     font-size: 24px;

@@ -15,8 +15,16 @@ const CustomNavbar = () => {
     }, [location]);
 
     const handleNavigate = (path) => {
-        navigate(path);
+        const isLoggedIn = localStorage.getItem("email");
+    
+        if (isLoggedIn || path === "/") {
+            navigate(path);
+        }
+        else {
+            navigate("/login");
+        }
     };
+    
 
     const handleLogout = async () => {
         try {

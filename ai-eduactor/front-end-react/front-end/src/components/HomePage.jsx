@@ -11,8 +11,15 @@ const HomePage = () => {
     const name = localStorage.getItem("name");
 
     const handleNavigate = (path) => {
-        navigate(path);
+        const isLoggedIn = localStorage.getItem("email");
+    
+        if (!isLoggedIn) {
+            navigate("/login");
+        } else {
+            navigate(path);
+        }
     };
+    
 
     return (
         <>

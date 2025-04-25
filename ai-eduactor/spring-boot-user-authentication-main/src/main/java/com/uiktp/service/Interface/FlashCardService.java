@@ -19,5 +19,5 @@ public interface FlashCardService {
 
     void deleteFlashCard(Long id);
 
-    void generateFlashCard(Long courseId, MultipartFile file, int numFlashcards) throws IOException;
+    void generateFlashCard(Long courseId, MultipartFile file, int numFlashcards);
 }

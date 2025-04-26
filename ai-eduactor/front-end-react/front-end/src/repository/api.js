@@ -378,3 +378,19 @@ export const deleteComment = async (courseId, commentId) => {
     throw error;
   }
 }
+
+export const deleteFlashCard = async (id) => {
+  try {
+    const token = localStorage.getItem('token');  // земаш токен ако има логирање
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+
+    const response = await axios.delete(`${API_URL}/flashcards/${id}`, { headers });
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting flashcard:', error);
+    throw error;
+  }
+};

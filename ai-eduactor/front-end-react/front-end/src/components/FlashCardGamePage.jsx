@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";  // To get the courseId from URL
-import { getFlashCardsByCourseId } from "../repository/api"; // Import the API call
+import { getFlashCardsByCourseId, deleteFlashCard } from "../repository/api";
 import CustomNavbar from "./CustomNavbar";
 import "./FlashCardGamePage.css"; // We'll create this CSS file
 

@@ -43,8 +43,18 @@ const FlashCardGamePage = () => {
     setCards([cards[cards.length - 1], ...cards.slice(0, cards.length - 1)]);
   };
 
-  const deleteCard = (id) => {
-    setCards(cards.filter(card => card.id !== id));
+  const deleteCard = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this flashcard?")) {
+      return;
+    }
+  
+    try {
+      await deleteFlashCard(id); 
+      setCards(cards.filter(card => card.id !== id)); 
+    } catch (error) {
+      console.error("Error deleting flashcard:", error);
+      alert("Failed to delete flashcard.");
+    }
   };
 
   return (

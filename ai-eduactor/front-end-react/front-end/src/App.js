@@ -7,6 +7,7 @@ import HomePage from './components/HomePage';  // Don't forget to import the Hom
 import SemesterPage from "./components/SemesterPage";
 import CourseReviews from "./components/CourseReviews";
 import CourseReviewPage from './components/CourseReviewPage';
+import FlashcardsPage from "./components/FlashcardsPage";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SubjectRecommendation from "./components/SubjectRecommendation";
 
@@ -24,6 +25,8 @@ function App() {
                     <Route path="/subject-recommendation" element={<SubjectRecommendation />} />
                     <Route path="/course-reviews" element={<CourseReviews />} />
                     <Route path="/course/:courseId/reviews" element={<CourseReviewPage />} />
+                    <Route path="/flash-cards" element={<FlashcardsPage />} />
+
                 </Routes>
             </div>
         </Router>

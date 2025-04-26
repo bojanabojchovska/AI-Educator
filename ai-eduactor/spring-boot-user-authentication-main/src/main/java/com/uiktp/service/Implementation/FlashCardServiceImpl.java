@@ -1,5 +1,8 @@
 package com.uiktp.service.Implementation;
 
+import com.lowagie.text.*;
+import com.lowagie.text.Font;
+import com.lowagie.text.pdf.PdfWriter;
 import com.uiktp.model.Course;
 import com.uiktp.model.FlashCard;
 import com.uiktp.model.dtos.FlashCardResponseDTO;
@@ -9,7 +12,7 @@ import com.uiktp.model.exceptions.general.InvalidArgumentsException;
 import com.uiktp.repository.CourseRepository;
 import com.uiktp.repository.FlashCardRepository;
 import com.uiktp.service.Interface.FlashCardService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,12 +25,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
+import java.awt.*;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class FlashCardServiceImpl implements FlashCardService {
@@ -140,5 +142,69 @@ public class FlashCardServiceImpl implements FlashCardService {
             throw new FlashCardGenerationException(course.getTitle());
         }
 
+    }
+
+    @Override
+    public void exportFlashCardsToPdf(Long courseId, HttpServletResponse response)
+            throws DocumentException, IOException {
+        Course course = courseRepository.findById(courseId).orElseThrow(
+                () -> new InvalidArgumentsException(String.format("Course with id: %d not found", courseId)));
+
+        List<FlashCard> flashCards = flashCardRepository.findByCourseId(courseId);
+
+        if (flashCards.isEmpty()) {
+            throw new InvalidArgumentsException("No flashcards found for this course");
+        }
+
+        Document document = new Document(PageSize.A4);
+        PdfWriter.getInstance(document, response.getOutputStream());
+
+        document.open();
+
+        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+        titleFont.setSize(18);
+        titleFont.setColor(Color.BLUE);
+
+        Paragraph title = new Paragraph("Flashcards for " + course.getTitle(), titleFont);
+        title.setAlignment(Paragraph.ALIGN_CENTER);
+        document.add(title);
+
+        Font dateFont = FontFactory.getFont(FontFactory.HELVETICA);
+        dateFont.setSize(12);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Paragraph date = new Paragraph("Generated on: " + formatter.format(new Date()), dateFont);
+        date.setAlignment(Paragraph.ALIGN_RIGHT);
+        document.add(date);
+
+        document.add(new Paragraph("\n"));
+
+        for (int i = 0; i < flashCards.size(); i++) {
+            FlashCard flashCard = flashCards.get(i);
+
+            Font cardFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+            cardFont.setSize(14);
+
+            Paragraph cardNumber = new Paragraph("Flashcard #" + (i + 1), cardFont);
+            document.add(cardNumber);
+
+            Font questionFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+            questionFont.setSize(12);
+
+            Paragraph question = new Paragraph("Question: ", questionFont);
+            question.add(new Chunk(flashCard.getQuestion(), FontFactory.getFont(FontFactory.HELVETICA)));
+            document.add(question);
+
+            Font answerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+            answerFont.setSize(12);
+
+            Paragraph answer = new Paragraph("Answer: ", answerFont);
+            answer.add(new Chunk(flashCard.getAnswer(), FontFactory.getFont(FontFactory.HELVETICA)));
+            document.add(answer);
+
+            document.add(new Paragraph("\n"));
+        }
+
+        document.close();
     }
 }

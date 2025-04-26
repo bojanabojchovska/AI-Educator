@@ -1,19 +1,16 @@
 package com.uiktp.web.controller;
 
+import com.lowagie.text.DocumentException;
 import com.uiktp.model.FlashCard;
-import com.uiktp.model.exceptions.custom.FlashCardGenerationException;
-import com.uiktp.model.exceptions.general.InvalidArgumentsException;
 import com.uiktp.service.Interface.FlashCardService;
-
-import org.springframework.http.HttpStatus;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -62,5 +59,21 @@ public class FlashCardController {
         flashCardService.generateFlashCard(courseId, file, numFlashcards);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/export/{courseId}")
+    public void exportFlashCardsToPdf(
+            @PathVariable("courseId") Long courseId,
+            HttpServletResponse response) throws IOException, DocumentException {
+        response.setContentType("application/pdf");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormat.format(new Date());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=flashcards_" + currentDateTime + ".pdf";
+        response.setHeader(headerKey, headerValue);
+
+        flashCardService.exportFlashCardsToPdf(courseId, response);
+    }
+
 
 }

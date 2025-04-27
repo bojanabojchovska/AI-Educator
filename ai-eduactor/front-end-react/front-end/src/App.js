@@ -10,6 +10,7 @@ import CourseReviewPage from './components/CourseReviewPage';
 import FlashcardsPage from "./components/FlashcardsPage";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SubjectRecommendation from "./components/SubjectRecommendation";
+import FlashcardActions from "./components/FlashcardActions"; // Import the FlashcardActions component
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
                     <Route path="/course-reviews" element={<CourseReviews />} />
                     <Route path="/course/:courseId/reviews" element={<CourseReviewPage />} />
                     <Route path="/flash-cards" element={<FlashcardsPage />} />
+                    <Route path="flashcardactions" element={<FlashcardActions />} /> {/* Updated to use element prop */}
 
                 </Routes>
             </div>

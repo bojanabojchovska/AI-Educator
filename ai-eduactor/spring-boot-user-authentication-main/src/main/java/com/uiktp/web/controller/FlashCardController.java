@@ -31,7 +31,7 @@ public class FlashCardController {
         return flashCardService.getAllFlashCards();
     }
 
-    @GetMapping("/{courseId}")
+    @GetMapping("/game/{courseId}")
     public List<FlashCardDTO> getAllFlashCardsByCourseId(@PathVariable Long courseId) {
         return flashCardService.getAllFlashCardsByCourseId(courseId);
     }

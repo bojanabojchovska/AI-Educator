@@ -176,7 +176,9 @@
     border-radius: 50px;
     font-size: 1rem;
     cursor: pointer;
-    
+    position: absolute;
+    top: 20px;
+    right: 20px; /* Positioned on the top-right corner of the front side */
     transition: background-color 0.3s ease;
   }
   
@@ -193,8 +195,34 @@
     z-index: 1;
   }
 
-  .flashcard-header-align{
+   .flashcard-header-align{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
   }
+
+  .start-game-container {
+  text-align: center;
+  padding: 100px 20px;
+}
+
+.start-btn {
+  padding: 12px 25px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #800000, #3c0101);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.start-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.start-btn:active {
+  transform: translateY(0);
+}

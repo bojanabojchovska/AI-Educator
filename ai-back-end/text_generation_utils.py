@@ -1,11 +1,20 @@
 from dotenv import load_dotenv, find_dotenv
+from pinecone import Pinecone
+import os
 from prompt_templates import *
 from langchain.chains import LLMChain
 from models import get_llm_model
 from document_loader import format_document
 import asyncio
 import re
+from pinecone_utils import get_vector_store
+
 load_dotenv(find_dotenv(), override=True)
+
+pc = Pinecone(
+        api_key=os.environ.get("PINECONE_API_KEY")
+    )
+index = pc.Index("books")
 
 async def get_recommended_courses(request):
     taken_courses_str = "\n".join(request.taken_courses)
@@ -64,3 +73,23 @@ def format_course_recommendation_answer(answer):
     print(courses)
     return courses
 
+def get_similarity_by_query(query, pdf_id, k):
+    vector_store = get_vector_store()
+    result = vector_store.similarity_search(query, k=k, filter={"pdf-id": pdf_id})
+    return result
+
+def get_generated_text(query, pdf_id, k):
+    llm = get_llm_model(repo_id="mistralai/Mistral-7B-Instruct-v0.3")
+    prompt = chatbot_prompt_template()
+    qa_chain = LLMChain(prompt=prompt, llm=llm)
+    similarities = get_similarity_by_query(query, pdf_id, k)
+    context = "\n".join([similarity.page_content for similarity in similarities])
+    answer = qa_chain.run({"context": context, "question": query})
+    answer = format_chatbot_answer(answer)
+    return answer
+
+def format_chatbot_answer(answer):
+    answer = answer.strip()
+    if "Answer:" in answer:
+        answer = answer.split("Answer:")[1].strip()
+    return answer

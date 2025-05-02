@@ -5,6 +5,8 @@ from tempfile import NamedTemporaryFile
 import uvicorn
 from text_generation_utils import get_flashcards, get_recommended_courses
 from request_models import CourseRecommendationRequst
+from pinecone_utils import add_file_to_database
+from text_generation_utils import get_generated_text
 
 app = FastAPI()
 
@@ -34,6 +36,24 @@ async def recommend_courses(request: CourseRecommendationRequst):
     # recommended_courses = await get_recommended_courses(request)
     return JSONResponse(content={"recommended_courses": ["calculus", "idk?", "discrete Mathematics"]})
 
+@app.post("/upload_file")
+async def upload_file(file: UploadFile = File(...)):
+    if not file.filename.endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Files must be uploaded only in PDF format.")
+    
+    with NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+        temp_file.write(await file.read())
+        temp_file.flush()
+        temp_path = temp_file.name
+        pdf_id = await add_file_to_database(file=temp_path)
+    os.remove(temp_path)
+
+    return JSONResponse(content={"Id": pdf_id})
+
+@app.post("/ask")
+async def ask_question(question: str = Form(...), pdf_id: str = Form(...)):
+    answer = get_generated_text(query=question, pdf_id=pdf_id, k=3)
+    return JSONResponse(content={"Question": question, "Answer":answer})
 
 if __name__ == "__main__":
     uvicorn.run("app:app", host="localhost", port=8000, reload=True)

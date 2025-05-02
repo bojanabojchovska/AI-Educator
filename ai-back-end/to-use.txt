@@ -1,5 +1,7 @@
 1. create a huggingface account and create an API TOKEN
 2. in the project folder create a file named {.env} and inside type in: `HUGGINGFACEHUB_API_TOKEN="hf_...your token here`
 3. open modules.ipynb and run only the first cell to install modules
-4. open app.py and run the api
-5. navigate to localhost:8000/docs
+4. you will need to create a pinecone account and create an index called 'books' with 768 dimension.
+5. generate 1 api key: PINECONE_API_KEY="..." and have another one called: PINECONE_ENV="eu-west4-gcp"
+6. open app.py and run the api
+7. navigate to localhost:8000/docs

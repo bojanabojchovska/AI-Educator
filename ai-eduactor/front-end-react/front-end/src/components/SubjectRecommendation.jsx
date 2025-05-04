@@ -96,11 +96,11 @@ const SubjectRecommendation = () => {
         <ul>
             {recommendedSubjects && recommendedSubjects.length > 0 ? (
                 recommendedSubjects.map((item, index) => (
-                    <li key={index}>
-                        <span className="avatar">{item[0]}</span>
-                        <span className="item-text">{item}</span>
-                        <input type="checkbox" checked readOnly />
-                    </li>
+                    <li key={item.id}>
+                    <span className="avatar">{item.title[0]}</span>
+                    <span className="item-text">{item.title}</span>
+                    <input type="checkbox" checked readOnly />
+                </li>
                 ))
             ) : (
                 <p>No recommendations available at the moment.</p>

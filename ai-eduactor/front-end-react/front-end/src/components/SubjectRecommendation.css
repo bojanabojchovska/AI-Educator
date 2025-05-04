@@ -39,9 +39,8 @@ body, h2, h4, p, ul {
     padding-top: 100px !important;
 }
 
-.recommendation-main h2 {
+.recommendation-main h1 {
     margin-bottom: 10px;
-    font-size: 22px;
 }
 
 .recommendation-main p {

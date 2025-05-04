@@ -162,20 +162,27 @@ const fetchSemesters = async () => {
                                 <ul>
                                     {semester.courses && semester.courses.length > 0 ? (
                                         semester.courses.map((course, index) => (
-                                            <li key={index}>{course}</li>
+                                            <li key={index}>
+                                                <button
+                                                    className="course-link-btn"
+                                                    onClick={() => navigate(`/course/${course}`)}
+                                                >
+                                                    {course}
+                                                </button>
+                                            </li>
                                         ))
                                     ) : (
                                         <li>No courses added.</li>
                                     )}
                                 </ul>
                                 <div className="card-buttons">
-    <button className="btn me-3" onClick={() => handleEdit(semester.id)}>
-        <i className="fas fa-pen me-1"></i> Edit
-    </button>
-    <button className="btn" onClick={() => handleDelete(semester.id)}>
-        <i className="fas fa-trash-alt me-1"></i> Delete
-    </button>
-</div>
+                                    <button className="btn me-3" onClick={() => handleEdit(semester.id)}>
+                                        <i className="fas fa-pen me-1"></i> Edit
+                                    </button>
+                                    <button className="btn" onClick={() => handleDelete(semester.id)}>
+                                        <i className="fas fa-trash-alt me-1"></i> Delete
+                                    </button>
+                                </div>
 
                             </div>
                         ))
@@ -187,15 +194,15 @@ const fetchSemesters = async () => {
                 </div>
 
                 <Modal show={showModal} onHide={closeModal} centered>
-    <Modal.Header closeButton>
-        <Modal.Title>{editingSemesterId ? 'EDIT SEMESTER' : 'CREATE SEMESTER'}</Modal.Title>
-    </Modal.Header>
-    <Modal.Body>
-    <label>Semester Name:</label>
-    <input
-        type="text"
-        value={semesterName}
-        onChange={(e) => setSemesterName(e.target.value)}
+                    <Modal.Header closeButton>
+                        <Modal.Title>{editingSemesterId ? 'EDIT SEMESTER' : 'CREATE SEMESTER'}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <label>Semester Name:</label>
+                        <input
+                            type="text"
+                            value={semesterName}
+                            onChange={(e) => setSemesterName(e.target.value)}
         className="modal-input form-control mb-4"
         placeholder="Enter semester name"
         required

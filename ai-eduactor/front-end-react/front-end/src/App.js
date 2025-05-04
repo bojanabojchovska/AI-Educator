@@ -7,9 +7,13 @@ import HomePage from './components/HomePage';  // Don't forget to import the Hom
 import SemesterPage from "./components/SemesterPage";
 import CourseReviews from "./components/CourseReviews";
 import CourseReviewPage from './components/CourseReviewPage';
+import FlashcardsPage from "./components/FlashcardsPage";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SubjectRecommendation from "./components/SubjectRecommendation";
-
+import FlashcardActions from "./components/FlashcardActions"; // Import the FlashcardActions component
+import CoursePage from './components/CoursePage';
+import FlashcardGame from "./components/FlashcardGame";
+import FlashCardGamePage from "./components/FlashCardGamePage";
 
 function App() {
     return (
@@ -24,6 +28,12 @@ function App() {
                     <Route path="/subject-recommendation" element={<SubjectRecommendation />} />
                     <Route path="/course-reviews" element={<CourseReviews />} />
                     <Route path="/course/:courseId/reviews" element={<CourseReviewPage />} />
+                    <Route path="/flash-cards" element={<FlashcardsPage />} />
+                    <Route path="flashcardactions" element={<FlashcardActions />} /> {/* Updated to use element prop */}
+                    <Route path="/course/:courseName" element={<CoursePage />} />
+                    <Route path="/flashcard-game/:courseId" element={<FlashcardGame />} />
+                    <Route path="/flashcard-game/demo" element={<FlashcardGame demo={true} />} />
+                    <Route path="/flashcards/game/:courseId" element={<FlashCardGamePage />} />
                 </Routes>
             </div>
         </Router>

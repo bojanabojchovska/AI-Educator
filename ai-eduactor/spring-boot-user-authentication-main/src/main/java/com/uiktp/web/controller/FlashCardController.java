@@ -1,15 +1,16 @@
 package com.uiktp.web.controller;
 
-import com.lowagie.text.DocumentException;
 import com.uiktp.model.FlashCard;
+import com.uiktp.model.dtos.FlashCardDTO;
+import com.uiktp.model.exceptions.custom.FlashCardGenerationException;
+import com.uiktp.model.exceptions.general.InvalidArgumentsException;
 import com.uiktp.service.Interface.FlashCardService;
-import jakarta.servlet.http.HttpServletResponse;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -30,9 +31,9 @@ public class FlashCardController {
         return flashCardService.getAllFlashCards();
     }
 
-    @GetMapping("/{id}")
-    public Optional<FlashCard> getFlashCardById(@PathVariable Long id) {
-        return flashCardService.getFlashCardById(id);
+    @GetMapping("/game/{courseId}")
+    public List<FlashCardDTO> getAllFlashCardsByCourseId(@PathVariable Long courseId) {
+        return flashCardService.getAllFlashCardsByCourseId(courseId);
     }
 
     @PostMapping
@@ -46,9 +47,18 @@ public class FlashCardController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFlashCard(@PathVariable Long id) {
-        flashCardService.deleteFlashCard(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> deleteFlashCard(@PathVariable Long id) {
+        try {
+            flashCardService.deleteFlashCard(id);
+            String message = "Flashcard with ID " + id + " has been successfully deleted.";
+            return ResponseEntity.status(HttpStatus.OK).body(message);
+        } catch (NoSuchElementException e) {
+            String errorMessage = "Flashcard with ID " + id + " not found.";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+        } catch (Exception e) {
+            String errorMessage = "An error occurred while deleting the flashcard.";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+        }
     }
 
     @PostMapping("/generate")
@@ -59,21 +69,5 @@ public class FlashCardController {
         flashCardService.generateFlashCard(courseId, file, numFlashcards);
         return ResponseEntity.noContent().build();
     }
-
-    @GetMapping("/export/{courseId}")
-    public void exportFlashCardsToPdf(
-            @PathVariable("courseId") Long courseId,
-            HttpServletResponse response) throws IOException, DocumentException {
-        response.setContentType("application/pdf");
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-        String currentDateTime = dateFormat.format(new Date());
-
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=flashcards_" + currentDateTime + ".pdf";
-        response.setHeader(headerKey, headerValue);
-
-        flashCardService.exportFlashCardsToPdf(courseId, response);
-    }
-
 
 }

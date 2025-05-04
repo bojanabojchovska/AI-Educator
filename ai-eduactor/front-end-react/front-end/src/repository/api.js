@@ -163,7 +163,15 @@ export const createFlashCard = async (flashCardData) => {
     throw error;
   }
 };
-
+export const getFlashCardsByCourseId = async (courseId) => {
+  try {
+    const response = await axios.get(`${API_URL}/flashcards/game/${courseId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching flashcards:', error);
+    throw error;
+  }
+};
 
 export const getSemesters = async (email, token) => {
   try {
@@ -370,3 +378,19 @@ export const deleteComment = async (courseId, commentId) => {
     throw error;
   }
 }
+
+export const deleteFlashCard = async (id) => {
+  try {
+    const token = localStorage.getItem('token');  // земаш токен ако има логирање
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+
+    const response = await axios.delete(`${API_URL}/flashcards/${id}`, { headers });
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting flashcard:', error);
+    throw error;
+  }
+};

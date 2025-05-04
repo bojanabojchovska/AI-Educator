@@ -38,3 +38,12 @@ def course_recommendation_prompt_template():
         input_variables=["user_courses", "remaining_courses"]
     )
     return prompt
+
+def chatbot_prompt_template():
+    prompt = PromptTemplate(
+        template=f"""Based on the context below, answer only the question asked.
+        If you can't find the answer in the provided context, politely ask the user to ask questions only about the uplaoded file, except when the user is thanking you. Return only the answer, do not return any unnecessary text and new lines.
+        \n\nContext: {{context}}\n\nQuestion: {{question}}""",
+        input_variables=["context", "question"],
+    )
+    return prompt

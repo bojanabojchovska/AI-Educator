@@ -370,3 +370,5 @@ export const deleteComment = async (courseId, commentId) => {
     throw error;
   }
 }
+
+

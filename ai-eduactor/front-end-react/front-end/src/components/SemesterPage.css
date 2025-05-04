@@ -124,3 +124,25 @@
 .arrow-btn:hover {
     background-color: #e0e0e0;
 }
+
+.course-link-btn {
+    width: 100%;
+    padding: 8px 12px;
+    margin: 4px 0;
+    text-align: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-radius: 4px;
+}
+
+.course-link-btn:hover {
+    background-color: #f5e8e8;
+    text-decoration: underline;
+}
+
+.semester-card li {
+    margin: 8px 0;
+    width: 100%;
+}

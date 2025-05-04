@@ -86,4 +86,61 @@
   .flashcards-button:hover {
     background-color: #5c1616;
   }
-  
+
+.flashcard-game {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.progress-info {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.flashcard {
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 40px;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: transform 0.2s;
+}
+
+.flashcard:hover {
+  transform: translateY(-2px);
+}
+
+.flashcard-content {
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.flashcard-hint {
+  font-size: 0.9rem;
+  color: #999;
+}
+
+.game-controls {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.game-controls .flashcards-button {
+  width: 120px;
+}
+
+.game-controls .flashcards-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

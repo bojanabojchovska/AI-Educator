@@ -1,146 +1,89 @@
+
 .flashcards-container {
-    text-align: center;
-    padding: 2rem;
-    background-color: #fff;
-    min-height: 100vh;
-  }
-  
-  .flashcards-title {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: #7B1E1E;
-  }
-  
-  .flashcards-subtitle {
-    margin-bottom: 2rem;
-    color: #555;
-    font-size: 1.1rem;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  .flashcards-upload-range {
-    background-color: #f5e8e8;
-    border-radius: 15px;
-    padding: 2rem;
-    margin: 0 auto 2rem auto;
-    max-width: 800px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    gap: 3rem;
-    flex-wrap: wrap;
-  }
-  
-  .upload-section, .range-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .upload-icon {
-    margin-top: 1rem;
-    cursor: pointer;
-    background-color: #fff;
-    border: 2px dashed #7B1E1E;
-    border-radius: 10px;
-    padding: 1rem;
-  }
-  
-  .range-control {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-  
-  .range-control input[type="range"] {
-    width: 150px;
-  }
-  
-  .flashcards-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-  }
-  
-  .flashcards-button {
-    background-color: #7b1e1e;
-    color: white;
-    border: none;
-    border-radius: 30px;
-    padding: 0.75rem 2rem;
-    font-size: 1rem;
-    cursor: pointer;
-    width: 200px;
-    height: 50px; /* ADD this to control the button height */
-    display: flex; /* ADD this */
-    justify-content: center; /* center horizontally */
-    align-items: center; /* center vertically */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    transition: background-color 0.3s ease;
-  }
-  
-  .flashcards-button:hover {
-    background-color: #5c1616;
-  }
-
-.flashcard-game {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.progress-info {
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 1.2rem;
-  color: #666;
+  padding: 2rem;
+  background-color: #fff;
+  min-height: 100vh;
 }
 
-.flashcard {
-  background-color: #fff;
+.flashcards-title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #7B1E1E;
+}
+
+.flashcards-subtitle {
+  margin-bottom: 2rem;
+  color: #555;
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.flashcards-upload-range {
+  background-color: #f5e8e8;
   border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  padding: 40px;
-  min-height: 300px;
+  padding: 2rem;
+  margin: 0 auto 2rem auto;
+  max-width: 800px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+
+.upload-section, .range-section {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+}
+
+.upload-icon {
+  margin-top: 1rem;
   cursor: pointer;
-  margin-bottom: 20px;
-  transition: transform 0.2s;
+  background-color: #fff;
+  border: 2px dashed #7B1E1E;
+  border-radius: 10px;
+  padding: 1rem;
 }
 
-.flashcard:hover {
-  transform: translateY(-2px);
-}
-
-.flashcard-content {
-  font-size: 1.5rem;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.flashcard-hint {
-  font-size: 0.9rem;
-  color: #999;
-}
-
-.game-controls {
+.range-control {
   display: flex;
-  justify-content: center;
-  gap: 20px;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
-.game-controls .flashcards-button {
-  width: 120px;
+.range-control input[type="range"] {
+  width: 150px;
 }
 
-.game-controls .flashcards-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+.flashcards-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.flashcards-button {
+  background-color: #7b1e1e;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 200px;
+  height: 50px; /* ADD this to control the button height */
+  display: flex; /* ADD this */
+  justify-content: center; /* center horizontally */
+  align-items: center; /* center vertically */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: background-color 0.3s ease;
+}
+
+.flashcards-button:hover {
+  background-color: #5c1616;
 }

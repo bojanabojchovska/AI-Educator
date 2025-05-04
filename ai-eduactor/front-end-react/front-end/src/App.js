@@ -13,6 +13,7 @@ import SubjectRecommendation from "./components/SubjectRecommendation";
 import FlashcardActions from "./components/FlashcardActions"; // Import the FlashcardActions component
 import CoursePage from './components/CoursePage';
 import FlashcardGame from "./components/FlashcardGame";
+import FlashCardGamePage from "./components/FlashCardGamePage";
 
 function App() {
     return (
@@ -32,6 +33,7 @@ function App() {
                     <Route path="/course/:courseName" element={<CoursePage />} />
                     <Route path="/flashcard-game/:courseId" element={<FlashcardGame />} />
                     <Route path="/flashcard-game/demo" element={<FlashcardGame demo={true} />} />
+                    <Route path="/flashcards/game/:courseId" element={<FlashCardGamePage />} />
                 </Routes>
             </div>
         </Router>

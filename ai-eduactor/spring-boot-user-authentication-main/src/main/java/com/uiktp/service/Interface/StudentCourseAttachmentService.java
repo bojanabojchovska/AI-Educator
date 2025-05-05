@@ -2,11 +2,11 @@ package com.uiktp.service.Interface;
 import com.uiktp.model.Attachment;
 import com.uiktp.model.Course;
 import com.uiktp.model.User;
-import javax.security.auth.Subject;
+
 import java.util.List;
 import java.util.UUID;
 
-public interface AttachmentService {
+public interface StudentCourseAttachmentService {
     Attachment createAttachment(String fileName, String fileType,
                                 String chatbotConversation, User user, Course course);
 

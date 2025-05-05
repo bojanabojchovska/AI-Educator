@@ -259,10 +259,12 @@ export const submitSubjectComment = async (courseId, commentFeedback) => {
     };
 
     if (commentFeedback && commentFeedback.trim()) {
-      await axios.post(`${API_URL}/courses/${courseId}/comments`, {
+      const response = await axios.post(`${API_URL}/courses/${courseId}/comments`, {
         commentBody: commentFeedback.trim(),
         studentEmail: email
-      }, {headers})
+      }, {headers});
+
+      return response.data;
     }
   } catch (error) {
     console.error('Error submitting review:', error);
@@ -393,4 +395,49 @@ export const deleteFlashCard = async (id) => {
     console.error('Error deleting flashcard:', error);
     throw error;
   }
+};
+
+export const fetchAttachments = async (commentId) => {
+  try {
+    const response = await axios.get(`${API_URL}/api/comments/${commentId}/attachments`);
+    return response.data;
+  } catch (err) {
+    console.error('Failed to load attachments:', err);
+    throw new Error('Failed to load attachments');
+  }
+};
+
+export const uploadCommentAttachments = async (commentId, files) => {
+  const formData = new FormData();
+  files.forEach(file => {
+    formData.append('files', file);
+  });
+
+  const response = await axios.post(`${API_URL}/comments/${commentId}/attachments/upload`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+
+  return response.data; // list of CommentAttachment objects
+};
+
+export const downloadCommentAttachment = async (attachmentId, commentId) => {
+  const response = await axios.get(
+      `${API_URL}/comments/${commentId}/attachments/download/${attachmentId}`,
+      { responseType: 'blob' } // so browser knows it’s a file
+  );
+
+  // Create and trigger a download
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement('a');
+  link.href = url;
+
+  // Try getting filename from headers or fallback
+  const contentDisposition = response.headers['content-disposition'];
+  const filenameMatch = contentDisposition && contentDisposition.match(/filename="(.+)"/);
+  const filename = filenameMatch ? filenameMatch[1] : 'attachment';
+
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
 };

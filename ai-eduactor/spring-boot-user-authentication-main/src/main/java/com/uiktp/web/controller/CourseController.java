@@ -2,13 +2,11 @@ package com.uiktp.web.controller;
 
 import com.uiktp.model.Course;
 import com.uiktp.model.dtos.CourseDTO;
-import com.uiktp.model.dtos.CourseRecommendationRequestDTO;
 import com.uiktp.model.dtos.CourseRecommendationResponseDTO;
 import com.uiktp.model.dtos.CreateCourseDto;
-import com.uiktp.model.exceptions.CourseRecommendationException;
-import com.uiktp.model.exceptions.NoTakenCoursesException;
+import com.uiktp.model.exceptions.custom.CourseRecommendationException;
+import com.uiktp.model.exceptions.custom.NoTakenCoursesException;
 import com.uiktp.service.Interface.CourseService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

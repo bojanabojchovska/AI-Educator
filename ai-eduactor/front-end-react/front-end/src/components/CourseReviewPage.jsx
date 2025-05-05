@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaStar } from 'react-icons/fa';
 import CustomNavbar from './CustomNavbar';
 import StarRatings from 'react-star-ratings';
+import { FaDownload, FaFilePdf, FaPaperclip } from 'react-icons/fa';
 import {
     getSubjectReviews,
     submitSubjectReview,
     getCourses,
     submitSubjectComment,
-    deleteComment
+    deleteComment, downloadCommentAttachment, uploadCommentAttachments, fetchAttachments
 } from '../repository/api';
 import './CourseReviewPage.css';
 
@@ -26,6 +26,10 @@ const CourseReviewPage = () => {
     const [successMessage, setSuccessMessage] = useState('');
     const [isSubmittingReview, setIsSubmittingReview] = useState(false);
     const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [attachmentsMap, setAttachmentsMap] = useState({}); // commentId -> [attachments]
+    const [expandedComments, setExpandedComments] = useState(new Set());
 
     useEffect(() => {
         fetchCourseData();
@@ -107,11 +111,19 @@ const CourseReviewPage = () => {
         setSuccessMessage('');
 
         try {
-            await submitSubjectComment(courseId, commentFeedback);
+            const comment = await submitSubjectComment(courseId, commentFeedback);
 
             setCommentFeedback('');
             setSuccessMessage('Your comment was submitted successfully!');
 
+            if (selectedFiles.length > 0) {
+                await uploadCommentAttachments(comment.id, selectedFiles);
+            }
+
+            setCommentFeedback('');
+            setSelectedFiles([]);
+            setAttachmentsMap({});
+            setSuccessMessage('Your comment was submitted successfully!');
             await fetchReviews();
         } catch (err) {
             console.error('Error submitting comment:', err);
@@ -138,6 +150,32 @@ const CourseReviewPage = () => {
             setError('Failed to delete comment. Please try again later.');
         }
     }
+
+    const handleFileChange = (e) => {
+        setSelectedFiles(Array.from(e.target.files));
+    };
+
+    const toggleAttachments = async (commentId) => {
+        const newExpanded = new Set(expandedComments);
+
+        if (newExpanded.has(commentId)) {
+            newExpanded.delete(commentId);
+        } else {
+            newExpanded.add(commentId);
+
+            // Fetch only if not already loaded
+            if (!attachmentsMap[commentId]) {
+                try {
+                    const attachments = await fetchAttachments(commentId); // Using the new function
+                    setAttachmentsMap(prev => ({ ...prev, [commentId]: attachments }));
+                } catch (err) {
+                    console.error(err.message); // Handle error (if any)
+                }
+            }
+        }
+
+        setExpandedComments(newExpanded);
+    };
 
     return (
         <>
@@ -231,6 +269,17 @@ const CourseReviewPage = () => {
                                 />
                             </div>
 
+                            <div className="file-upload-container">
+                                <label htmlFor="attachmentFiles">Attach files (optional):</label>
+                                <input
+                                    type="file"
+                                    id="attachmentFiles"
+                                    accept="application/pdf"
+                                    multiple
+                                    onChange={handleFileChange}
+                                />
+                            </div>
+
                             <button
                                 type="submit"
                                 className="submit-btn"
@@ -249,7 +298,7 @@ const CourseReviewPage = () => {
                                 <div key={index} className="review-card">
                                     {/* Review Header: User info */}
                                     <div className="review-header">
-                                        <div className="review-user">
+                                    <div className="review-user">
                                             <div className="user-info">
                                                 <p className="student-name"><strong>{comment.student.name}</strong></p>
                                                 <p className="user-email"><small>{comment.student.email}</small></p>
@@ -259,6 +308,32 @@ const CourseReviewPage = () => {
                                             <p>{new Date(comment.date).toLocaleDateString()}</p>
                                         </div>
                                     </div>
+
+                                    <button onClick={() => toggleAttachments(comment.id)}>
+                                        {expandedComments.has(comment.id) ? 'Hide Attachments' : 'Show Attachments'}
+                                    </button>
+
+                                    {expandedComments.has(comment.id) && attachmentsMap[comment.id]?.length > 0 && (
+                                        <ul className="attachments-list">
+                                            {attachmentsMap[comment.id].map((att) => (
+                                                <li key={att.id} className="attachment-item">
+                                                    <div className="attachment-details">
+                                                        {/* PDF Icon */}
+                                                        <FaFilePdf size={24} color="#ff6f61" />
+                                                        {/* Attachment Name */}
+                                                        <span>{att.fileName}</span>
+                                                    </div>
+                                                    {/* Download Button */}
+                                                    <button
+                                                        className="download-button"
+                                                        onClick={() => downloadCommentAttachment(att.id, comment.id)}
+                                                    >
+                                                        <FaDownload size={20} />
+                                                    </button>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
 
                                     {/* Review Content */}
                                     <div className="review-body">

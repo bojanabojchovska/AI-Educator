@@ -28,7 +28,9 @@ public class RatingServiceImpl implements RatingService {
         this.ratingRepository = ratingRepository;
         this.userRepository = userRepository;
         this.courseRepository = courseRepository;
-        }
+    }
+
+    @Override
     public Rating addRating(Long courseId, RatingDTO dto) {
         User user = userRepository.findByEmail(dto.getStudentEmail())
                 .orElseThrow(() -> new ResourceNotFoundException(User.class, dto.getStudentEmail()));
@@ -53,6 +55,7 @@ public class RatingServiceImpl implements RatingService {
         return ratingRepository.save(rating);
     }
 
+    @Override
     public double getAverageRating(Long courseId) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId.toString()));

@@ -11,6 +11,7 @@ import com.uiktp.repository.CourseRepository;
 import com.uiktp.repository.UserRepository;
 import com.uiktp.service.Interface.CommentService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,7 +36,13 @@ public class CommentServiceImpl implements CommentService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId.toString()));
 
-        return commentRepository.findByCourseId(courseId);
+        return commentRepository.findAllByCourse(course);
+    }
+
+    @Override
+    public Comment getComment(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException(Comment.class, commentId.toString()));
     }
 
     public Comment addCommentToCourse(Long courseId, CommentDTO dto) {
@@ -66,7 +73,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void deleteComment(Long courseId, Long commentId, String email) {
-        Comment comment = commentRepository.findByCourseId(courseId)
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId.toString()));
+
+        Comment comment = commentRepository.findAllByCourse(course)
                 .stream().filter(c -> c.getId().equals(commentId))
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException(Comment.class, commentId.toString()));

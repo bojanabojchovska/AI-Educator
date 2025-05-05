@@ -1,12 +1,13 @@
 package com.uiktp.web.controller;
 
 import com.uiktp.model.Attachment;
+import com.uiktp.model.CommentAttachment;
 import com.uiktp.model.Course;
 import com.uiktp.model.User;
 import com.uiktp.model.dtos.AttachmentRequestDTO;
-import com.uiktp.repository.CourseRepository;
+import com.uiktp.repository.CommentAttachmentRepository;
 import com.uiktp.repository.UserRepository;
-import com.uiktp.service.Interface.AttachmentService;
+import com.uiktp.service.Interface.StudentCourseAttachmentService;
 import com.uiktp.service.Interface.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +21,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AttachmentController {
 
-    private final AttachmentService attachmentService;
+    private final StudentCourseAttachmentService studentCourseAttachmentService;
     private final UserRepository userRepository;
     private final CourseService courseService;
+    private final CommentAttachmentRepository commentAttachmentRepository;
 
     @PostMapping
     public ResponseEntity<Attachment> createAttachment(@RequestBody AttachmentRequestDTO request) {
@@ -30,7 +32,7 @@ public class AttachmentController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Course course = courseService.getCourseById(request.getCourseId());
 
-        Attachment attachment = attachmentService.createAttachment(
+        Attachment attachment = studentCourseAttachmentService.createAttachment(
                 request.getFileName(),
                 request.getFileType(),
                 request.getChatbotConversation(),
@@ -43,18 +45,25 @@ public class AttachmentController {
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Attachment>> getByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(attachmentService.getAttachmentsByUser(userId));
+        return ResponseEntity.ok(studentCourseAttachmentService.getAttachmentsByUser(userId));
     }
 
     @GetMapping("/course/{courseId}")
     public ResponseEntity<List<Attachment>> getByCourse(@PathVariable Long courseId) {
-        return ResponseEntity.ok(attachmentService.getAttachmentsByCourse(courseId));
+        return ResponseEntity.ok(studentCourseAttachmentService.getAttachmentsByCourse(courseId));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Attachment> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(attachmentService.getById(id));
+        return ResponseEntity.ok(studentCourseAttachmentService.getById(id));
     }
+
+    @GetMapping
+
+    public ResponseEntity<List<CommentAttachment>> getAllCommetnAttachments(){
+        return ResponseEntity.ok().body(commentAttachmentRepository.findAll());
+    }
+
 }
 
 

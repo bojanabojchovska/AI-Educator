@@ -1,11 +1,15 @@
 package com.uiktp.web.controller;
 
+import com.uiktp.model.CommentAttachment;
+import com.uiktp.service.Interface.CommentAttachmentService;
 import com.uiktp.service.Interface.CourseService;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/files")
@@ -36,8 +40,5 @@ public class FileController {
         }catch (IOException e) {
             return ResponseEntity.badRequest().body("Invalid file content");
         }
-
     }
-
-
 }

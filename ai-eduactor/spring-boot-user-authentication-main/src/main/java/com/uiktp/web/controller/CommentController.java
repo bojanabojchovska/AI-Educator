@@ -1,13 +1,16 @@
 package com.uiktp.web.controller;
 
 import com.uiktp.model.Comment;
+import com.uiktp.model.CommentAttachment;
 import com.uiktp.model.User;
 import com.uiktp.model.dtos.CommentDTO;
+import com.uiktp.service.Interface.CommentAttachmentService;
 import com.uiktp.service.Interface.CommentService;
 import com.uiktp.service.Interface.CourseService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,16 +19,19 @@ import java.util.List;
 public class CommentController {
     private final CommentService commentService;
     private  final CourseService courseService;
+    private final CommentAttachmentService commentAttachmentService;
 
-    public CommentController(CommentService commentService, CourseService courseService) {
+    public CommentController(CommentService commentService, CourseService courseService, CommentAttachmentService commentAttachmentService) {
         this.commentService = commentService;
         this.courseService = courseService;
+        this.commentAttachmentService = commentAttachmentService;
     }
 
     @GetMapping
     public ResponseEntity<List<Comment>> getComments(@PathVariable Long courseId) {
         return ResponseEntity.ok(commentService.getAllCommentsForCourse(courseId));
     }
+
     @PostMapping
     public ResponseEntity<Comment> addComment(@PathVariable Long courseId, @RequestBody CommentDTO dto) {
         return ResponseEntity.ok(commentService.addCommentToCourse(courseId, dto));
@@ -42,5 +48,7 @@ public class CommentController {
         commentService.deleteComment(courseId, commentId, email);
         return ResponseEntity.ok().build();
     }
+
+
 }
 

@@ -1,11 +1,12 @@
 package com.uiktp.web.controller;
 
+import com.lowagie.text.DocumentException;
 import com.uiktp.model.FlashCard;
 import com.uiktp.model.dtos.FlashCardDTO;
-import com.uiktp.model.exceptions.custom.FlashCardGenerationException;
-import com.uiktp.model.exceptions.general.InvalidArgumentsException;
 import com.uiktp.service.Interface.FlashCardService;
 
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -70,4 +71,11 @@ public class FlashCardController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/export/{courseId}")
+    public void exportFlashCardsToPdf(@PathVariable Long courseId, HttpServletResponse response) throws DocumentException, IOException {
+        response.setContentType("application/pdf");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=flashcards.pdf");
+
+        flashCardService.exportFlashCardsToPdf(courseId, response);
+    }
 }

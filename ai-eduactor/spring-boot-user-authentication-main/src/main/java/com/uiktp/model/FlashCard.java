@@ -31,4 +31,8 @@ public class FlashCard {
         this.answer = answer;
         this.course = course;
     }
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

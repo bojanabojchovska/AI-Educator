@@ -89,3 +89,15 @@
 .login-link a:hover {
     text-decoration: underline;
 }
+
+.register-card {
+    max-width: 400px;
+    width: 100%;
+    border-radius: 15px;
+    background-color: #ffffff;
+  }
+.register-button-align{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+}

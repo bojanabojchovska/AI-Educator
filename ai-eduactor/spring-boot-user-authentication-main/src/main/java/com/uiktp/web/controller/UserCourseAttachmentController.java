@@ -25,10 +25,10 @@ public class UserCourseAttachmentController {
     private final CourseService courseService;
 
     @PostMapping
-    public ResponseEntity<UserCourseAttachment> uploadAttachments(@RequestBody UserCourseAttachmentRequestDTO request) {
+    public ResponseEntity<UserCourseAttachment> uploadAttachments(
+            @ModelAttribute UserCourseAttachmentRequestDTO request) {
         return ResponseEntity.ok(userCourseAttachmentService.uploadAttachment(request));
     }
-
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<UserCourseAttachment>> getByUser(@PathVariable Long userId) {
@@ -45,5 +45,3 @@ public class UserCourseAttachmentController {
         return ResponseEntity.ok(userCourseAttachmentService.getById(id));
     }
 }
-
-

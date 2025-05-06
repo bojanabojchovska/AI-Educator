@@ -6,15 +6,16 @@ import com.lowagie.text.pdf.PdfWriter;
 import com.uiktp.model.Course;
 import com.uiktp.model.FlashCard;
 import com.uiktp.model.User;
+import com.uiktp.model.UserCourseAttachment;
 import com.uiktp.model.dtos.FlashCardDTO;
 import com.uiktp.model.dtos.FlashCardResponseDTO;
 import com.uiktp.model.exceptions.custom.FlashCardGenerationException;
-import com.uiktp.model.exceptions.custom.PDFLoadingException;
 import com.uiktp.model.exceptions.general.InvalidArgumentsException;
 import com.uiktp.repository.CourseRepository;
 import com.uiktp.repository.FlashCardRepository;
 import com.uiktp.repository.UserRepository;
 import com.uiktp.service.Interface.FlashCardService;
+import com.uiktp.service.Interface.UserCourseAttachmentService;
 import jakarta.persistence.PersistenceException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.hibernate.Hibernate;
@@ -31,11 +32,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
-import org.apache.pdfbox.pdmodel.PDDocument;
 
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -47,11 +50,13 @@ public class FlashCardServiceImpl implements FlashCardService {
     private final FlashCardRepository flashCardRepository;
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
+    private final UserCourseAttachmentService userCourseAttachmentService;
 
-    public FlashCardServiceImpl(FlashCardRepository flashCardRepository, CourseRepository courseRepository, UserRepository userRepository) {
+    public FlashCardServiceImpl(FlashCardRepository flashCardRepository, CourseRepository courseRepository, UserRepository userRepository, UserCourseAttachmentService userCourseAttachmentService) {
         this.flashCardRepository = flashCardRepository;
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
+        this.userCourseAttachmentService = userCourseAttachmentService;
     }
 
     @Override
@@ -65,21 +70,24 @@ public class FlashCardServiceImpl implements FlashCardService {
             throw new IllegalArgumentException("Course ID cannot be null.");
         }
         try {
-            List<FlashCard> flashCards = flashCardRepository.findAllByCourse_Id(courseId);
+            List<FlashCard> flashCards = userCourseAttachmentService.getAttachmentsByCourse(courseId)
+                    .stream()
+                    .flatMap(attachment -> flashCardRepository.findAllByAttachment(attachment).stream())
+                    .toList();
+
 
             if (flashCards.isEmpty()) {
                 throw new NoSuchElementException("No flashcards found for course ID: " + courseId);
             }
-            List<FlashCardDTO> flashCardDTOs = flashCards.stream()
+
+            return flashCards.stream()
                     .map(flashCard -> new FlashCardDTO(
                             flashCard.getId(),
                             flashCard.getQuestion(),
                             flashCard.getAnswer(),
-                            flashCard.getCourse().getId(),
-                            flashCard.getCourse().getTitle()))
+                            flashCard.getAttachment().getCourse().getId(),
+                            flashCard.getAttachment().getCourse().getTitle()))
                     .collect(Collectors.toList());
-
-            return flashCardDTOs;
         } catch (DataAccessException e) {
             throw new RuntimeException("Database error while fetching flashcards for course ID: " + courseId, e);
         } catch (PersistenceException e) {
@@ -116,25 +124,22 @@ public class FlashCardServiceImpl implements FlashCardService {
     }
 
     @Override
-    public void generateFlashCard(Long courseId, MultipartFile file, int numFlashcards) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName();
-        User currentUser = userRepository.findByEmail(currentUserEmail)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public List<FlashCard> generateFlashCard(UUID attachmentId, int numFlashcards) throws FileNotFoundException {
+        UserCourseAttachment attachment = userCourseAttachmentService.getById(attachmentId);
 
-        Course course = courseRepository.findById(courseId).orElseThrow(
-                () -> new InvalidArgumentsException(String.format("Course with id: %d not found", courseId)));
-        if (!file.getOriginalFilename().toLowerCase().endsWith(".pdf")) {
-            throw new InvalidArgumentsException("Only PDF files can be accpeted!");
+        File file = new File(attachment.getFileUrl());
+        if (!file.exists()) {
+            throw new FileNotFoundException("File not found at path: " + attachment.getFileUrl());
         }
-        try (PDDocument document = PDDocument.load(file.getInputStream())) {
-            int numPages = document.getNumberOfPages();
-            if (numPages < 1 || numPages > 3) {
-                throw new InvalidArgumentsException("PDFs must be between 1 and 3 pages!");
-            }
+
+        byte[] fileBytes;
+        try {
+            Path path = file.toPath();
+            fileBytes = Files.readAllBytes(path);
         } catch (IOException e) {
-            throw new PDFLoadingException();
+            throw new RuntimeException("Error reading file bytes", e);
         }
+
         if (numFlashcards < 1 || numFlashcards > 5) {
             throw new InvalidArgumentsException("A maximum of 5 flashcards can be generated!");
         }
@@ -146,10 +151,10 @@ public class FlashCardServiceImpl implements FlashCardService {
 
             MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 
-            ByteArrayResource PDFasResource = new ByteArrayResource(file.getBytes()) {
+            ByteArrayResource PDFasResource = new ByteArrayResource(fileBytes) {
                 @Override
                 public String getFilename() {
-                    return file.getOriginalFilename();
+                    return file.getName();
                 }
             };
 
@@ -160,36 +165,39 @@ public class FlashCardServiceImpl implements FlashCardService {
             ResponseEntity<FlashCardResponseDTO> response = restTemplate.postForEntity("http://localhost:8000/", entity,
                     FlashCardResponseDTO.class);
 
-            List<Map<String, String>> pairs = response.getBody().getQuestion_answer_pairs();
+            List<Map<String, String>> pairs = Objects.requireNonNull(response.getBody()).getQuestion_answer_pairs();
             List<FlashCard> flashCards = new ArrayList<>();
 
             for (Map<String, String> pair : pairs) {
-                String question = "";
-                String answer = "";
-
-                for (Map.Entry<String, String> entry : pair.entrySet()) {
-                    if (entry.getKey().toLowerCase().contains("question")) {
-                        question = entry.getValue();
-                    } else if (entry.getKey().toLowerCase().contains("answer")) {
-                        answer = entry.getValue();
-                    }
-                }
-
-                FlashCard flashCard = new FlashCard();
-                flashCard.setQuestion(question);
-                flashCard.setAnswer(answer);
-                flashCard.setCourse(course);
-                flashCard.setAttachment(file.getBytes());
-                flashCard.setUser(currentUser);
+                FlashCard flashCard = getFlashCard(pair, attachment);
                 flashCards.add(flashCard);
             }
-            flashCardRepository.saveAll(flashCards);
+            return flashCardRepository.saveAll(flashCards);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            throw new FlashCardGenerationException(course.getTitle());
+            throw new FlashCardGenerationException(attachment.getOriginalFileName());
+        }
+    }
+
+    private FlashCard getFlashCard(Map<String, String> pair, UserCourseAttachment attachment) {
+        String question = "";
+        String answer = "";
+
+        for (Map.Entry<String, String> entry : pair.entrySet()) {
+            if (entry.getKey().toLowerCase().contains("question")) {
+                question = entry.getValue();
+            } else if (entry.getKey().toLowerCase().contains("answer")) {
+                answer = entry.getValue();
+            }
         }
 
+        FlashCard flashCard = new FlashCard();
+        flashCard.setQuestion(question);
+        flashCard.setAnswer(answer);
+        flashCard.setAttachment(attachment);
+        return flashCard;
     }
+
     @Override
     @Transactional(readOnly = true)
     public void exportFlashCardsToPdf(Long courseId, HttpServletResponse response)
@@ -210,7 +218,10 @@ public class FlashCardServiceImpl implements FlashCardService {
 
         Hibernate.initialize(course.getLikedBy());
 
-        List<FlashCard> allUserCourseFlashcards = flashCardRepository.findByCourseIdAndUserId(courseId, currentUser.getId());
+        List<FlashCard> allUserCourseFlashcards = userCourseAttachmentService.getAttachmentsByCourseAndUser(courseId, currentUser.getId())
+                .stream()
+                .flatMap(attachment -> flashCardRepository.findAllByAttachment(attachment).stream())
+                .toList();
 
         if (allUserCourseFlashcards.isEmpty()) {
             throw new InvalidArgumentsException("No flashcards found for this course");
@@ -218,8 +229,10 @@ public class FlashCardServiceImpl implements FlashCardService {
 
         Map<String, List<FlashCard>> flashcardBatches = new HashMap<>();
         for (FlashCard card : allUserCourseFlashcards) {
+            byte[] attachmentBytes = Files.readAllBytes(Path.of(card.getAttachment().getFileUrl()));
+
             String attachmentHash = card.getAttachment() != null ?
-                    String.valueOf(Arrays.hashCode(card.getAttachment())) :
+                    String.valueOf(Arrays.hashCode(attachmentBytes)) :
                     "no-attachment";
 
             if (!flashcardBatches.containsKey(attachmentHash)) {
@@ -228,17 +241,28 @@ public class FlashCardServiceImpl implements FlashCardService {
             flashcardBatches.get(attachmentHash).add(card);
         }
 
-        List<FlashCard> mostRecentBatch = allUserCourseFlashcards.stream()
+        List<FlashCard> mostRecentBatch = Collections.emptyList();
+
+        for (FlashCard card : allUserCourseFlashcards.stream()
                 .sorted(Comparator.comparing(FlashCard::getId).reversed())
-                .limit(1)
-                .map(card -> {
-                    String hash = card.getAttachment() != null ?
-                            String.valueOf(Arrays.hashCode(card.getAttachment())) :
-                            "no-attachment";
-                    return flashcardBatches.get(hash);
-                })
-                .findFirst()
-                .orElse(Collections.emptyList());
+                .toList()) {
+
+            String hash = "no-attachment";
+            if (card.getAttachment() != null) {
+                try {
+                    byte[] attachmentBytes = Files.readAllBytes(Path.of(card.getAttachment().getFileUrl()));
+                    hash = String.valueOf(Arrays.hashCode(attachmentBytes));
+                } catch (IOException e) {
+                    // Log or handle more gracefully
+                    continue;
+                }
+            }
+
+            if (flashcardBatches.containsKey(hash)) {
+                mostRecentBatch = flashcardBatches.get(hash);
+                break;
+            }
+        }
 
         if (mostRecentBatch.isEmpty()) {
             throw new InvalidArgumentsException("No flashcards found for this course");

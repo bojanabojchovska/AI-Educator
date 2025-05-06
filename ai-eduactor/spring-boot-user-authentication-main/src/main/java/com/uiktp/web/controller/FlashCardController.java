@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
@@ -62,14 +63,16 @@ public class FlashCardController {
         }
     }
 
-    @PostMapping("/generate")
-    public ResponseEntity<?> generateFlashCard(
-            @RequestParam("course_id") Long courseId,
-            @RequestParam("file") MultipartFile file,
-            @RequestParam("num_flashcards") int numFlashcards) {
-        flashCardService.generateFlashCard(courseId, file, numFlashcards);
-        return ResponseEntity.noContent().build();
-    }
+//    @PostMapping("/generate")
+//    public ResponseEntity<List<FlashCard>> generateFlashCard(
+//            @RequestParam("attachment_id") UUID attachmentId,
+//            @RequestParam("num_flashcards") int numFlashcards) {
+//        try {
+//            return flashCardService.generateFlashCard(attachmentId, numFlashcards);
+//        } catch (FileNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     @GetMapping("/export/{courseId}")
     public void exportFlashCardsToPdf(@PathVariable Long courseId, HttpServletResponse response) throws DocumentException, IOException {

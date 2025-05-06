@@ -570,13 +570,13 @@ public class DatabaseSeeder implements CommandLineRunner {
                 if (!courseRepository.existsByTitle("Business and Management")) {
                         courseRepository.saveAll(courses);
                 }
-                if (!flashCardRepository.existsByQuestion("Test Question?")) {
-                        List<FlashCard> flashCards = List.of(
-                                new FlashCard("Test Question?", "Test Answer", courseRepository.findById(1L).get()),
-                                new FlashCard("Test Question Again?", "Test Answer Again", courseRepository.findById(1L).get())
-                        );
-                        flashCardRepository.saveAll(flashCards);
-                }
+//                if (!flashCardRepository.existsByQuestion("Test Question?")) {
+//                        List<FlashCard> flashCards = List.of(
+//                                new FlashCard("Test Question?", "Test Answer", courseRepository.findById(1L).get()),
+//                                new FlashCard("Test Question Again?", "Test Answer Again", courseRepository.findById(1L).get())
+//                        );
+//                        flashCardRepository.saveAll(flashCards);
+//                }
         }
 
 }

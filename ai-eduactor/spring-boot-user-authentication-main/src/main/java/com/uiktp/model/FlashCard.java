@@ -20,19 +20,12 @@ public class FlashCard {
     private String answer;
 
     @ManyToOne
-    @JoinColumn(name = "course_id")
-    private Course course;
+    @JoinColumn(name = "attachment_id")
+    private UserCourseAttachment attachment;
 
-    @Column(name = "attachment", columnDefinition = "BYTEA")
-    private byte[] attachment;
-
-    public FlashCard(String question, String answer, Course course) {
+    public FlashCard(UserCourseAttachment attachment, String question, String answer) {
+        this.attachment = attachment;
         this.question = question;
         this.answer = answer;
-        this.course = course;
     }
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
 }

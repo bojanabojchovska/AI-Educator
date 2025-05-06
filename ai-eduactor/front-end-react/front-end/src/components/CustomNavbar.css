@@ -8,6 +8,7 @@
     box-shadow: 0 0 1px gray;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    background: linear-gradient(135deg, #800000, #3c0101);
 }
 
 .nav-login-btn {

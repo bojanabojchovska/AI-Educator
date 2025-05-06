@@ -78,3 +78,18 @@ h1 {
 .footer{
     margin-top: 80px;
 }
+
+.login-card {
+    max-width: 400px;
+    width: 100%;
+    border-radius: 15px;
+    background-color: #ffffff;
+  }
+
+.login-button-align{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+}
+
+  

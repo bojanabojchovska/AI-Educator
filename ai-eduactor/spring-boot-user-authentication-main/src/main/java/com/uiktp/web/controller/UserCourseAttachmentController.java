@@ -28,7 +28,7 @@ public class UserCourseAttachmentController {
     private final UserRepository userRepository;
     private final CourseService courseService;
 
-    @PostMapping
+    @PostMapping("/upload")
     public ResponseEntity<UserCourseAttachment> uploadAttachments(
             @ModelAttribute UserCourseAttachmentRequestDTO request) {
         return ResponseEntity.ok(userCourseAttachmentService.uploadAttachment(request));
@@ -42,6 +42,11 @@ public class UserCourseAttachmentController {
     @GetMapping("/course/{courseId}")
     public ResponseEntity<List<UserCourseAttachment>> getByCourse(@PathVariable Long courseId) {
         return ResponseEntity.ok(userCourseAttachmentService.getAttachmentsByCourse(courseId));
+    }
+
+    @GetMapping("")
+    public ResponseEntity<List<UserCourseAttachment>> getByCourseAndUser(@RequestParam Long courseId, @RequestParam Long userId) {
+        return ResponseEntity.ok(userCourseAttachmentService.getAttachmentsByCourseAndUser(courseId, userId));
     }
 
     @GetMapping("/{id}")

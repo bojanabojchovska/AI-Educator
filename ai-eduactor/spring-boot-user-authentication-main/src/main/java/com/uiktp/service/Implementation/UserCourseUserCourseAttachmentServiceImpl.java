@@ -102,9 +102,7 @@ public class UserCourseUserCourseAttachmentServiceImpl implements UserCourseAtta
         attachment.setSavedFileName(uniqueFilename);
         attachment.setFileUrl(filePath);
         attachment.setFileType("pdf");
-        attachment.setChatBotConversation(dto.getChatBotConversation());
         attachment.setUploadedAt(LocalDateTime.now());
-        attachment.setChatBotConversation(dto.getChatBotConversation());
         attachment.setUser(userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException(User.class, dto.getUserId().toString())));
         attachment.setCourse(courseRepository.findById(dto.getCourseId())

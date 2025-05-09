@@ -71,7 +71,8 @@ public class FlashCardController {
     }
 
     @GetMapping("/export/{courseId}")
-    public void exportFlashCardsToPdf(@PathVariable Long courseId, HttpServletResponse response) throws DocumentException, IOException {
+    public void exportFlashCardsToPdf(@PathVariable Long courseId, HttpServletResponse response)
+            throws DocumentException, IOException {
         response.setContentType("application/pdf");
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=flashcards.pdf");
 

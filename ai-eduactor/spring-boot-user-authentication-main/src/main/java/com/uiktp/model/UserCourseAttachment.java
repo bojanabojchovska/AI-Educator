@@ -15,11 +15,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "user_course_attachments")
-public class UserCourseAttachment extends Attachment{
+public class UserCourseAttachment extends Attachment {
     @Id
     private UUID id;
-    @Lob
-    private String chatBotConversation;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

@@ -1,10 +1,6 @@
 package com.uiktp.model.exceptions;
 
-import com.uiktp.model.exceptions.custom.CourseAlreadyLikedByStudentException;
-import com.uiktp.model.exceptions.custom.CourseNotLikedByStudentException;
-import com.uiktp.model.exceptions.custom.FlashCardGenerationException;
-import com.uiktp.model.exceptions.custom.PDFLoadingException;
-import com.uiktp.model.exceptions.custom.UserCannotDeleteCommentException;
+import com.uiktp.model.exceptions.custom.*;
 import com.uiktp.model.exceptions.general.InvalidArgumentsException;
 import com.uiktp.model.exceptions.general.ResourceNotFoundException;
 
@@ -61,4 +57,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handlePDFLoading(PDFLoadingException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(FileUploadFailureException.class)
+    public ResponseEntity<String> handleFileUploadFailureException(FileUploadFailureException ex){
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    }
+
 }

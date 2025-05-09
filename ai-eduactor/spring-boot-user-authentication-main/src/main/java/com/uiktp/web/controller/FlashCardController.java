@@ -63,19 +63,20 @@ public class FlashCardController {
         }
     }
 
-//    @PostMapping("/generate")
-//    public ResponseEntity<List<FlashCard>> generateFlashCard(
-//            @RequestParam("attachment_id") UUID attachmentId,
-//            @RequestParam("num_flashcards") int numFlashcards) {
-//        try {
-//            return flashCardService.generateFlashCard(attachmentId, numFlashcards);
-//        } catch (FileNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    @PostMapping("/generate")
+    public ResponseEntity<List<FlashCard>> generateFlashCard(
+            @RequestParam("attachment_id") UUID attachmentId,
+            @RequestParam("num_flashcards") int numFlashcards) {
+        try {
+            return ResponseEntity.ok(flashCardService.generateFlashCard(attachmentId, numFlashcards));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @GetMapping("/export/{courseId}")
-    public void exportFlashCardsToPdf(@PathVariable Long courseId, HttpServletResponse response) throws DocumentException, IOException {
+    public void exportFlashCardsToPdf(@PathVariable Long courseId, HttpServletResponse response)
+            throws DocumentException, IOException {
         response.setContentType("application/pdf");
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=flashcards.pdf");
 

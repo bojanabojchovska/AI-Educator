@@ -63,16 +63,12 @@ public class FlashCardController {
         }
     }
 
-//    @PostMapping("/generate")
-//    public ResponseEntity<List<FlashCard>> generateFlashCard(
-//            @RequestParam("attachment_id") UUID attachmentId,
-//            @RequestParam("num_flashcards") int numFlashcards) {
-//        try {
-//            return flashCardService.generateFlashCard(attachmentId, numFlashcards);
-//        } catch (FileNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    @PostMapping("/generate")
+    public ResponseEntity<List<FlashCard>> generateFlashCard(
+            @RequestParam("attachment_id") UUID attachmentId,
+            @RequestParam("num_flashcards") int numFlashcards) throws FileNotFoundException {
+        return ResponseEntity.ok(flashCardService.generateFlashCard(attachmentId, numFlashcards));
+    }
 
     @GetMapping("/export/{courseId}")
     public void exportFlashCardsToPdf(@PathVariable Long courseId, HttpServletResponse response) throws DocumentException, IOException {

@@ -4,6 +4,7 @@ import com.uiktp.model.exceptions.custom.*;
 import com.uiktp.model.exceptions.general.InvalidArgumentsException;
 import com.uiktp.model.exceptions.general.ResourceNotFoundException;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.springframework.http.HttpStatus;
@@ -71,6 +72,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AskQuestionException.class)
     public ResponseEntity<String> handleAskQuestionException(AskQuestionException ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    public ResponseEntity<String> handleFileNotFoundException(FileNotFoundException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
 }

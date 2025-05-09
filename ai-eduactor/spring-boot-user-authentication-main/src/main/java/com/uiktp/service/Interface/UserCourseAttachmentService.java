@@ -8,15 +8,14 @@ import com.uiktp.model.dtos.AskQuestionRequestDTO;
 import com.uiktp.model.dtos.AskQuestionResponseDTO;
 import com.uiktp.model.dtos.UserCourseAttachmentRequestDTO;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
 public interface UserCourseAttachmentService {
-    // UserCourseAttachment createAttachment(String fileName, String fileType,
-    // String chatBotConversation, User user, Course course);
-
     UserCourseAttachment uploadAttachment(UserCourseAttachmentRequestDTO dto);
+    List<UserCourseAttachment> getAllAttachments();
 
     List<UserCourseAttachment> getAttachmentsByUser(Long userId);
 
@@ -27,5 +26,7 @@ public interface UserCourseAttachmentService {
     public List<UserCourseAttachment> getAttachmentsByCourseAndUser(Long courseId, Long userId);
 
     AskQuestionResponseDTO askQuestion(AskQuestionRequestDTO askQuestionRequestDTO);
+
+    void deleteAttachment(UUID id) throws FileNotFoundException;
 
 }

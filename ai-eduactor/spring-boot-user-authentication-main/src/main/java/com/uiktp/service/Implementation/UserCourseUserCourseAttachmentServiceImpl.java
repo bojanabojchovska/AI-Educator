@@ -29,9 +29,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.util.MultiValueMap;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -100,7 +102,7 @@ public class UserCourseUserCourseAttachmentServiceImpl implements UserCourseAtta
         attachment.setId(id);
         attachment.setOriginalFileName(dto.getFile().getOriginalFilename());
         attachment.setSavedFileName(uniqueFilename);
-        //filepath will be for example uploads/test.pdf while the url to acces the file will be localhost:8080/files/test.pdf
+        //filepath will be for example uploads/test.pdf while the url to access the file will be localhost:8080/files/test.pdf
         attachment.setFilePath(filePath);
         attachment.setFileUrl("/files/" + uniqueFilename);
 
@@ -114,6 +116,11 @@ public class UserCourseUserCourseAttachmentServiceImpl implements UserCourseAtta
                 .orElseThrow(() -> new ResourceNotFoundException(Course.class, dto.getCourseId().toString())));
 
         return userCourseAttachmentRepository.save(attachment);
+    }
+
+    @Override
+    public List<UserCourseAttachment> getAllAttachments() {
+        return userCourseAttachmentRepository.findAll();
     }
 
     @Override
@@ -186,5 +193,20 @@ public class UserCourseUserCourseAttachmentServiceImpl implements UserCourseAtta
             throw new AskQuestionException();
         }
 
+    }
+
+    @Override
+    public void deleteAttachment(UUID id) throws FileNotFoundException {
+        UserCourseAttachment attachment = userCourseAttachmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(UserCourseAttachment.class, id.toString()));
+
+        Path filePath = Paths.get(attachment.getFilePath());
+        try {
+            if(Files.deleteIfExists(filePath)){
+                userCourseAttachmentRepository.delete(attachment);
+            }
+        } catch (IOException e) {
+            throw new FileNotFoundException();
+        }
     }
 }

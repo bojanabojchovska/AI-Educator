@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,8 +26,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class UserCourseAttachmentController {
 
     private final UserCourseAttachmentService userCourseAttachmentService;
-    private final UserRepository userRepository;
-    private final CourseService courseService;
+
+    @GetMapping("/all")
+    public ResponseEntity<List<UserCourseAttachment>> getAllAttachments(){
+        return ResponseEntity.ok(userCourseAttachmentService.getAllAttachments());
+    }
 
     @PostMapping("/upload")
     public ResponseEntity<UserCourseAttachment> uploadAttachments(
@@ -54,9 +58,14 @@ public class UserCourseAttachmentController {
         return ResponseEntity.ok(userCourseAttachmentService.getById(id));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteAttachment(@PathVariable UUID id) throws FileNotFoundException {
+        userCourseAttachmentService.deleteAttachment(id);
+        return ResponseEntity.ok("File deleted successfully!");
+    }
+
     @PostMapping("/ask")
     public ResponseEntity<AskQuestionResponseDTO> postMethodName(@RequestBody AskQuestionRequestDTO dto) {
         return ResponseEntity.ok(userCourseAttachmentService.askQuestion(dto));
     }
-
 }

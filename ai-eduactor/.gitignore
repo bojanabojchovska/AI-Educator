@@ -13,4 +13,4 @@ target/
 *.tmp
 
 #Ignore personal configuration files
-spring-boot-user-authentication-main/src/main/resources/application.properties
+**/application.properties

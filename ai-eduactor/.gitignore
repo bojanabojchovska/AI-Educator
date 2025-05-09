@@ -11,6 +11,3 @@ target/
 # Ignore logs and temp files
 *.log
 *.tmp
-
-#Ignore personal configuration files
-**/application.properties

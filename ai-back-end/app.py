@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from tempfile import NamedTemporaryFile
 import uvicorn
 from text_generation_utils import get_flashcards, get_recommended_courses
-from request_models import CourseRecommendationRequst
+from request_models import CourseRecommendationRequst, AskQuestionRequest
 from pinecone_utils import add_file_to_database
 from text_generation_utils import get_generated_text
 
@@ -51,7 +51,9 @@ async def upload_file(file: UploadFile = File(...)):
     return JSONResponse(content={"Id": pdf_id})
 
 @app.post("/ask")
-async def ask_question(question: str = Form(...), pdf_id: str = Form(...)):
+async def ask_question(request: AskQuestionRequest):
+    question = request.question
+    pdf_id = request.pdf_id
     answer = get_generated_text(query=question, pdf_id=pdf_id, k=3)
     return JSONResponse(content={"Question": question, "Answer":answer})
 

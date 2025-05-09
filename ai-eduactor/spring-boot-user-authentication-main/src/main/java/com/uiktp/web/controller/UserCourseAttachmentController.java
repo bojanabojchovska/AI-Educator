@@ -4,6 +4,8 @@ import com.uiktp.model.Attachment;
 import com.uiktp.model.Course;
 import com.uiktp.model.User;
 import com.uiktp.model.UserCourseAttachment;
+import com.uiktp.model.dtos.AskQuestionRequestDTO;
+import com.uiktp.model.dtos.AskQuestionResponseDTO;
 import com.uiktp.model.dtos.UserCourseAttachmentRequestDTO;
 import com.uiktp.repository.UserRepository;
 import com.uiktp.service.Interface.UserCourseAttachmentService;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/attachments")
@@ -44,4 +48,10 @@ public class UserCourseAttachmentController {
     public ResponseEntity<UserCourseAttachment> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(userCourseAttachmentService.getById(id));
     }
+
+    @PostMapping("/ask")
+    public ResponseEntity<AskQuestionResponseDTO> postMethodName(@RequestBody AskQuestionRequestDTO dto) {
+        return ResponseEntity.ok(userCourseAttachmentService.askQuestion(dto));
+    }
+
 }

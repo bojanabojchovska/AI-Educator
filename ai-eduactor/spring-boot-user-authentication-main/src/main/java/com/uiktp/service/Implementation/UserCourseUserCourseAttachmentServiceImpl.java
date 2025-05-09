@@ -3,8 +3,11 @@ package com.uiktp.service.Implementation;
 import com.uiktp.model.Course;
 import com.uiktp.model.User;
 import com.uiktp.model.UserCourseAttachment;
+import com.uiktp.model.dtos.AskQuestionRequestDTO;
+import com.uiktp.model.dtos.AskQuestionResponseDTO;
 import com.uiktp.model.dtos.AttachmentIDResponseDTO;
 import com.uiktp.model.dtos.UserCourseAttachmentRequestDTO;
+import com.uiktp.model.exceptions.custom.AskQuestionException;
 import com.uiktp.model.exceptions.custom.FileUploadFailureException;
 import com.uiktp.model.exceptions.custom.PDFLoadingException;
 import com.uiktp.model.exceptions.general.InvalidArgumentsException;
@@ -30,7 +33,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -150,6 +155,32 @@ public class UserCourseUserCourseAttachmentServiceImpl implements UserCourseAtta
             return UUID.fromString(response.getBody().getId());
         } catch (Exception e) {
             throw new FileUploadFailureException();
+        }
+
+    }
+
+    @Override
+    public AskQuestionResponseDTO askQuestion(AskQuestionRequestDTO askQuestionRequestDTO) {
+        String question = askQuestionRequestDTO.getQuestion();
+        String pdfId = askQuestionRequestDTO.getPdf_id();
+        UUID id = UUID.fromString(pdfId);
+        UserCourseAttachment attachment = getById(id);
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, String> body = new HashMap<>();
+        body.put("question", question);
+        body.put("pdf_id", pdfId);
+
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(body, headers);
+        String fastApiUrl = "http://localhost:8000/ask";
+        try {
+            ResponseEntity<AskQuestionResponseDTO> response = restTemplate.postForEntity(fastApiUrl, requestEntity,
+                    AskQuestionResponseDTO.class);
+            return response.getBody();
+        } catch (Exception e) {
+            throw new AskQuestionException();
         }
 
     }

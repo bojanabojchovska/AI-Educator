@@ -1,5 +1,6 @@
 package com.uiktp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -20,16 +21,11 @@ public class UserCourseAttachment extends Attachment {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "course_id")
+    @JsonIgnore
     private Course course;
-
-    public UserCourseAttachment(String fileName, String savedFileName, String fileType, String filePath,
-            LocalDateTime uploadedAt, String chatBotConversation, User user, Course course) {
-        super(fileName, savedFileName, fileType, filePath, uploadedAt);
-        this.user = user;
-        this.course = course;
-    }
 }

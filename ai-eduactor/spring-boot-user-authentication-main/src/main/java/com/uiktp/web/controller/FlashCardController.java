@@ -66,12 +66,8 @@ public class FlashCardController {
     @PostMapping("/generate")
     public ResponseEntity<List<FlashCard>> generateFlashCard(
             @RequestParam("attachment_id") UUID attachmentId,
-            @RequestParam("num_flashcards") int numFlashcards) {
-        try {
-            return ResponseEntity.ok(flashCardService.generateFlashCard(attachmentId, numFlashcards));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+            @RequestParam("num_flashcards") int numFlashcards) throws FileNotFoundException {
+        return ResponseEntity.ok(flashCardService.generateFlashCard(attachmentId, numFlashcards));
     }
 
     @GetMapping("/export/{courseId}")

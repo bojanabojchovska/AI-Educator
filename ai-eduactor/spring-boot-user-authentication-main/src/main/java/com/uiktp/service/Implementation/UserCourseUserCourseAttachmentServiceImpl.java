@@ -100,7 +100,10 @@ public class UserCourseUserCourseAttachmentServiceImpl implements UserCourseAtta
         attachment.setId(id);
         attachment.setOriginalFileName(dto.getFile().getOriginalFilename());
         attachment.setSavedFileName(uniqueFilename);
-        attachment.setFileUrl(filePath);
+        //filepath will be for example uploads/test.pdf while the url to acces the file will be localhost:8080/files/test.pdf
+        attachment.setFilePath(filePath);
+        attachment.setFileUrl("/files/" + uniqueFilename);
+
         attachment.setFileType("pdf");
         attachment.setUploadedAt(LocalDateTime.now());
         attachment.setUser(userRepository.findById(dto.getUserId())

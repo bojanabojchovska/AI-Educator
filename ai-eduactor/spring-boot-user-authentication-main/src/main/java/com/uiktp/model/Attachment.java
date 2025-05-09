@@ -18,6 +18,7 @@ public class Attachment {
     private String savedFileName;
 
     private String fileType;
+    private String filePath;
 
     private String fileUrl;
 

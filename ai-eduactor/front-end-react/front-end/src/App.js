@@ -14,6 +14,7 @@ import FlashcardActions from "./components/FlashcardActions"; // Import the Flas
 import CoursePage from './components/CoursePage';
 // import FlashcardGame from "./components/FlashcardGame";
 import FlashCardGamePage from "./components/FlashCardGamePage";
+import ChatBot from "./components/ChatBot";
 
 function App() {
     return (
@@ -34,6 +35,7 @@ function App() {
                     {/* <Route path="/flashcard-game/:courseId" element={<FlashcardGame />} />
                     <Route path="/flashcard-game/demo" element={<FlashcardGame demo={true} />} /> */}
                     <Route path="/flashcards/game/:courseId" element={<FlashCardGamePage />} />
+                    <Route path="/chatbot" element={<ChatBot />} />
                 </Routes>
             </div>
         </Router>

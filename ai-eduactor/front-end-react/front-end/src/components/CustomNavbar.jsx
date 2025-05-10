@@ -55,6 +55,7 @@ const CustomNavbar = () => {
                     <Nav.Link onClick={() => handleNavigate('/flashcards/game/1')}>Flash Cards</Nav.Link>
                     <Nav.Link onClick={() => handleNavigate('/subject-recommendation')}>Subject Recommendation</Nav.Link>
                     <Nav.Link onClick={() => handleNavigate('/course-reviews')}>Reviews</Nav.Link>
+                    <Nav.Link onClick={() => handleNavigate('/chatbot')}>ChatBot</Nav.Link>
                 </Nav>
 
                 <Nav>

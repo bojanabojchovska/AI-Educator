@@ -38,13 +38,11 @@ const ChatBot = () => {
     const handleSendMessage = () => {
         if (inputValue.trim() === '') return;
 
-        // Add user message
         const newMessage = { text: inputValue, isUser: true, timestamp: new Date() };
         const updatedMessages = [...messages, newMessage];
         setMessages(updatedMessages);
         setInputValue('');
 
-        // Simulate bot response (replace with actual API call in production)
         setTimeout(() => {
             const botResponse = {
                 text: "This is a sample response from AI Educator. In a real implementation, this would be connected to an AI API.",
@@ -54,7 +52,6 @@ const ChatBot = () => {
             const finalMessages = [...updatedMessages, botResponse];
             setMessages(finalMessages);
 
-            // Update session chat history if this is an active chat
             if (activeChat !== null) {
                 setChatHistory(prevHistory =>
                     prevHistory.map(chat =>
@@ -74,7 +71,6 @@ const ChatBot = () => {
     };
 
     const startNewChat = () => {
-        // Create a new chat in the session history
         const newChatId = chatHistory.length > 0 ? Math.max(...chatHistory.map(c => c.id)) + 1 : 1;
         const newChat = {
             id: newChatId,

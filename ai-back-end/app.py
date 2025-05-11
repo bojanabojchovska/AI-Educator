@@ -33,8 +33,8 @@ async def recommend_courses(request: CourseRecommendationRequst):
     # print(request.taken_courses)
     # print(request.remaining_courses)
     # print("======================")
-    # recommended_courses = await get_recommended_courses(request)
-    return JSONResponse(content={"recommended_courses": ["calculus", "idk?", "discrete Mathematics"]})
+    recommended_courses = await get_recommended_courses(request)
+    return JSONResponse(content={"recommended_courses": recommended_courses})
 
 @app.post("/upload_file")
 async def upload_file(file: UploadFile = File(...)):

@@ -15,6 +15,7 @@ import com.uiktp.model.exceptions.general.ResourceNotFoundException;
 import com.uiktp.repository.CourseRepository;
 import com.uiktp.repository.UserCourseAttachmentRepository;
 import com.uiktp.repository.UserRepository;
+import com.uiktp.service.Interface.AuthenticationService;
 import com.uiktp.service.Interface.UserCourseAttachmentService;
 import lombok.RequiredArgsConstructor;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -23,6 +24,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -48,6 +51,7 @@ public class UserCourseUserCourseAttachmentServiceImpl implements UserCourseAtta
     private final UserCourseAttachmentRepository userCourseAttachmentRepository;
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
+    private final AuthenticationService authenticationService;
     private static final String UPLOAD_DIR_PATH = "uploads";
 
     @Override
@@ -132,8 +136,12 @@ public class UserCourseUserCourseAttachmentServiceImpl implements UserCourseAtta
     }
 
     @Override
-    public List<UserCourseAttachment> getAttachmentsByCourseAndUser(Long courseId, Long userId) {
-        return userCourseAttachmentRepository.findAllByCourseIdAndUserId(courseId, userId);
+    public List<UserCourseAttachment> getAttachmentsByCourseAndUser(Long courseId) {
+        User currentUser = authenticationService.getCurrentlyLoggedInUser();
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId.toString()));
+
+        return userCourseAttachmentRepository.findAllByUserAndCourse(currentUser, course);
     }
 
     @Override

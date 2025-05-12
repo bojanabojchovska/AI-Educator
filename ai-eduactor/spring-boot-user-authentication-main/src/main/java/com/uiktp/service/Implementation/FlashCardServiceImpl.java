@@ -202,23 +202,13 @@ public class FlashCardServiceImpl implements FlashCardService {
     @Transactional(readOnly = true)
     public void exportFlashCardsToPdf(Long courseId, HttpServletResponse response)
             throws DocumentException, IOException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser;
-
-        if (authentication.getPrincipal() instanceof User) {
-            currentUser = (User) authentication.getPrincipal();
-        } else {
-            String currentUserEmail = authentication.getName();
-            currentUser = userRepository.findByEmail(currentUserEmail)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-        }
 
         Course course = courseRepository.findById(courseId).orElseThrow(
                 () -> new InvalidArgumentsException(String.format("Course with id: %d not found", courseId)));
 
         Hibernate.initialize(course.getLikedBy());
 
-        List<FlashCard> allUserCourseFlashcards = userCourseAttachmentService.getAttachmentsByCourseAndUser(courseId, currentUser.getId())
+        List<FlashCard> allUserCourseFlashcards = userCourseAttachmentService.getAttachmentsByCourseAndUser(courseId)
                 .stream()
                 .flatMap(attachment -> flashCardRepository.findAllByAttachment(attachment).stream())
                 .toList();

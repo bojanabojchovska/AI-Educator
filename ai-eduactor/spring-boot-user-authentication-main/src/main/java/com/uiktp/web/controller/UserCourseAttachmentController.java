@@ -12,6 +12,8 @@ import com.uiktp.service.Interface.UserCourseAttachmentService;
 import com.uiktp.service.Interface.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
@@ -49,8 +51,8 @@ public class UserCourseAttachmentController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<UserCourseAttachment>> getByCourseAndUser(@RequestParam Long courseId, @RequestParam Long userId) {
-        return ResponseEntity.ok(userCourseAttachmentService.getAttachmentsByCourseAndUser(courseId, userId));
+    public ResponseEntity<List<UserCourseAttachment>> getByCourseAndUser(@RequestParam Long courseId) {
+        return ResponseEntity.ok(userCourseAttachmentService.getAttachmentsByCourseAndUser(courseId));
     }
 
     @GetMapping("/{id}")

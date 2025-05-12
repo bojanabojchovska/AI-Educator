@@ -7,6 +7,8 @@ import com.uiktp.model.exceptions.general.InvalidArgumentsException;
 import com.uiktp.model.exceptions.credentials.InvalidUserCredentialsException;
 import com.uiktp.repository.UserRepository;
 import com.uiktp.service.Interface.AuthenticationService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -55,5 +57,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         newUser.setRole(UserRole.USER);
         return userRepository.save(newUser);
     }
+
+    @Override
+    public User getCurrentlyLoggedInUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser;
+
+        if (authentication.getPrincipal() instanceof User) {
+            currentUser = (User) authentication.getPrincipal();
+        } else {
+            String currentUserEmail = authentication.getName();
+            currentUser = userRepository.findByEmail(currentUserEmail)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+        }
+        return currentUser;
+    }
+
 
 }

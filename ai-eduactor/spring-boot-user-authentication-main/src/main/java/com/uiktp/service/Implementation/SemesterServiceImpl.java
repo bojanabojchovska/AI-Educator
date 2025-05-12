@@ -99,6 +99,10 @@ public class SemesterServiceImpl implements SemesterService {
             semester = new Semester();
         }
 
+        if (dto.getCourses().size() > 5) {
+            throw new IllegalStateException("A semester can have a maximum of 5 courses.");
+        }
+
         semester.setName(dto.getName());
         List<Course> courses = courseService.getCoursesByTitleIn(dto.getCourses());
         semester.setCourses(courses);

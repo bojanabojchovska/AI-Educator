@@ -1,6 +1,4 @@
 import axios from 'axios';
-import config from "bootstrap/js/src/util/config";
-
 
 export const AUTH_BASE_URL = 'http://localhost:8080/auth';
 export const API_URL = 'http://localhost:8080/api';

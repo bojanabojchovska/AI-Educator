@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FiUpload } from "react-icons/fi";
-import CustomNavbar from "./CustomNavbar";
-import {getCourseAttachments, getCourses} from "../repository/api";
+import CustomNavbar from "../app-custom/CustomNavbar";
+import {getCourseAttachments, getCourses, uploadAttachment} from "../../services/api";
 import axios from "axios";
-import "./FlashcardsPage.css";
+import "./CoursePage.css";
 
 const CoursePage = () => {
   const { courseName } = useParams();
@@ -14,6 +14,9 @@ const CoursePage = () => {
   const [numFlashcards, setNumFlashcards] = useState(0);
   const [isGenerated, setIsGenerated] = useState(false);
   const [attachments, setAttachments] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [error, setError] = useState(null);
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     const fetchCourseDetails = async () => {
@@ -34,9 +37,30 @@ const CoursePage = () => {
     fetchCourseDetails();
   }, [courseName]);
 
-  const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
-    setIsGenerated(false);
+  const handleChooseFile = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      setSelectedFile(file);
+    } else {
+      alert('Please upload a valid PDF file.');
+      setSelectedFile(null);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) return;
+
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    formData.append('courseId', courseDetails.id);
+
+
+    try {
+      const data = await uploadAttachment(formData);
+      setNotification("File " + data.originalFileName + " uploaded successfully!")
+    } catch (error) {
+      setError(error);
+    }
   };
 
   const handleNumChange = (event) => {
@@ -97,66 +121,44 @@ const CoursePage = () => {
   return (
       <>
         <CustomNavbar/>
+
+        <div className="course-details-section">
+          <h1 className="course-details-title">{courseName}</h1>
+          <p className="course-details-description">{courseDetails.description}</p>
+        </div>
+
         <div className="flashcards-container">
-          <h1 className="flashcards-title">{courseDetails.title}</h1>
-          <p className="flashcards-subtitle">{courseDetails.description}</p>
+          <h1 className="flashcards-title">Upload Your Course PDF</h1>
+          <p className="flashcards-subtitle">
+            Upload a PDF related to your course. You can generate flashcards, take a quiz, download them,
+            and preview them anytime.
+          </p>
 
-          <div className="flashcards-buttons">
-            <button className="flashcards-button" onClick={handlePlayDemo}>
-              Try Flashcards Game
-            </button>
-            <br/>
-          </div>
-
-          <div className="flashcards-upload-range">
-            <div className="upload-section">
-              <label>Upload PDF</label>
-              <div className="upload-icon">
-                <label htmlFor="file-upload">
-                  <FiUpload size={24}/>
-                </label>
-                <input
-                    id="file-upload"
-                    type="file"
-                    accept="application/pdf"
-                    onChange={handleFileChange}
-                    style={{display: "none"}}
-                />
-              </div>
-            </div>
-
-            <div className="range-section">
-              <label>Select number of flashcards</label>
-              <div className="range-control">
-                <span>0</span>
-                <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={numFlashcards}
-                    onChange={handleNumChange}
-                />
-                <span>100</span>
-              </div>
-            </div>
+          <div className="upload-box">
+            <label htmlFor="file-upload" className="custom-upload-label">
+              <FiUpload size={20}/>
+              {selectedFile ? selectedFile.name : 'Choose PDF File'}
+            </label>
+            <input
+                id="file-upload"
+                type="file"
+                accept="application/pdf"
+                onChange={handleChooseFile}
+                style={{display: 'none'}}
+            />
           </div>
 
           <div className="flashcards-buttons">
-            <button className="flashcards-button" onClick={handleGenerate}>
-              Generate Flashcards
+            <button
+                className="flashcards-button"
+                onClick={handleUpload}
+                disabled={!selectedFile}
+            >
+              Upload PDF
             </button>
-            {isGenerated && (
-                <>
-                  <button className="flashcards-button" onClick={handleDownload}>
-                    Download
-                  </button>
-                  <button className="flashcards-button" onClick={handlePlayGame}>
-                    Play Game
-                  </button>
-                </>
-            )}
           </div>
         </div>
+
         <div className="attachments-section">
           <h2>Uploaded Documents</h2>
           {attachments.length === 0 ? (
@@ -189,7 +191,6 @@ const CoursePage = () => {
               </ul>
           )}
         </div>
-
       </>
   );
 };

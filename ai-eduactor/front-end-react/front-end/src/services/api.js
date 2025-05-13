@@ -407,5 +407,21 @@ export const getCourseAttachments = async (courseId) => {
         return res.data;
     } catch (error) {
         console.error("Error fetching course attachments:", error);
+        throw error;
+    }
+}
+
+export const uploadAttachment = async (formData) => {
+    try {
+        const response = await axios.post('http://localhost:8080/api/attachments/upload', formData, {
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error during file upload:', error);
+        throw error;
     }
 }

@@ -4,8 +4,8 @@ import "./LoginPage.css";
 import axios from "axios";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 //axios.defaults.withCredentials = true;
-import aiImage from "../assets/books.png";
-import {login} from "../repository/api";
+import aiImage from "../../assets/books.png";
+import {login} from "../../services/api";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");

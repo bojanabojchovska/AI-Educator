@@ -112,8 +112,7 @@ public class UserCourseUserCourseAttachmentServiceImpl implements UserCourseAtta
 
         attachment.setFileType("pdf");
         attachment.setUploadedAt(LocalDateTime.now());
-        attachment.setUser(userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException(User.class, dto.getUserId().toString())));
+        attachment.setUser(authenticationService.getCurrentlyLoggedInUser());
         attachment.setCourse(courseRepository.findById(dto.getCourseId())
                 .orElseThrow(() -> new ResourceNotFoundException(Course.class, dto.getCourseId().toString())));
 

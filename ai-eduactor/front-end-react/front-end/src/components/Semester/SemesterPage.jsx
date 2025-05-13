@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {Modal} from 'react-bootstrap';
-import CustomNavbar from './CustomNavbar';
-import './HomePage.css';
+import CustomNavbar from '../app-custom/CustomNavbar';
+import '../home/HomePage.css';
 import './SemesterPage.css';
-import {createSemester, deleteSemester, getCourses, getSemesters} from '../repository/api';
+import {createSemester, deleteSemester, getCourses, getSemesters} from '../../services/api';
 import {useNavigate} from 'react-router-dom';
-import Notification from './Notification';
+import Notification from '../app-custom/Notification';
 
 const SemesterPage = () => {
     const MAX_CHOSEN_COURSES = 5;

@@ -35,7 +35,7 @@ public class SecurityConfigurations {
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
 //                                .requestMatchers("/**").permitAll()
-                        .requestMatchers("/auth/login", "/auth/register", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("http://localhost:3000/**", "/auth/login", "/auth/register", "/css/**", "/js/**", "/images/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Navbar, Container, Nav } from 'react-bootstrap';
 import { useNavigate, Link } from 'react-router-dom';
 import './CustomNavbar.css';
-import { logout } from "../repository/api";
+import { logout } from "../../services/api";
 
 const CustomNavbar = () => {
     const navigate = useNavigate();

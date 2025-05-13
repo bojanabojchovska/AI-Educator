@@ -3,10 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { GraduationCap } from "lucide-react";
 import "./RegisterPage.css";
 import axios from "axios";
-import {AUTH_BASE_URL, registerUser} from "../repository/api";
-import Notification from "../components/Notification"; // Import the Notification component
+import {AUTH_BASE_URL, registerUser} from "../../services/api";
+import Notification from "../app-custom/Notification"; // Import the Notification component
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
-import aiImage from "../assets/books.png";
+import aiImage from "../../assets/books.png";
 
 const RegisterPage = () => {
   const [name, setName] = useState("");

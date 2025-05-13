@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { getFlashCardsByCourseId, deleteFlashCard } from "../repository/api";
-import CustomNavbar from "./CustomNavbar";
+import { getFlashCardsByCourseId, deleteFlashCard } from "../services/api";
+import CustomNavbar from "./app-custom/CustomNavbar";
 import "./FlashCardGamePage.css";
 import { Spinner } from "react-bootstrap";
 

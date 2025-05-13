@@ -1,19 +1,19 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LoginPage from "./components/LoginPage";
-import RegisterPage from "./components/RegisterPage";
-import Admin from './components/Admin';
-import HomePage from './components/HomePage';
-import SemesterPage from "./components/SemesterPage";
-import CourseReviews from "./components/CourseReviews";
-import CourseReviewPage from './components/CourseReviewPage';
+import LoginPage from "./components/Authentication/LoginPage";
+import RegisterPage from "./components/Authentication/RegisterPage";
+import Admin from './components/Admin/Admin';
+import HomePage from './components/home/HomePage';
+import SemesterPage from "./components/Semester/SemesterPage";
+import CourseReviews from "./components/Predmetnik/CourseReviews";
+import CourseReviewPage from './components/Predmetnik/CourseReviewPage';
 import FlashcardsPage from "./components/FlashcardsPage";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import SubjectRecommendation from "./components/SubjectRecommendation";
+import SubjectRecommendation from "./components/Recommendations/SubjectRecommendation";
 import FlashcardActions from "./components/FlashcardActions";
-import CoursePage from './components/CoursePage';
+import CoursePage from './components/CoursePage/CoursePage';
 import FlashCardGamePage from "./components/FlashCardGamePage";
-import ChatBot from "./components/ChatBot";
+import ChatBot from "./components/ChatBot/ChatBot";
 import PrivateRoute from "./PrivateRoute";
 
 function App() {

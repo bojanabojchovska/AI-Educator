@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './ChatBot.css';
-import CustomNavbar from './CustomNavbar';
+import CustomNavbar from '../app-custom/CustomNavbar';
 
 const ChatBot = () => {
     const [messages, setMessages] = useState([]);

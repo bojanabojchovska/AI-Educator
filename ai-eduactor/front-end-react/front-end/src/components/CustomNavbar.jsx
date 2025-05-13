@@ -1,57 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar, Container, Nav } from 'react-bootstrap';
-import { useNavigate, useLocation } from 'react-router-dom'; // useLocation to detect route change
+import { useNavigate, Link } from 'react-router-dom';
 import './CustomNavbar.css';
-import {logout} from "../repository/api";
+import { logout } from "../repository/api";
 
 const CustomNavbar = () => {
     const navigate = useNavigate();
-    const location = useLocation();
-
     const [name, setName] = useState(localStorage.getItem("name"));
 
     useEffect(() => {
         const storedName = localStorage.getItem("name");
         setName(storedName);
-    }, [location]);
-
-    const handleNavigate = (path) => {
-        const isLoggedIn = localStorage.getItem("email");
-    
-        if (isLoggedIn || path === "/") {
-            navigate(path);
-        }
-        else {
-            navigate("/login");
-        }
-    };
-    
+    }, []);
 
     const handleLogout = async () => {
         try {
             await logout();
-            setName(null); 
-            navigate('/login'); 
+            setName(null);
+            navigate('/login');
         } catch (error) {
             console.error("Error logging out:", error);
         }
     };
-    
 
     return (
         <Navbar bg="light" expand="lg">
             <Container>
-                <Navbar.Brand onClick={() => handleNavigate('/')} style={{ cursor: 'pointer' }}>
+                <Navbar.Brand as={Link} to="/" style={{ cursor: 'pointer' }}>
                     AI Educator
                 </Navbar.Brand>
 
                 <Nav className="me-auto">
-                    <Nav.Link onClick={() => handleNavigate('/')}>Home</Nav.Link>
-                    <Nav.Link onClick={() => handleNavigate('/semester-planning')}>Semesters</Nav.Link>
-                    <Nav.Link onClick={() => handleNavigate('/flashcards/game/1')}>Flash Cards</Nav.Link>
-                    <Nav.Link onClick={() => handleNavigate('/subject-recommendation')}>Subject Recommendation</Nav.Link>
-                    <Nav.Link onClick={() => handleNavigate('/course-reviews')}>Reviews</Nav.Link>
-                    <Nav.Link onClick={() => handleNavigate('/chatbot')}>ChatBot</Nav.Link>
+                    <Link to="/" className="nav-link">
+                        Home
+                    </Link>
+                    <Link to="/semester-planning" className="nav-link">
+                        Semesters
+                    </Link>
+                    <Link to="/flashcards/game/1" className="nav-link">
+                        Flash Cards
+                    </Link>
+                    <Link to="/subject-recommendation" className="nav-link">
+                        Subject Recommendation
+                    </Link>
+                    <Link to="/course-reviews" className="nav-link">
+                        Reviews
+                    </Link>
+                    <Link to="/chatbot" className="nav-link">
+                        ChatBot
+                    </Link>
                 </Nav>
 
                 <Nav>
@@ -64,12 +61,12 @@ const CustomNavbar = () => {
                         </>
                     ) : (
                         <>
-                            <button className="nav-auth-button nav-login-btn" onClick={() => handleNavigate('/login')}>
+                            <Link to="/login" className="nav-auth-button nav-login-btn">
                                 Log In
-                            </button>
-                            <button className="nav-auth-button nav-register-btn" onClick={() => handleNavigate('/register')}>
+                            </Link>
+                            <Link to="/register" className="nav-auth-button nav-register-btn">
                                 Register
-                            </button>
+                            </Link>
                         </>
                     )}
                 </Nav>

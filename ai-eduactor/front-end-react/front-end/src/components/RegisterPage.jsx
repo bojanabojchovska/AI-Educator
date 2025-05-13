@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { GraduationCap } from "lucide-react";
 import "./RegisterPage.css";
 import axios from "axios";
-import { AUTH_BASE_URL } from "../repository/api";
+import {AUTH_BASE_URL, registerUser} from "../repository/api";
 import Notification from "../components/Notification"; // Import the Notification component
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import aiImage from "../assets/books.png";
@@ -25,44 +25,18 @@ const RegisterPage = () => {
     }
 
     try {
-      const response = await axios.post(
-        `${AUTH_BASE_URL}/register`,
-        { name, email, password },
-        { headers: { "Content-Type": "application/json" } }
-      );
-
-      if (response.status === 200) {
-        setNotification({
-          message: "Registration successful! Redirecting to Login Page...",
-          type: "success",
-        });
-        setTimeout(() => navigate("/login"), 2000); // Redirect after 2 seconds
-      }
-    } catch (error) {
-      if (error.response) {
-        if (error.response.status === 409) {
-          setNotification({
-            message: "Email is already taken. Please use a different email.",
-            type: "error",
-          });
-        } else if (error.response.status === 400) {
-          setNotification({
-            message: "Invalid input data. Please check your information.",
-            type: "error",
-          });
-        } else {
-          setNotification({
-            message: "Something went wrong. Please try again later.",
-            type: "error",
-          });
-        }
-      } else {
-        setNotification({
-          message: "Network error. Please check your connection.",
-          type: "error",
-        });
-      }
-      console.error("Registration failed:", error);
+      await registerUser(name, email, password);
+      setNotification({
+        message: "Registration successful! Redirecting to Login Page...",
+        type: "success",
+      });
+      setTimeout(() => navigate("/login"), 1200);
+    }catch(err){
+      setNotification({
+        message: err,
+        type: "error"
+      })
+      console.log(err);
     }
   };
 

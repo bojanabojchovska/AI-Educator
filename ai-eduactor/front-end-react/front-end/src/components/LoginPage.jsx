@@ -5,6 +5,7 @@ import axios from "axios";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 //axios.defaults.withCredentials = true;
 import aiImage from "../assets/books.png";
+import {login} from "../repository/api";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -24,38 +25,11 @@ const LoginPage = () => {
 
     try {
       setIsLoading(true);
-
-      const response = await axios.post("http://localhost:8080/auth/login", {
-        email,
-        password,
-      });
-
-      if (response.status === 200) {
-        const { token, email, name } = response.data;
-        localStorage.setItem("token", token);
-        localStorage.setItem("email", email);
-        localStorage.setItem("name", name);
-        navigate("/"); // Redirect after successful login
-      }
-    } catch (err) {
-      console.error(err);
-
-      if (err.response) {
-        // Check status codes and show backend error message
-        if (err.response.status === 401) {
-          setError(
-            err.response.data || "Invalid email or password. Please try again."
-          );
-        } else if (err.response.status === 500) {
-          setError("An error occurred. Please try again later.");
-        } else {
-          setError("An unexpected error occurred. Please try again.");
-        }
-      } else {
-        // Handle cases where there is no response from the server (e.g., network error)
-        setError(
-          "Unable to reach the server. Please check your network and try again."
-        );
+      try{
+        await login(email, password);
+        navigate("/");
+      }catch (err){
+        setError(err);
       }
     } finally {
       setIsLoading(false);

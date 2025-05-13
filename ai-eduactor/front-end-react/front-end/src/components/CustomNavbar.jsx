@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Navbar, Container, Nav } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom'; // useLocation to detect route change
 import './CustomNavbar.css';
+import {logout} from "../repository/api";
 
 const CustomNavbar = () => {
     const navigate = useNavigate();
@@ -28,12 +29,7 @@ const CustomNavbar = () => {
 
     const handleLogout = async () => {
         try {
-            await fetch('http://localhost:8080/auth/logout', {
-                method: 'POST',
-                credentials: 'include',
-            });
-    
-            localStorage.clear(); 
+            await logout();
             setName(null); 
             navigate('/login'); 
         } catch (error) {

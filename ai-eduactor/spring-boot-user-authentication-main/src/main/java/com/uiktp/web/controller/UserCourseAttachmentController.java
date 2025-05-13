@@ -50,7 +50,7 @@ public class UserCourseAttachmentController {
         return ResponseEntity.ok(userCourseAttachmentService.getAttachmentsByCourse(courseId));
     }
 
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<List<UserCourseAttachment>> getByCourseAndUser(@RequestParam Long courseId) {
         return ResponseEntity.ok(userCourseAttachmentService.getAttachmentsByCourseAndUser(courseId));
     }

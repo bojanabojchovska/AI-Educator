@@ -6,17 +6,26 @@ export const API_URL = 'http://localhost:8080/api';
 export const login = async (email, password) => {
     try {
         const response = await axios.post(`${AUTH_BASE_URL}/login`, {email, password});
-        return response.data;
-    } catch (error) {
-        console.error('Error during login:', error);
-        throw error;
+        if (response.status === 200) {
+            const {token, email, name} = response.data;
+            localStorage.setItem("token", token);
+            localStorage.setItem("email", email);
+            localStorage.setItem("name", name);
+            document.cookie = `jwt=${token}; path=/`;
+        }
+    } catch (err) {
+        console.log("Error while logging in", err);
+        throw err;
     }
 };
 
-export const registerUser = async (userData) => {
+export const registerUser = async (name, email, password) => {
     try {
-        const response = await axios.post(`${AUTH_BASE_URL}/register`, userData);
-        return response.data;
+        await axios.post(
+            `${AUTH_BASE_URL}/register`,
+            { name, email, password },
+            { headers: { "Content-Type": "application/json" } }
+        );
     } catch (error) {
         console.error("Error during registration:", error);
         throw error;
@@ -25,8 +34,12 @@ export const registerUser = async (userData) => {
 
 export const logout = async () => {
     try {
-        const response = await axios.post(`${AUTH_BASE_URL}/logout`);
-        return response.data;
+        await axios.post(`${AUTH_BASE_URL}/logout`, {}, {
+            withCredentials: true
+        });
+
+        document.cookie = "jwt=; Max-Age=0; path=/";
+        localStorage.clear();
     } catch (error) {
         console.error('Error during logout:', error);
         throw error;
@@ -35,14 +48,11 @@ export const logout = async () => {
 
 export const deleteSemester = async (id) => {
     try {
-        const response = await fetch(`${API_URL}/semesters/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
+        const response = await axios.delete(`${API_URL}/semesters/${id}`, {
+           withCredentials: true
         });
 
-        if (response.ok) {
+        if (response.status === 200) {
             console.log('Semester deleted successfully');
         } else {
             console.error('Failed to delete semester');
@@ -54,7 +64,9 @@ export const deleteSemester = async (id) => {
 
 export const getCourses = async () => {
     try {
-        const response = await axios.get(`${API_URL}/courses`);
+        const response = await axios.get(`${API_URL}/courses`, {
+            withCredentials: true
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching courses:', error);
@@ -64,7 +76,9 @@ export const getCourses = async () => {
 
 export const createCourse = async (courseData) => {
     try {
-        const response = await axios.post(`${API_URL}/courses`, courseData);
+        const response = await axios.post(`${API_URL}/courses`, courseData, {
+            withCredentials: true
+        });
         return response.data;
     } catch (error) {
         console.error('Error creating course:', error);
@@ -74,7 +88,9 @@ export const createCourse = async (courseData) => {
 
 export const updateCourse = async (id, courseData) => {
     try {
-        const response = await axios.put(`${API_URL}/courses/${id}`, courseData);
+        const response = await axios.put(`${API_URL}/courses/${id}`, courseData, {
+            withCredentials: true
+        });
         return response.data;
     } catch (error) {
         console.error('Error updating course:', error);
@@ -85,7 +101,9 @@ export const updateCourse = async (id, courseData) => {
 export const deleteCourse = async (id) => {
     try {
         console.log("Attempting to delete course with ID:", id);
-        const response = await axios.delete(`${API_URL}/courses/${id}`);
+        const response = await axios.delete(`${API_URL}/courses/${id}`, {
+            withCredentials: true
+        });
         return response.data;
     } catch (error) {
         console.error('Error deleting course:', error);
@@ -119,6 +137,7 @@ export const uploadFile = async (file) => {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
+            withCredentials: true
         });
 
         return response.data;
@@ -134,6 +153,7 @@ export const importCourses = async (formData) => {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
+            withCredentials: true
         });
         return response.data;
     } catch (error) {
@@ -145,7 +165,9 @@ export const importCourses = async (formData) => {
 
 export const getFlashCards = async () => {
     try {
-        const response = await axios.get(`${API_URL}/flashcards`);
+        const response = await axios.get(`${API_URL}/flashcards`, {
+            withCredentials: true
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching flashcards:', error);
@@ -155,7 +177,9 @@ export const getFlashCards = async () => {
 
 export const createFlashCard = async (flashCardData) => {
     try {
-        const response = await axios.post(`${API_URL}/flashcards`, flashCardData);
+        const response = await axios.post(`${API_URL}/flashcards`, flashCardData, {
+            withCredentials: true
+        });
         return response.data;
     } catch (error) {
         console.error('Error creating flashcard:', error);
@@ -164,7 +188,9 @@ export const createFlashCard = async (flashCardData) => {
 };
 export const getFlashCardsByCourseId = async (courseId) => {
     try {
-        const response = await axios.get(`${API_URL}/flashcards/game/${courseId}`);
+        const response = await axios.get(`${API_URL}/flashcards/game/${courseId}`, {
+            withCredentials: true
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching flashcards:', error);
@@ -174,13 +200,9 @@ export const getFlashCardsByCourseId = async (courseId) => {
 
 export const getSemesters = async (email, token) => {
     try {
-        const headers = {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-        };
 
         const response = await axios.get(`${API_URL}/semesters`, {
-            headers,
+            withCredentials: true,
             params: {email}
         });
 
@@ -195,7 +217,9 @@ export const getSemesters = async (email, token) => {
 
 export const createSemester = async (semesterData, email) => {
     try {
-        const response = await axios.post(`${API_URL}/semesters/createOrUpdate?email=${email}`, semesterData);
+        const response = await axios.post(`${API_URL}/semesters/createOrUpdate?email=${email}`, semesterData, {
+            withCredentials: true
+        });
         return response.data;
     } catch (error) {
         console.error('Error creating semester:', error);
@@ -204,20 +228,16 @@ export const createSemester = async (semesterData, email) => {
 };
 
 export const getCourseRecommendations = async (takenSubjects) => {
-    const response = await axios.post(`${API_URL}/courses/recommend`, takenSubjects);
+    const response = await axios.post(`${API_URL}/courses/recommend`, takenSubjects, {
+        withCredentials: true
+    });
     return response.data;
 };
 
 
 export const submitSubjectReview = async (courseId, reviewData) => {
     try {
-        const token = localStorage.getItem('token');
         const email = localStorage.getItem('email');
-        const headers = {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        };
-
         const requests = [];
 
         // Submit rating
@@ -226,7 +246,9 @@ export const submitSubjectReview = async (courseId, reviewData) => {
                 axios.post(`${API_URL}/courses/${courseId}/ratings`, {
                     ratingValue: parseInt(reviewData.rating),
                     studentEmail: email
-                }, {headers})
+                }, {
+                    withCredentials: true
+                })
             );
         }
 
@@ -236,7 +258,9 @@ export const submitSubjectReview = async (courseId, reviewData) => {
                 axios.post(`${API_URL}/courses/${courseId}/comments`, {
                     commentBody: reviewData.feedback.trim(),
                     studentEmail: email
-                }, {headers})
+                }, {
+                    withCredentials: true
+                })
             );
         }
 
@@ -250,18 +274,15 @@ export const submitSubjectReview = async (courseId, reviewData) => {
 
 export const submitSubjectComment = async (courseId, commentFeedback) => {
     try {
-        const token = localStorage.getItem('token');
         const email = localStorage.getItem('email');
-        const headers = {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        };
 
         if (commentFeedback && commentFeedback.trim()) {
             await axios.post(`${API_URL}/courses/${courseId}/comments`, {
                 commentBody: commentFeedback.trim(),
                 studentEmail: email
-            }, {headers})
+            }, {
+                withCredentials: true
+            })
         }
     } catch (error) {
         console.error('Error submitting review:', error);
@@ -272,8 +293,12 @@ export const submitSubjectComment = async (courseId, commentFeedback) => {
 export const getSubjectReviews = async (courseId) => {
     try {
         const [commentsResponse, ratingResponse] = await Promise.all([
-            axios.get(`${API_URL}/courses/${courseId}/comments`),
-            axios.get(`${API_URL}/courses/${courseId}/ratings/average`)
+            axios.get(`${API_URL}/courses/${courseId}/comments`, {
+                withCredentials: true
+            }),
+            axios.get(`${API_URL}/courses/${courseId}/ratings/average`, {
+                withCredentials: true
+            })
         ]);
 
         // Logging both responses to make sure the structure is correct
@@ -292,15 +317,10 @@ export const getSubjectReviews = async (courseId) => {
 
 export const addCourseToFavorites = async (courseId) => {
     try {
-        const token = localStorage.getItem('token');
         const email = localStorage.getItem('email');
-        const headers = {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        };
 
         const response = await axios.put(`${API_URL}/courses/${courseId}/favorite/add`, {}, {
-            headers,
+            withCredentials: true,
             params: {
                 email: email
             }
@@ -314,15 +334,10 @@ export const addCourseToFavorites = async (courseId) => {
 
 export const removeCourseFromFavorites = async (courseId) => {
     try {
-        const token = localStorage.getItem('token');
         const email = localStorage.getItem('email');
-        const headers = {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        };
 
         await axios.put(`${API_URL}/courses/${courseId}/favorite/remove`, {}, {
-            headers,
+            withCredentials: true,
             params: {
                 email: email
             }
@@ -335,15 +350,10 @@ export const removeCourseFromFavorites = async (courseId) => {
 
 export const getFavoriteCourses = async () => {
     try {
-        const token = localStorage.getItem('token');
         const email = localStorage.getItem('email');
-        const headers = {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        };
 
         const response = await axios.get(`${API_URL}/courses/favorites`, {
-            headers,
+            withCredentials: true,
             params: {
                 email: email
             }
@@ -357,16 +367,10 @@ export const getFavoriteCourses = async () => {
 
 export const deleteComment = async (courseId, commentId) => {
     try {
-        const token = localStorage.getItem('token');
         const email = localStorage.getItem('email');
-        const headers = {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        };
 
-        // Remove the empty object {} from the delete request, had an error with it
         const response = await axios.delete(`${API_URL}/courses/${courseId}/comments/${commentId}`, {
-            headers,
+            withCredentials: true,
             params: {
                 email: email
             }
@@ -380,13 +384,9 @@ export const deleteComment = async (courseId, commentId) => {
 
 export const deleteFlashCard = async (id) => {
     try {
-        const token = localStorage.getItem('token');  // земаш токен ако има логирање
-        const headers = {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-        };
-
-        const response = await axios.delete(`${API_URL}/flashcards/${id}`, {headers});
+        const response = await axios.delete(`${API_URL}/flashcards/${id}`, {
+            withCredentials: true
+        });
         return response.data;
     } catch (error) {
         console.error('Error deleting flashcard:', error);
@@ -396,18 +396,13 @@ export const deleteFlashCard = async (id) => {
 
 export const getCourseAttachments = async (courseId) => {
     try {
-        const token = localStorage.getItem('token');  // земаш токен ако има логирање
-        const headers = {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-        };
-
         const res = await axios.get(
             `http://localhost:8080/api/attachments`, {
-                headers,
+                withCredentials: true,
                 params: {
                     courseId: courseId
-                }
+                },
+
             });
         return res.data;
     } catch (error) {

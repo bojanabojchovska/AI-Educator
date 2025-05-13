@@ -27,7 +27,7 @@ async def get_recommended_courses(request):
     return answer
 
 async def get_flashcards(num_flashcards, file):
-    llm = get_llm_model(repo_id="mistralai/Mistral-7B-Instruct-v0.3")
+    llm = get_llm_model(repo_id="mistralai/Mistral-7B-Instruct-v0.3", task="conversational")
     prompt = flash_cards_prompt_template(num_flashcards)
     qa_chain = LLMChain(prompt=prompt, llm=llm)
     text = await asyncio.to_thread(format_document, file)

@@ -33,6 +33,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1rem;
     background-color: #fff;
     margin-bottom: 0.5rem;
     padding: 0.6rem 1rem;
@@ -46,14 +47,24 @@
 }
 
 .attachment-item span {
-    flex: 1;
+    flex: 0 0 50%;
     font-size: 0.95rem;
     color: #444;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 1rem;
+}
+.attachment-item div {
+    flex: 1;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    align-items: center;
 }
 
-
 /* === Flashcards Section === */
-.flashcards-container {
+.upload-container {
     background-color: #fff;
     border-radius: 8px;
     border: 1px solid #ddd;
@@ -68,12 +79,12 @@
     overflow-y: auto;  /* Add scrolling if content exceeds max height */
 }
 
-.flashcards-title {
+.upload-title {
     font-size: 1.5rem;
     color: #7B1E1E;
 }
 
-.flashcards-subtitle {
+.upload-subtitle {
     font-size: 1rem;
     color: #555;
     margin-bottom: 1rem;  /* Reduced margin */
@@ -150,6 +161,10 @@
     width: 150px;
 }
 
+input[type="number"]{
+    margin-right: 3%;
+    width: 60px;
+}
 
 /* === Buttons === */
 .flashcards-buttons {
@@ -197,7 +212,7 @@
     border-radius: 8px;
     border: 1px solid #ddd;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-    text-align: left;
+    text-align: center;
 }
 
 .course-details-title {
@@ -212,3 +227,41 @@
     margin-bottom: 1rem;
     max-width: 800px;
 }
+
+.icon-button {
+    position: relative;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px;
+    margin-left: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .icon-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .icon-button .button-tooltip {
+    visibility: hidden;
+    width: max-content;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 4px 8px;
+    border-radius: 5px;
+  
+    position: absolute;
+    z-index: 1;
+    top: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+  
+  .icon-button:hover .button-tooltip {
+    visibility: visible;
+  }
+  

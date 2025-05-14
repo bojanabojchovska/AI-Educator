@@ -156,12 +156,11 @@ const CoursePage = () => {
     setIsDownloading(true);
     try {
       const url = await exportFlashCards(courseDetails.id);
-      setNotification("Successfully exported flashcards to pdf!");
+      setNotification("Successfully exported flashcards to PDF!");
       setIsDownloading(false);
 
-      const link = document.createElement("a");
-      link.href = url;
-      link.click();
+      // Open in new tab
+      window.open(url, "_blank");
     } catch (error) {
       setIsDownloading(false);
       console.error("Error downloading flashcards:", error);

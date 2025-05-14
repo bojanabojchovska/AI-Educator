@@ -245,8 +245,9 @@ const CoursePage = () => {
                         <button
                             onClick={() => handleDelete(attachment.id)}
                             className="flashcards-button"
+                            title="delete"
                         >
-                          <FaTrash style={{ cursor: 'pointer' }}/>
+                          <FaTrash/>
                         </button>
 
                         {isGeneratedClicked && !isGenerated && (

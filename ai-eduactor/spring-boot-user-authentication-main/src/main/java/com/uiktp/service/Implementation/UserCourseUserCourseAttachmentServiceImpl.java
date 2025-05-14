@@ -38,11 +38,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -140,7 +136,11 @@ public class UserCourseUserCourseAttachmentServiceImpl implements UserCourseAtta
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId.toString()));
 
-        return userCourseAttachmentRepository.findAllByUserAndCourse(currentUser, course);
+        List<UserCourseAttachment> attachments = userCourseAttachmentRepository.findAllByUserAndCourse(currentUser, course)
+                .stream()
+                .sorted(Comparator.comparing(UserCourseAttachment::getUploadedAt).reversed())
+                .toList();
+        return attachments;
     }
 
     @Override

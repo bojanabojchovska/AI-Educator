@@ -1,20 +1,33 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, use} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FiUpload } from "react-icons/fi";
 import CustomNavbar from "../app-custom/CustomNavbar";
-import {getCourseAttachments, getCourses, uploadAttachment} from "../../services/api";
-import axios from "axios";
+import {
+  getCourseAttachments,
+  getCourses,
+  generateFlashCards,
+  getFlashCardsByCourseAndUser,
+  uploadCourseAttachment, exportFlashCards, deleteAttachment
+} from "../../services/api";
 import "./CoursePage.css";
+import {Spinner} from "react-bootstrap";
+import { FaTrash } from 'react-icons/fa';
 
 const CoursePage = () => {
   const { courseName } = useParams();
   const navigate = useNavigate();
   const [courseDetails, setCourseDetails] = useState(null);
-  const [file, setFile] = useState(null);
-  const [numFlashcards, setNumFlashcards] = useState(0);
-  const [isGenerated, setIsGenerated] = useState(false);
   const [attachments, setAttachments] = useState([]);
+
   const [selectedFile, setSelectedFile] = useState(null);
+
+  const [numFlashcards, setNumFlashcards] = useState(1);
+  const [isGeneratedClicked, setIsGeneratedClicked] = useState(false);
+  const [isGenerated, setIsGenerated] = useState(false);
+  const [flashCards, setFlashCards] = useState([]);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
   const [error, setError] = useState(null);
   const [notification, setNotification] = useState(null);
 
@@ -28,6 +41,9 @@ const CoursePage = () => {
         if(course){
           const courseAttachments = await getCourseAttachments(course.id);
           setAttachments(courseAttachments);
+
+          const flashCards = await getFlashCardsByCourseAndUser(course.id);
+          setFlashCards(flashCards);
         }
       } catch (error) {
         console.error("Error fetching course details:", error);
@@ -38,9 +54,9 @@ const CoursePage = () => {
   }, [courseName]);
 
   const handleChooseFile = (e) => {
-    const file = e.target.files[0];
-    if (file && file.type === 'application/pdf') {
-      setSelectedFile(file);
+    const selectedFile = e.target.files[0];
+    if (selectedFile && selectedFile.type === 'application/pdf') {
+      setSelectedFile(selectedFile);
     } else {
       alert('Please upload a valid PDF file.');
       setSelectedFile(null);
@@ -48,18 +64,22 @@ const CoursePage = () => {
   };
 
   const handleUpload = async () => {
+    setIsUploading(true);
     if (!selectedFile) return;
 
     const formData = new FormData();
     formData.append('file', selectedFile);
     formData.append('courseId', courseDetails.id);
 
-
     try {
-      const data = await uploadAttachment(formData);
+      const data = await uploadCourseAttachment(formData);
       setNotification("File " + data.originalFileName + " uploaded successfully!")
+      setAttachments([...attachments, data]);
+      setSelectedFile(null);
+      setIsUploading(false);
     } catch (error) {
       setError(error);
+      setIsUploading(false);
     }
   };
 
@@ -67,31 +87,18 @@ const CoursePage = () => {
     setNumFlashcards(event.target.value);
   };
 
-  const handleGenerate = async () => {
-    if (!file) {
-      alert("Please upload a file first!");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("num_flashcards", numFlashcards);
-    formData.append("course_id", courseDetails.id);
+  const handleGenerate = async (attachmentId) => {
+    setIsGeneratedClicked(true);
 
     try {
-      await axios.post(
-        "http://localhost:8080/api/flashcards/generate",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const newFlashCards = await generateFlashCards(attachmentId, numFlashcards);
+      setFlashCards(flashCards => [...flashCards, ...newFlashCards]);
+
       setIsGenerated(true);
       alert("Flashcards generated!");
     } catch (error) {
       console.error("Error generating flashcards:", error);
+      setError(error);
       alert(
         error.response?.data?.message ||
           "Failed to generate flashcards. Please try again!"
@@ -99,11 +106,25 @@ const CoursePage = () => {
     }
   };
 
-  const handleDownload = () => {
-    window.open(
-      `http://localhost:8080/api/flashcards/export/${courseDetails.id}`,
-      "_blank"
-    );
+  const handleDownload = async () => {
+    setIsDownloading(true);
+    try {
+      const url = await exportFlashCards(courseDetails.id);
+      setNotification("Successfully exported flashcards to pdf!");
+      setIsDownloading(false);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.click();
+    } catch (error) {
+      setIsDownloading(false);
+      console.error("Error downloading flashcards:", error);
+      setError(error);
+      alert(
+          error.response?.data?.message ||
+          "Failed to download flashcards. Please try again!"
+      );
+    }
   };
 
   const handlePlayGame = () => {
@@ -115,8 +136,25 @@ const CoursePage = () => {
   };
 
   if (!courseDetails) {
-    return <div>Loading...</div>;
+    return <div>Loading... <Spinner animation="border" role="status" /></div>;
   }
+
+ const handleDelete = async (attachmentId) => {
+   try {
+     await deleteAttachment(attachmentId);
+     setAttachments(prev =>
+         prev.filter(attachment => attachment.id !== attachmentId)
+     );
+     setFlashCards(prev =>
+         prev.filter(fc => fc.attachment?.id !== attachmentId)
+     );
+
+     setNotification("Attachment deleted successfully!");
+   }catch(error){
+     console.error("Error deleting attachment: " + error);
+     setError(error);
+   }
+ }
 
   return (
       <>
@@ -145,6 +183,7 @@ const CoursePage = () => {
                 accept="application/pdf"
                 onChange={handleChooseFile}
                 style={{display: 'none'}}
+                multiple={false}
             />
           </div>
 
@@ -156,10 +195,28 @@ const CoursePage = () => {
             >
               Upload PDF
             </button>
+            {isUploading &&  <Spinner animation="border" role="status"/>}
           </div>
         </div>
 
         <div className="attachments-section">
+          {flashCards != null && !(flashCards.length === 0) && (
+              <div>
+                <button
+                    onClick={() => handleDownload()}
+                    className="flashcards-button"
+                >
+                  Export to PDF
+                </button>
+                {isDownloading && <Spinner animation="border" role="status" />}
+                <button
+                    onClick={() => handlePlayGame()}
+                    className="flashcards-button"
+                >
+                  Take Quiz
+                </button>
+              </div>
+          )}
           <h2>Uploaded Documents</h2>
           {attachments.length === 0 ? (
               <p>No documents uploaded yet.</p>
@@ -167,25 +224,35 @@ const CoursePage = () => {
               <ul className="attachment-list">
                 {attachments.map((attachment) => (
                     <li key={attachment.id} className="attachment-item">
-                      <span>{attachment.fileName}</span>
-                      <button
-                          onClick={() => handleGenerate(attachment.id)}
-                          className="flashcards-button"
-                      >
-                        Generate Flashcards
-                      </button>
-                      <button
-                          onClick={() => handleDownload(attachment.id)}
-                          className="flashcards-button"
-                      >
-                        Export to PDF
-                      </button>
-                      <button
-                          onClick={() => handlePlayGame(attachment.id)}
-                          className="flashcards-button"
-                      >
-                        Take Quiz
-                      </button>
+                      <span>{attachment.originalFileName}</span>
+                      <div>
+                        <input
+                            type="number"
+                            id={`flashcard-count-${attachment.id}`}
+                            value={numFlashcards}
+                            onChange={(e) => setNumFlashcards(e.target.value)}
+                            min="1"
+                            max="5"
+                            disabled={isGenerated}
+                        />
+                        <button
+                            onClick={() => handleGenerate(attachment.id)}
+                            className="flashcards-button"
+                            disabled={isGenerated}
+                        >
+                          Generate Flashcards
+                        </button>
+                        <button
+                            onClick={() => handleDelete(attachment.id)}
+                            className="flashcards-button"
+                        >
+                          <FaTrash style={{ cursor: 'pointer' }}/>
+                        </button>
+
+                        {isGeneratedClicked && !isGenerated && (
+                            <Spinner animation="border" role="status"/>
+                        )}
+                      </div>
                     </li>
                 ))}
               </ul>

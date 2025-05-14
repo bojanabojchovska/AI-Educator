@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./components/Authentication/LoginPage";
 import RegisterPage from "./components/Authentication/RegisterPage";
@@ -17,6 +17,24 @@ import ChatBot from "./components/ChatBot/ChatBot";
 import PrivateRoute from "./PrivateRoute";
 
 function App() {
+    const checkAuthCookie = () => {
+        const isLoggedIn = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('jwt='));
+
+        if (!isLoggedIn) {
+            console.log('Auth cookie expired or missing. Clearing localStorage.');
+            localStorage.clear();
+            window.location.href = '/login';
+        }
+    };
+
+    useEffect(() => {
+        const interval = setInterval(checkAuthCookie, 5 * 60 * 1000);
+
+        return () => clearInterval(interval);
+    }, []);
+
     return (
         <Router>
             <div className="App">
@@ -59,7 +77,7 @@ function App() {
                         element={<PrivateRoute element={<CoursePage />} />}
                     />
                     <Route
-                        path="/flashcards/game/:courseId"
+                        path="/flashcard-game/:courseId"
                         element={<PrivateRoute element={<FlashCardGamePage />} />}
                     />
                     <Route

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { getFlashCardsByCourseId, deleteFlashCard } from "../services/api";
+import { getFlashCardsByCourseAndUser, deleteFlashCard } from "../services/api";
 import CustomNavbar from "./app-custom/CustomNavbar";
 import "./FlashCardGamePage.css";
 import { Spinner } from "react-bootstrap";
@@ -15,7 +15,7 @@ const FlashCardGamePage = () => {
     const fetchFlashcards = async () => {
       try {
         setLoading(true);
-        const fetchedCards = await getFlashCardsByCourseId(courseId);
+        const fetchedCards = await getFlashCardsByCourseAndUser(courseId);
         setCards(fetchedCards);
         setLoading(false);
       } catch (error) {

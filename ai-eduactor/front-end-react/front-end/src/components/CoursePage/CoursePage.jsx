@@ -2,6 +2,7 @@ import React, { useState, useEffect, use } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FiUpload } from "react-icons/fi";
 import CustomNavbar from "../app-custom/CustomNavbar";
+import Notification from "../app-custom/Notification";
 import {
   getCourseAttachments,
   getCourses,
@@ -86,14 +87,21 @@ const CoursePage = () => {
 
     try {
       const data = await uploadCourseAttachment(formData);
-      setNotification(
-        "File " + data.originalFileName + " uploaded successfully!"
-      );
+      setNotification({
+        message: "File " + data.originalFileName + " uploaded successfully!",
+        type: "success",
+      });
       setAttachments([...attachments, data]);
       setSelectedFile(null);
       setIsUploading(false);
     } catch (error) {
       setError(error);
+      console.log("Upload error response:", error.response?.data);
+      setNotification({
+        message:
+          error.response?.data || "Failed to upload pdf. Please try again!",
+        type: "error",
+      });
       setIsUploading(false);
     }
   };
@@ -134,7 +142,10 @@ const CoursePage = () => {
         },
       }));
 
-      setNotification("Flashcards generated successfully!");
+      setNotification({
+        message: "Flashcards generated successfully!",
+        type: "success",
+      });
     } catch (error) {
       setAttachmentStates((prev) => ({
         ...prev,
@@ -145,10 +156,12 @@ const CoursePage = () => {
       }));
       console.error("Error generating flashcards:", error);
       setError(error);
-      setNotification(
-        error.response?.data?.message ||
-          "Failed to generate flashcards. Please try again!"
-      );
+      setNotification({
+        message:
+          error.response?.data ||
+          "Failed to generate flashcards. Please try again!",
+        type: "error",
+      });
     }
   };
 
@@ -156,7 +169,10 @@ const CoursePage = () => {
     setIsDownloading(true);
     try {
       const url = await exportFlashCards(courseDetails.id);
-      setNotification("Successfully exported flashcards to PDF!");
+      setNotification({
+        message: "Successfully exported flashcards to PDF!",
+        type: "success",
+      });
       setIsDownloading(false);
 
       // Open in new tab
@@ -165,8 +181,14 @@ const CoursePage = () => {
       setIsDownloading(false);
       console.error("Error downloading flashcards:", error);
       setError(error);
+      setNotification({
+        message:
+          error.response?.data ||
+          "Failed to download flashcards. Please try again!",
+        type: "error",
+      });
       alert(
-        error.response?.data?.message ||
+        error.response?.data ||
           "Failed to download flashcards. Please try again!"
       );
     }
@@ -198,9 +220,18 @@ const CoursePage = () => {
         prev.filter((fc) => fc.attachment?.id !== attachmentId)
       );
 
-      setNotification("Attachment deleted successfully!");
+      setNotification({
+        message: "Attachment deleted successfully!",
+        type: "success",
+      });
     } catch (error) {
       console.error("Error deleting attachment: " + error);
+      setNotification({
+        message:
+          error.response?.data ||
+          "Failed to delete the attachment. Please try again.",
+        type: "error",
+      });
       setError(error);
     }
   };
@@ -208,6 +239,13 @@ const CoursePage = () => {
   return (
     <>
       <CustomNavbar />
+      {notification && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(null)}
+        />
+      )}
 
       <div className="course-details-section">
         <h1 className="course-details-title">{courseName}</h1>

@@ -29,4 +29,6 @@ public interface FlashCardService {
 
     @Transactional
     public String exportFlashCardsToPdf(Long courseId) throws DocumentException, IOException;
+    @Transactional
+    public String exportAttachmentFlashCardsToPdf(UUID attachmentId) throws DocumentException, IOException;
 }

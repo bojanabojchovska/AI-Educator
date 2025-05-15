@@ -537,6 +537,25 @@ export const getCourseAttachments = async (courseId) => {
     }
 }
 
+export const exportPdfFlashcards = async (attachmentId) => {
+    try {
+        console.log("IDDDD", attachmentId);
+        const res = await axios.get(
+            `http://localhost:8080/api/flashcards/export-for-attachment?attachment_id=${attachmentId}`, {
+                withCredentials: true,
+            });
+        return res.data;
+    } catch (error) {
+        console.error("Error exporting pdf flashcards:", error);
+        if (error.response?.status === 403) {
+            console.error("You are not authorized. Maybe session expired?");
+            localStorage.clear();
+            window.location.href = "/login";
+        }
+        throw error;
+    }
+}
+
 export const uploadCourseAttachment = async (formData) => {
     try {
         const response = await axios.post('http://localhost:8080/api/attachments/upload', formData, {

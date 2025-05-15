@@ -76,4 +76,11 @@ public class FlashCardController {
             throws DocumentException, IOException {
         return ResponseEntity.ok().body(flashCardService.exportFlashCardsToPdf(courseId));
     }
+    @GetMapping("/export-for-attachment")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<String> exportFlashCardsToPdf(@RequestParam("attachment_id") UUID attachmentId)
+            throws DocumentException, IOException {
+        System.out.println("Attachment ID: " + attachmentId);
+        return ResponseEntity.ok().body(flashCardService.exportAttachmentFlashCardsToPdf(attachmentId));
+    }
 }

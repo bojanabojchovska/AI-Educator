@@ -272,4 +272,73 @@ public class FlashCardServiceImpl implements FlashCardService {
         return "http://localhost:8080/files/" + uniqueFilename;
     }
 
+    @Override
+    @Transactional
+    public String exportAttachmentFlashCardsToPdf(UUID attachmentId) throws DocumentException, IOException {
+        UserCourseAttachment attachment = userCourseAttachmentService.getById(attachmentId);
+        Course course = attachment.getCourse();
+
+        Path folderPath = Files.createDirectories(Paths.get(UPLOAD_DIR_PATH));
+
+        String uniqueFilename = UUID.randomUUID() + "_" + course.getTitle() + ".pdf";
+        String filePath = folderPath + File.separator + uniqueFilename;
+
+        Document document = new Document(PageSize.A4);
+        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(filePath));
+
+        document.open();
+
+        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+        titleFont.setSize(18);
+        titleFont.setColor(Color.BLUE);
+
+        Paragraph title = new Paragraph("Flashcards for " + attachment.getOriginalFileName(), titleFont);
+        title.setAlignment(Paragraph.ALIGN_CENTER);
+        document.add(title);
+
+        Font dateFont = FontFactory.getFont(FontFactory.HELVETICA);
+        dateFont.setSize(12);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Paragraph date = new Paragraph("Generated on: " + formatter.format(new Date()), dateFont);
+        date.setAlignment(Paragraph.ALIGN_RIGHT);
+        document.add(date);
+
+        document.add(new Paragraph("\n"));
+
+        List<FlashCard> flashCards = flashCardRepository.findAllByAttachment(attachment);
+
+        if (flashCards.isEmpty()) {
+            throw new InvalidArgumentsException("No flashcards found for this PDF");
+        }
+
+        for (int i = 0; i < flashCards.size(); i++) {
+            FlashCard flashCard = flashCards.get(i);
+
+            Font cardFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+            cardFont.setSize(14);
+            Paragraph cardNumber = new Paragraph("Flashcard #" + (i + 1), cardFont);
+            document.add(cardNumber);
+
+            Font questionFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+            questionFont.setSize(12);
+            Paragraph question = new Paragraph("Question: ", questionFont);
+            question.add(new Chunk(flashCard.getQuestion(), FontFactory.getFont(FontFactory.HELVETICA)));
+            document.add(question);
+
+            Font answerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+            answerFont.setSize(12);
+            Paragraph answer = new Paragraph("Answer: ", answerFont);
+            answer.add(new Chunk(flashCard.getAnswer(), FontFactory.getFont(FontFactory.HELVETICA)));
+            document.add(answer);
+
+            document.add(new Paragraph("\n"));
+        }
+
+        document.close();
+        writer.flush();
+
+        return "http://localhost:8080/files/" + uniqueFilename;
+    }
+
+
 }

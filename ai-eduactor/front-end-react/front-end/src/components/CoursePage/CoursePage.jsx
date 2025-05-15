@@ -10,6 +10,7 @@ import {
   getFlashCardsByCourseAndUser,
   uploadCourseAttachment,
   exportFlashCards,
+  exportPdfFlashcards,
   deleteAttachment,
 } from "../../services/api";
 import "./CoursePage.css";
@@ -48,10 +49,13 @@ const CoursePage = () => {
           // Initialize state for each attachment
           const initialStates = {};
           courseAttachments.forEach((attachment) => {
+            const hasFlashcards = flashCards.some(
+              (fc) => fc.attachment?.id === attachment.id
+            );
             initialStates[attachment.id] = {
               numFlashcards: 1,
               isGenerating: false,
-              isGenerated: false,
+              isGenerated: hasFlashcards,
             };
           });
           setAttachmentStates(initialStates);
@@ -236,6 +240,36 @@ const CoursePage = () => {
     }
   };
 
+  const handlePdfDownload = async (attachmentId) => {
+    setIsDownloading(true); // Set downloading state to true
+    try {
+      const pdfUrl = await exportPdfFlashcards(attachmentId);
+      setNotification({
+        message: "Successfully exported flashcards to PDF!",
+        type: "success",
+      });
+      setIsDownloading(false);
+
+      window.open(pdfUrl, "_blank");
+    } catch (error) {
+      setIsDownloading(false); // Set downloading state to false
+      console.error("Error during PDF export:", error);
+
+      setError(error);
+      setNotification({
+        message:
+          error.response?.data ||
+          "Failed to download flashcards. Please try again!",
+        type: "error",
+      });
+
+      alert(
+        error.response?.data ||
+          "Failed to download flashcards. Please try again!"
+      );
+    }
+  };
+
   return (
     <>
       <CustomNavbar />
@@ -289,13 +323,14 @@ const CoursePage = () => {
       </div>
 
       <div className="attachments-section">
-        {/* {flashCards != null && !(flashCards.length === 0) && (
+        {flashCards != null && !(flashCards.length === 0) && (
           <div>
             <button
               onClick={() => handleDownload()}
               className="flashcards-button"
+              style={{ marginRight: "1rem" }}
             >
-              Export to PDF
+              Export All to PDF
             </button>
             {isDownloading && <Spinner animation="border" role="status" />}
             <button
@@ -305,7 +340,7 @@ const CoursePage = () => {
               Take Quiz
             </button>
           </div>
-        )} */}
+        )}
         <h2>Uploaded Documents</h2>
         {attachments.length === 0 ? (
           <p>No documents uploaded yet.</p>
@@ -359,7 +394,7 @@ const CoursePage = () => {
                     {state.isGenerated && (
                       <>
                         <button
-                          onClick={() => handleDownload()}
+                          onClick={() => handlePdfDownload(attachment.id)}
                           className="icon-button"
                           title="Export to PDF"
                         >

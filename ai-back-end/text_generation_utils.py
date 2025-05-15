@@ -19,7 +19,7 @@ index = pc.Index("books")
 async def get_recommended_courses(request):
     taken_courses_str = "\n".join(request.taken_courses)
     remaining_courses_str = "\n".join(request.remaining_courses)
-    llm = get_llm_model(repo_id="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B")
+    llm = get_llm_model(repo_id="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B", task="conversational")
     prompt = course_recommendation_prompt_template()
     qa_chain = LLMChain(prompt=prompt, llm=llm)
     answer = await qa_chain.ainvoke({"user_courses": taken_courses_str, "remaining_courses": remaining_courses_str})
@@ -79,7 +79,7 @@ def get_similarity_by_query(query, pdf_id, k):
     return result
 
 def get_generated_text(query, pdf_id, k):
-    llm = get_llm_model(repo_id="mistralai/Mistral-7B-Instruct-v0.3")
+    llm = get_llm_model(repo_id="mistralai/Mistral-7B-Instruct-v0.3", task="conversational")
     prompt = chatbot_prompt_template()
     qa_chain = LLMChain(prompt=prompt, llm=llm)
     similarities = get_similarity_by_query(query, pdf_id, k)
@@ -92,4 +92,6 @@ def format_chatbot_answer(answer):
     answer = answer.strip()
     if "Answer:" in answer:
         answer = answer.split("Answer:")[1].strip()
+    if "</think>" in answer:
+        answer = answer.split("</think>")[1].strip()
     return answer

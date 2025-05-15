@@ -11,6 +11,7 @@ import com.uiktp.model.dtos.FlashCardDTO;
 import com.uiktp.model.dtos.FlashCardResponseDTO;
 import com.uiktp.model.exceptions.custom.FlashCardGenerationException;
 import com.uiktp.model.exceptions.general.InvalidArgumentsException;
+import com.uiktp.model.exceptions.general.ResourceNotFoundException;
 import com.uiktp.repository.CourseRepository;
 import com.uiktp.repository.FlashCardRepository;
 import com.uiktp.repository.UserRepository;
@@ -69,15 +70,32 @@ public class FlashCardServiceImpl implements FlashCardService {
 
     @Override
     public List<FlashCardDTO> getAllFlashCardsByCourseId(Long courseId) {
+        return getFlashCardsByCourse(courseId, false);
+    }
+
+    @Override
+    public List<FlashCardDTO> getAllFlashCardsByCourseAndUser(Long courseId) {
+        return getFlashCardsByCourse(courseId, true);
+    }
+
+    private List<FlashCardDTO> getFlashCardsByCourse(Long courseId, boolean isForUser) {
         if (courseId == null) {
             throw new IllegalArgumentException("Course ID cannot be null.");
         }
         try {
-            List<FlashCard> flashCards = userCourseAttachmentService.getAttachmentsByCourse(courseId)
-                    .stream()
-                    .flatMap(attachment -> flashCardRepository.findAllByAttachment(attachment).stream())
-                    .toList();
+            List<FlashCard> flashCards;
 
+            if (isForUser) {
+                flashCards = userCourseAttachmentService.getAttachmentsByCourseAndUser(courseId)
+                        .stream()
+                        .flatMap(attachment -> flashCardRepository.findAllByAttachment(attachment).stream())
+                        .toList();
+            } else {
+                flashCards = userCourseAttachmentService.getAttachmentsByCourse(courseId)
+                        .stream()
+                        .flatMap(attachment -> flashCardRepository.findAllByAttachment(attachment).stream())
+                        .toList();
+            }
 
             if (flashCards.isEmpty()) {
                 throw new NoSuchElementException("No flashcards found for course ID: " + courseId);
@@ -89,7 +107,8 @@ public class FlashCardServiceImpl implements FlashCardService {
                             flashCard.getQuestion(),
                             flashCard.getAnswer(),
                             flashCard.getAttachment().getCourse().getId(),
-                            flashCard.getAttachment().getCourse().getTitle()))
+                            flashCard.getAttachment().getCourse().getTitle(),
+                            flashCard.getAttachment().getId()))
                     .collect(Collectors.toList());
         } catch (DataAccessException e) {
             throw new RuntimeException("Database error while fetching flashcards for course ID: " + courseId, e);

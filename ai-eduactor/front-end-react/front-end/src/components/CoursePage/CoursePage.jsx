@@ -1,5 +1,5 @@
 import React, { useState, useEffect, use } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import {useParams, useNavigate, useLocation} from "react-router-dom";
 import { FiUpload } from "react-icons/fi";
 import CustomNavbar from "../app-custom/CustomNavbar";
 import Notification from "../app-custom/Notification";
@@ -22,6 +22,7 @@ import { FaPlay } from "react-icons/fa";
 const CoursePage = () => {
   const { courseName } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [courseDetails, setCourseDetails] = useState(null);
   const [attachments, setAttachments] = useState([]);
 
@@ -46,11 +47,16 @@ const CoursePage = () => {
           const courseAttachments = await getCourseAttachments(course.id);
           setAttachments(courseAttachments);
 
+          const flashCards = await getFlashCardsByCourseAndUser(course.id);
+          setFlashCards(flashCards);
+
+          console.log(flashCards)
+
           // Initialize state for each attachment
           const initialStates = {};
           courseAttachments.forEach((attachment) => {
             const hasFlashcards = flashCards.some(
-              (fc) => fc.attachment?.id === attachment.id
+              (fc) => fc.attachmentId === attachment.id
             );
             initialStates[attachment.id] = {
               numFlashcards: 1,
@@ -59,9 +65,6 @@ const CoursePage = () => {
             };
           });
           setAttachmentStates(initialStates);
-
-          const flashCards = await getFlashCardsByCourseAndUser(course.id);
-          setFlashCards(flashCards);
         }
       } catch (error) {
         console.error("Error fetching course details:", error);
@@ -199,7 +202,9 @@ const CoursePage = () => {
   };
 
   const handlePlayGame = () => {
-    navigate(`/flashcard-game/${courseDetails.id}`);
+    navigate(`/flashcard-game/${courseDetails.id}`, {
+      state: { from: location.pathname },
+    });
   };
 
   const handlePlayDemo = () => {
@@ -366,13 +371,12 @@ const CoursePage = () => {
                       }
                       min="1"
                       max="5"
-                      disabled={state.isGenerated}
                     />
 
                     <button
                       onClick={() => handleGenerate(attachment.id)}
                       className="flashcards-button"
-                      disabled={state.isGenerated || state.isGenerating}
+                      disabled={state.isGenerating}
                     >
                       {state.isGenerating ? (
                         <>
@@ -392,24 +396,24 @@ const CoursePage = () => {
                     </button>
 
                     {state.isGenerated && (
-                      <>
-                        <button
-                          onClick={() => handlePdfDownload(attachment.id)}
-                          className="icon-button"
-                          title="Export to PDF"
-                        >
-                          <FiDownload size={18} />
-                          <span className="button-tooltip">Export to PDF</span>
-                        </button>
-                        <button
-                          onClick={() => handlePlayGame()}
-                          className="icon-button"
-                          title="Take a quiz"
-                        >
-                          <FaPlay size={16} />
-                          <span className="button-tooltip">Take a quiz</span>
-                        </button>
-                      </>
+                        <>
+                          <button
+                              onClick={() => handlePdfDownload(attachment.id)}
+                              className="icon-button"
+                              title="Export to PDF"
+                          >
+                            <FiDownload size={18} />
+                            <span className="button-tooltip">Export to PDF</span>
+                          </button>
+                          <button
+                              onClick={() => handlePlayGame()}
+                              className="icon-button"
+                              title="Take a quiz"
+                          >
+                            <FaPlay size={16} />
+                            <span className="button-tooltip">Take a quiz</span>
+                          </button>
+                        </>
                     )}
                   </div>
                 </li>

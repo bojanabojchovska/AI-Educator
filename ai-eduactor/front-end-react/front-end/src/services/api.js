@@ -244,7 +244,7 @@ export const exportFlashCards = async (courseId) => {
 
 export const getFlashCardsByCourseAndUser = async (courseId) => {
     try {
-        const response = await axios.get(`${API_URL}/flashcards/game/${courseId}`, {
+        const response = await axios.get(`${API_URL}/flashcards/forCourseAndUser/${courseId}`, {
             withCredentials: true
         });
         return response.data;

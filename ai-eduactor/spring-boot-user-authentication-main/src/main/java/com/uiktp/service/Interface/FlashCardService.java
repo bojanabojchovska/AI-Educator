@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface FlashCardService {
     List<FlashCard> getAllFlashCards();
     List<FlashCardDTO> getAllFlashCardsByCourseId(Long courseId);
-
+    public List<FlashCardDTO> getAllFlashCardsByCourseAndUser(Long courseId);
     Optional<FlashCard> getFlashCardById(Long id);
 
     FlashCard addFlashCard(FlashCard flashCard);

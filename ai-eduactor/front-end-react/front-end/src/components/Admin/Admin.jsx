@@ -8,7 +8,7 @@ import {
   createCourse,
   updateCourse,
   deleteCourse, importCourses
-} from '../repository/api.js';
+} from '../../services/api.js';
 
 const Admin = () => {
   const [subjects, setSubjects] = useState([]);

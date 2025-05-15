@@ -1,9 +1,9 @@
 import React from "react";
 import "./HomePage.css";
-import CustomNavbar from "./CustomNavbar";
+import CustomNavbar from "../app-custom/CustomNavbar";
 import { useNavigate } from "react-router-dom";
-import gradCap from "../assets/grad-cap.png";
-import aiImage from "../assets/books.png";
+import gradCap from "../../assets/grad-cap.png";
+import aiImage from "../../assets/books.png";
 
 const HomePage = () => {
   const navigate = useNavigate();

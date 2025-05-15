@@ -34,9 +34,9 @@ public class SecurityConfigurations {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers("/**").permitAll()
-    //                    .requestMatchers("/auth/login", "/auth/register", "/css/**", "/js/**", "/images/**").permitAll()
-    //                    .anyRequest().authenticated()
+//                                .requestMatchers("/**").permitAll()
+                        .requestMatchers("http://localhost:3000/**", "/auth/login", "/auth/register", "/css/**", "/js/**", "/images/**").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .build();
     }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './SubjectRecommendation.css';
-import {  getCourses, getCourseRecommendations } from '../repository/api';
-import CustomNavbar from './CustomNavbar';
+import {  getCourses, getCourseRecommendations } from '../../services/api';
+import CustomNavbar from '../app-custom/CustomNavbar';
 
 const SubjectRecommendation = () => {
     const [allSubjects, setAllSubjects] = useState([]);

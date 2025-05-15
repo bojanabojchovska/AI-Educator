@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
-import CustomNavbar from './CustomNavbar';
+import CustomNavbar from '../app-custom/CustomNavbar';
 import StarRatings from 'react-star-ratings';
 import {
     getSubjectReviews,
@@ -9,7 +9,7 @@ import {
     getCourses,
     submitSubjectComment,
     deleteComment
-} from '../repository/api';
+} from '../../services/api';
 import './CourseReviewPage.css';
 
 const CourseReviewPage = () => {

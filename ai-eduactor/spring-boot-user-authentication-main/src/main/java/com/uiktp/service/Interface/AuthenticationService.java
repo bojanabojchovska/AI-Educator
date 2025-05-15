@@ -11,4 +11,5 @@ public interface AuthenticationService extends UserDetailsService {
 
     User register(RegisterDTO registerDTO);
     UserDetails loadUserByUsername(String email) throws UsernameNotFoundException;
+    User getCurrentlyLoggedInUser();
 }

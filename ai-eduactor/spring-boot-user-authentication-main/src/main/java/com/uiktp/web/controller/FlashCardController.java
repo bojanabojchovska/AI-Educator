@@ -71,11 +71,16 @@ public class FlashCardController {
     }
 
     @GetMapping("/export/{courseId}")
-    public void exportFlashCardsToPdf(@PathVariable Long courseId, HttpServletResponse response)
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<String> exportFlashCardsToPdf(@PathVariable Long courseId)
             throws DocumentException, IOException {
-        response.setContentType("application/pdf");
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=flashcards.pdf");
-
-        flashCardService.exportFlashCardsToPdf(courseId, response);
+        return ResponseEntity.ok().body(flashCardService.exportFlashCardsToPdf(courseId));
+    }
+    @GetMapping("/export-for-attachment")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<String> exportFlashCardsToPdf(@RequestParam("attachment_id") UUID attachmentId)
+            throws DocumentException, IOException {
+        System.out.println("Attachment ID: " + attachmentId);
+        return ResponseEntity.ok().body(flashCardService.exportAttachmentFlashCardsToPdf(attachmentId));
     }
 }

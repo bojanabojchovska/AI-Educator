@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FiUpload } from 'react-icons/fi';
-import CustomNavbar from './CustomNavbar';
+import CustomNavbar from './app-custom/CustomNavbar';
 import './FlashcardsPage.css';
 import axios from 'axios'; // ⬅️ ADD axios!
 

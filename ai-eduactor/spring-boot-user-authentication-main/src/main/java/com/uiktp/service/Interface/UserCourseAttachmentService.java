@@ -23,7 +23,7 @@ public interface UserCourseAttachmentService {
 
     UserCourseAttachment getById(UUID id);
 
-    public List<UserCourseAttachment> getAttachmentsByCourseAndUser(Long courseId, Long userId);
+    public List<UserCourseAttachment> getAttachmentsByCourseAndUser(Long courseId);
 
     AskQuestionResponseDTO askQuestion(AskQuestionRequestDTO askQuestionRequestDTO);
 

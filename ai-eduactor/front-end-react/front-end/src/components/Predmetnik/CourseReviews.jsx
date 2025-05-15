@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CourseReviews.css';
-import CustomNavbar from './CustomNavbar';
+import CustomNavbar from '../app-custom/CustomNavbar';
 import {
     addCourseToFavorites,
     getCourses,
     getFavoriteCourses,
     removeCourseFromFavorites,
     submitSubjectReview
-} from '../repository/api';
+} from '../../services/api';
 import { FaHeart, FaRegHeart } from "react-icons/fa6";
 import StarRatings from 'react-star-ratings';
 

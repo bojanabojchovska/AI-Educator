@@ -36,9 +36,11 @@ import org.springframework.web.client.RestTemplate;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -51,6 +53,7 @@ public class FlashCardServiceImpl implements FlashCardService {
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
     private final UserCourseAttachmentService userCourseAttachmentService;
+    private static final String UPLOAD_DIR_PATH = "uploads";
 
     public FlashCardServiceImpl(FlashCardRepository flashCardRepository, CourseRepository courseRepository, UserRepository userRepository, UserCourseAttachmentService userCourseAttachmentService) {
         this.flashCardRepository = flashCardRepository;
@@ -127,7 +130,7 @@ public class FlashCardServiceImpl implements FlashCardService {
     public List<FlashCard> generateFlashCard(UUID attachmentId, int numFlashcards) throws FileNotFoundException {
         UserCourseAttachment attachment = userCourseAttachmentService.getById(attachmentId);
 
-        File file = new File(attachment.getFileUrl());
+        File file = new File(attachment.getFilePath());
         if (!file.exists()) {
             throw new FileNotFoundException("File not found at path: " + attachment.getFileUrl());
         }
@@ -199,77 +202,18 @@ public class FlashCardServiceImpl implements FlashCardService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public void exportFlashCardsToPdf(Long courseId, HttpServletResponse response)
-            throws DocumentException, IOException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser;
-
-        if (authentication.getPrincipal() instanceof User) {
-            currentUser = (User) authentication.getPrincipal();
-        } else {
-            String currentUserEmail = authentication.getName();
-            currentUser = userRepository.findByEmail(currentUserEmail)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-        }
-
+    @Transactional
+    public String exportFlashCardsToPdf(Long courseId) throws DocumentException, IOException {
         Course course = courseRepository.findById(courseId).orElseThrow(
                 () -> new InvalidArgumentsException(String.format("Course with id: %d not found", courseId)));
 
-        Hibernate.initialize(course.getLikedBy());
+        Path folderPath = Files.createDirectories(Paths.get(UPLOAD_DIR_PATH));
 
-        List<FlashCard> allUserCourseFlashcards = userCourseAttachmentService.getAttachmentsByCourseAndUser(courseId, currentUser.getId())
-                .stream()
-                .flatMap(attachment -> flashCardRepository.findAllByAttachment(attachment).stream())
-                .toList();
-
-        if (allUserCourseFlashcards.isEmpty()) {
-            throw new InvalidArgumentsException("No flashcards found for this course");
-        }
-
-        Map<String, List<FlashCard>> flashcardBatches = new HashMap<>();
-        for (FlashCard card : allUserCourseFlashcards) {
-            byte[] attachmentBytes = Files.readAllBytes(Path.of(card.getAttachment().getFileUrl()));
-
-            String attachmentHash = card.getAttachment() != null ?
-                    String.valueOf(Arrays.hashCode(attachmentBytes)) :
-                    "no-attachment";
-
-            if (!flashcardBatches.containsKey(attachmentHash)) {
-                flashcardBatches.put(attachmentHash, new ArrayList<>());
-            }
-            flashcardBatches.get(attachmentHash).add(card);
-        }
-
-        List<FlashCard> mostRecentBatch = Collections.emptyList();
-
-        for (FlashCard card : allUserCourseFlashcards.stream()
-                .sorted(Comparator.comparing(FlashCard::getId).reversed())
-                .toList()) {
-
-            String hash = "no-attachment";
-            if (card.getAttachment() != null) {
-                try {
-                    byte[] attachmentBytes = Files.readAllBytes(Path.of(card.getAttachment().getFileUrl()));
-                    hash = String.valueOf(Arrays.hashCode(attachmentBytes));
-                } catch (IOException e) {
-                    // Log or handle more gracefully
-                    continue;
-                }
-            }
-
-            if (flashcardBatches.containsKey(hash)) {
-                mostRecentBatch = flashcardBatches.get(hash);
-                break;
-            }
-        }
-
-        if (mostRecentBatch.isEmpty()) {
-            throw new InvalidArgumentsException("No flashcards found for this course");
-        }
+        String uniqueFilename = UUID.randomUUID() + "_" + course.getTitle() + ".pdf";
+        String filePath = folderPath + File.separator + uniqueFilename;
 
         Document document = new Document(PageSize.A4);
-        PdfWriter.getInstance(document, response.getOutputStream());
+        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(filePath));
 
         document.open();
 
@@ -283,7 +227,6 @@ public class FlashCardServiceImpl implements FlashCardService {
 
         Font dateFont = FontFactory.getFont(FontFactory.HELVETICA);
         dateFont.setSize(12);
-
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Paragraph date = new Paragraph("Generated on: " + formatter.format(new Date()), dateFont);
         date.setAlignment(Paragraph.ALIGN_RIGHT);
@@ -291,25 +234,31 @@ public class FlashCardServiceImpl implements FlashCardService {
 
         document.add(new Paragraph("\n"));
 
-        for (int i = 0; i < mostRecentBatch.size(); i++) {
-            FlashCard flashCard = mostRecentBatch.get(i);
+        List<FlashCard> allUserCourseFlashcards = userCourseAttachmentService.getAttachmentsByCourseAndUser(courseId)
+                .stream()
+                .flatMap(attachment -> flashCardRepository.findAllByAttachment(attachment).stream())
+                .toList();
+
+        if (allUserCourseFlashcards.isEmpty()) {
+            throw new InvalidArgumentsException("No flashcards found for this course");
+        }
+
+        for (int i = 0; i < allUserCourseFlashcards.size(); i++) {
+            FlashCard flashCard = allUserCourseFlashcards.get(i);
 
             Font cardFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
             cardFont.setSize(14);
-
             Paragraph cardNumber = new Paragraph("Flashcard #" + (i + 1), cardFont);
             document.add(cardNumber);
 
             Font questionFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
             questionFont.setSize(12);
-
             Paragraph question = new Paragraph("Question: ", questionFont);
             question.add(new Chunk(flashCard.getQuestion(), FontFactory.getFont(FontFactory.HELVETICA)));
             document.add(question);
 
             Font answerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
             answerFont.setSize(12);
-
             Paragraph answer = new Paragraph("Answer: ", answerFont);
             answer.add(new Chunk(flashCard.getAnswer(), FontFactory.getFont(FontFactory.HELVETICA)));
             document.add(answer);
@@ -318,5 +267,78 @@ public class FlashCardServiceImpl implements FlashCardService {
         }
 
         document.close();
+        writer.flush();
+
+        return "http://localhost:8080/files/" + uniqueFilename;
     }
+
+    @Override
+    @Transactional
+    public String exportAttachmentFlashCardsToPdf(UUID attachmentId) throws DocumentException, IOException {
+        UserCourseAttachment attachment = userCourseAttachmentService.getById(attachmentId);
+        Course course = attachment.getCourse();
+
+        Path folderPath = Files.createDirectories(Paths.get(UPLOAD_DIR_PATH));
+
+        String uniqueFilename = UUID.randomUUID() + "_" + course.getTitle() + ".pdf";
+        String filePath = folderPath + File.separator + uniqueFilename;
+
+        Document document = new Document(PageSize.A4);
+        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(filePath));
+
+        document.open();
+
+        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+        titleFont.setSize(18);
+        titleFont.setColor(Color.BLUE);
+
+        Paragraph title = new Paragraph("Flashcards for " + attachment.getOriginalFileName(), titleFont);
+        title.setAlignment(Paragraph.ALIGN_CENTER);
+        document.add(title);
+
+        Font dateFont = FontFactory.getFont(FontFactory.HELVETICA);
+        dateFont.setSize(12);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Paragraph date = new Paragraph("Generated on: " + formatter.format(new Date()), dateFont);
+        date.setAlignment(Paragraph.ALIGN_RIGHT);
+        document.add(date);
+
+        document.add(new Paragraph("\n"));
+
+        List<FlashCard> flashCards = flashCardRepository.findAllByAttachment(attachment);
+
+        if (flashCards.isEmpty()) {
+            throw new InvalidArgumentsException("No flashcards found for this PDF");
+        }
+
+        for (int i = 0; i < flashCards.size(); i++) {
+            FlashCard flashCard = flashCards.get(i);
+
+            Font cardFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+            cardFont.setSize(14);
+            Paragraph cardNumber = new Paragraph("Flashcard #" + (i + 1), cardFont);
+            document.add(cardNumber);
+
+            Font questionFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+            questionFont.setSize(12);
+            Paragraph question = new Paragraph("Question: ", questionFont);
+            question.add(new Chunk(flashCard.getQuestion(), FontFactory.getFont(FontFactory.HELVETICA)));
+            document.add(question);
+
+            Font answerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+            answerFont.setSize(12);
+            Paragraph answer = new Paragraph("Answer: ", answerFont);
+            answer.add(new Chunk(flashCard.getAnswer(), FontFactory.getFont(FontFactory.HELVETICA)));
+            document.add(answer);
+
+            document.add(new Paragraph("\n"));
+        }
+
+        document.close();
+        writer.flush();
+
+        return "http://localhost:8080/files/" + uniqueFilename;
+    }
+
+
 }

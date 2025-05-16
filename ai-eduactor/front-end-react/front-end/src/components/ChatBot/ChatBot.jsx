@@ -46,34 +46,74 @@ const ChatBot = () => {
         setInputValue(e.target.value);
     };
 
-    const handleSendMessage = () => {
-        if (inputValue.trim() === '') return;
+    const handleSendMessage = async () => {
+        if (inputValue.trim() === '' || !selectedAttachmentId) return;
 
-        const newMessage = { text: inputValue, isUser: true, timestamp: new Date() };
+        const userMessage = { text: inputValue, isUser: true, timestamp: new Date() };
         setChatHistory(prevHistory =>
             prevHistory.map(chat =>
                 chat.id === selectedAttachmentId
-                    ? { ...chat, messages: [...chat.messages, newMessage] }
+                    ? { ...chat, messages: [...chat.messages, userMessage] }
                     : chat
             )
         );
         setInputValue('');
 
-        setTimeout(() => {
-            const botResponse = {
-                text: "This is a sample response from AI Educator. In a real implementation, this would be connected to an AI API.",
-                isUser: false,
-                timestamp: new Date()
-            };
+        try {
+            const loadingMessage = { text: "Thinking...", isUser: false, timestamp: new Date(), isLoading: true };
             setChatHistory(prevHistory =>
                 prevHistory.map(chat =>
                     chat.id === selectedAttachmentId
-                        ? { ...chat, messages: [...chat.messages, botResponse] }
+                        ? { ...chat, messages: [...chat.messages, loadingMessage] }
                         : chat
                 )
             );
-        }, 1000);
+
+            const response = await fetch('http://localhost:8000/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    question: userMessage.text,
+                    pdf_id: selectedAttachmentId
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to get answer from chatbot');
+            }
+
+            const data = await response.json();
+
+            setChatHistory(prevHistory =>
+                prevHistory.map(chat =>
+                    chat.id === selectedAttachmentId
+                        ? {
+                            ...chat,
+                            messages: [
+                                ...chat.messages.filter(msg => !msg.isLoading),
+                                { text: data.Answer, isUser: false, timestamp: new Date() }
+                            ]
+                        }
+                        : chat
+                )
+            );
+        } catch (error) {
+            setChatHistory(prevHistory =>
+                prevHistory.map(chat =>
+                    chat.id === selectedAttachmentId
+                        ? {
+                            ...chat,
+                            messages: [
+                                ...chat.messages.filter(msg => !msg.isLoading),
+                                { text: "Sorry, there was an error getting a response.", isUser: false, timestamp: new Date() }
+                            ]
+                        }
+                        : chat
+                )
+            );
+        }
     };
+
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {

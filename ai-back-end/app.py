@@ -7,8 +7,17 @@ from text_generation_utils import get_flashcards, get_recommended_courses
 from request_models import CourseRecommendationRequst, AskQuestionRequest
 from pinecone_utils import add_file_to_database
 from text_generation_utils import get_generated_text
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/")
 async def generate_flashcards(file: UploadFile = File(...), num_flashcards: int = Form(...)):

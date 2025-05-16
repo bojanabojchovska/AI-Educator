@@ -1,37 +1,46 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from "react-router-dom";
 import './ChatBot.css';
 import CustomNavbar from '../app-custom/CustomNavbar';
 
+function formatAttachmentName(filename) {
+    const nameWithoutExt = filename.replace(/\.[^/.]+$/, "");
+    return nameWithoutExt
+        .replace(/([a-z])([A-Z])/g, "$1 $2")
+        .replace(/[_\-]+/g, " ")
+        .replace(/\s+/g, " ")
+        .replace(/\b\w/g, c => c.toUpperCase());
+}
+
 const ChatBot = () => {
-    const [messages, setMessages] = useState([]);
+    const location = useLocation();
+    const { attachments = [], courseId, courseName } = location.state || {};
+
+    const initialChatHistory = attachments.map(att => ({
+        id: att.id,
+        title: formatAttachmentName(att.originalFileName),
+        messages: []
+    }));
+
+    const [chatHistory, setChatHistory] = useState(initialChatHistory);
+    const [selectedAttachmentId, setSelectedAttachmentId] = useState(
+        attachments.length > 0 ? attachments[0].id : null
+    );
     const [inputValue, setInputValue] = useState('');
-    const [chatHistory, setChatHistory] = useState([
-        { id: 1, title: "Previous Chat 1", date: "May 8, 2025", messages: [
-                { text: "This is a previous message from chat 1", isUser: false, timestamp: new Date(2025, 4, 8, 14, 30) },
-                { text: "Here's my question about that topic", isUser: true, timestamp: new Date(2025, 4, 8, 14, 31) },
-                { text: "And here's the AI response to your question", isUser: false, timestamp: new Date(2025, 4, 8, 14, 32) }
-            ]},
-        { id: 2, title: "Math Questions", date: "May 9, 2025", messages: [
-                { text: "How do I solve quadratic equations?", isUser: true, timestamp: new Date(2025, 4, 9, 10, 15) },
-                { text: "To solve a quadratic equation ax² + bx + c = 0, you can use the quadratic formula: x = (-b ± √(b² - 4ac)) / 2a", isUser: false, timestamp: new Date(2025, 4, 9, 10, 16) }
-            ]},
-        { id: 3, title: "Physics Help", date: "May 10, 2025", messages: [
-                { text: "Can you explain Newton's laws of motion?", isUser: true, timestamp: new Date(2025, 4, 10, 9, 45) },
-                { text: "Newton's First Law: An object at rest stays at rest, and an object in motion stays in motion unless acted upon by an external force. Newton's Second Law: F = ma (force equals mass times acceleration). Newton's Third Law: For every action, there is an equal and opposite reaction.", isUser: false, timestamp: new Date(2025, 4, 10, 9, 46) }
-            ]}
-    ]);
-    const [activeChat, setActiveChat] = useState(null);
     const messagesEndRef = useRef(null);
+
+    const selectedChat = chatHistory.find(chat => chat.id === selectedAttachmentId);
+    const messages = selectedChat ? selectedChat.messages : [];
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages, selectedAttachmentId]);
 
     const scrollToBottom = () => {
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
     };
-
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
 
     const handleInputChange = (e) => {
         setInputValue(e.target.value);
@@ -41,8 +50,13 @@ const ChatBot = () => {
         if (inputValue.trim() === '') return;
 
         const newMessage = { text: inputValue, isUser: true, timestamp: new Date() };
-        const updatedMessages = [...messages, newMessage];
-        setMessages(updatedMessages);
+        setChatHistory(prevHistory =>
+            prevHistory.map(chat =>
+                chat.id === selectedAttachmentId
+                    ? { ...chat, messages: [...chat.messages, newMessage] }
+                    : chat
+            )
+        );
         setInputValue('');
 
         setTimeout(() => {
@@ -51,18 +65,13 @@ const ChatBot = () => {
                 isUser: false,
                 timestamp: new Date()
             };
-            const finalMessages = [...updatedMessages, botResponse];
-            setMessages(finalMessages);
-
-            if (activeChat !== null) {
-                setChatHistory(prevHistory =>
-                    prevHistory.map(chat =>
-                        chat.id === activeChat
-                            ? {...chat, messages: finalMessages}
-                            : chat
-                    )
-                );
-            }
+            setChatHistory(prevHistory =>
+                prevHistory.map(chat =>
+                    chat.id === selectedAttachmentId
+                        ? { ...chat, messages: [...chat.messages, botResponse] }
+                        : chat
+                )
+            );
         }, 1000);
     };
 
@@ -72,26 +81,8 @@ const ChatBot = () => {
         }
     };
 
-    const startNewChat = () => {
-        const newChatId = chatHistory.length > 0 ? Math.max(...chatHistory.map(c => c.id)) + 1 : 1;
-        const newChat = {
-            id: newChatId,
-            title: `New Chat ${newChatId}`,
-            date: new Date().toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'}),
-            messages: []
-        };
-
-        setChatHistory([...chatHistory, newChat]);
-        setMessages([]);
-        setActiveChat(newChatId);
-    };
-
-    const selectChat = (chatId) => {
-        const selectedChat = chatHistory.find(chat => chat.id === chatId);
-        if (selectedChat) {
-            setMessages(selectedChat.messages);
-            setActiveChat(chatId);
-        }
+    const selectAttachment = (attId) => {
+        setSelectedAttachmentId(attId);
     };
 
     return (
@@ -100,21 +91,16 @@ const ChatBot = () => {
 
             <div className="chat-interface">
                 <div className="chat-sidebar">
-                    <div className="new-chat-button" onClick={startNewChat}>
-                        <button>+ New Chat</button>
-                    </div>
-
                     <div className="chat-history">
                         <h3>Chat History</h3>
                         <ul>
                             {chatHistory.map((chat) => (
                                 <li
                                     key={chat.id}
-                                    className={activeChat === chat.id ? 'active' : ''}
-                                    onClick={() => selectChat(chat.id)}
+                                    className={selectedAttachmentId === chat.id ? 'active' : ''}
+                                    onClick={() => selectAttachment(chat.id)}
                                 >
                                     <div className="chat-title">{chat.title}</div>
-                                    <div className="chat-date">{chat.date}</div>
                                 </li>
                             ))}
                         </ul>
@@ -123,7 +109,11 @@ const ChatBot = () => {
 
                 <div className="chatbot-container">
                     <div className="chatbot-header">
-                        <h2>AI Tutor Chat</h2>
+                        <h2>
+                            {selectedChat
+                                ? `${selectedChat.title}`
+                                : "Select a chat history to begin."}
+                        </h2>
                     </div>
 
                     <div className="chatbot-messages">
@@ -141,7 +131,9 @@ const ChatBot = () => {
                                         {message.text}
                                     </div>
                                     <div className="message-time">
-                                        {message.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                        {message.timestamp instanceof Date
+                                            ? message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                            : message.timestamp}
                                     </div>
                                 </div>
                             ))
@@ -157,10 +149,11 @@ const ChatBot = () => {
                                 onChange={handleInputChange}
                                 onKeyPress={handleKeyPress}
                                 placeholder="Type your message here..."
+                                disabled={!selectedChat}
                             />
                             <button
                                 onClick={handleSendMessage}
-                                disabled={inputValue.trim() === ''}
+                                disabled={inputValue.trim() === '' || !selectedChat}
                             >
                                 Send
                             </button>

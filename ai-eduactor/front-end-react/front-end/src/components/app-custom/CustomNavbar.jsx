@@ -46,9 +46,9 @@ const CustomNavbar = () => {
                     <Link to="/course-reviews" className="nav-link">
                         Reviews
                     </Link>
-                    <Link to="/chatbot" className="nav-link">
-                        ChatBot
-                    </Link>
+                    {/*<Link to="/chatbot" className="nav-link">*/}
+                    {/*    ChatBot*/}
+                    {/*</Link>*/}
                 </Nav>
 
                 <Nav>

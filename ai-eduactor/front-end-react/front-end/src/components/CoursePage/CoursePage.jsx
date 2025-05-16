@@ -207,6 +207,16 @@ const CoursePage = () => {
     });
   };
 
+  const handleChatBot = () => {
+    navigate(`/chatbot`, {
+      state: {
+          from: location.pathname,
+          attachments,
+          courseId: courseDetails.id,
+          courseName: courseDetails.title,
+      },
+    });
+  };
   const handlePlayDemo = () => {
     navigate(`/flashcards/game/${courseDetails.id}`);
   };
@@ -344,9 +354,16 @@ const CoursePage = () => {
             >
               Take Quiz
             </button>
+            <button
+                className="flashcards-button"
+                style={{ marginLeft: "1rem" }}
+                onClick={() => handleChatBot()}
+            >
+              Go to ChatBot
+            </button>
           </div>
         )}
-        <h2>Uploaded Documents</h2>
+        <h2 className="uploaded-docs">Uploaded Documents</h2>
         {attachments.length === 0 ? (
           <p>No documents uploaded yet.</p>
         ) : (

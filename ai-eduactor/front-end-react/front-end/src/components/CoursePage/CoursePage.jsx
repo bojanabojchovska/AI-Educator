@@ -18,6 +18,7 @@ import { Spinner } from "react-bootstrap";
 import { FaTrash } from "react-icons/fa";
 import { FiDownload } from "react-icons/fi";
 import { FaPlay } from "react-icons/fa";
+import { FaRobot } from "react-icons/fa";
 
 const CoursePage = () => {
   const { courseName } = useParams();
@@ -339,36 +340,40 @@ const CoursePage = () => {
 
       <div className="attachments-section">
         {flashCards != null && !(flashCards.length === 0) && (
-          <div>
+          <div className={"d-flex justify-content-between"}>
+            <div>
+              <button
+                  onClick={() => handleDownload()}
+                  className="flashcards-button"
+                  style={{marginRight: "1rem"}}
+              >
+                Export All to PDF
+              </button>
+              {isDownloading && <Spinner animation="border" role="status"/>}
+              <button
+                  onClick={() => handlePlayGame()}
+                  className="flashcards-button"
+              >
+                Take Quiz
+              </button>
+            </div>
+
             <button
-              onClick={() => handleDownload()}
-              className="flashcards-button"
-              style={{ marginRight: "1rem" }}
-            >
-              Export All to PDF
-            </button>
-            {isDownloading && <Spinner animation="border" role="status" />}
-            <button
-              onClick={() => handlePlayGame()}
-              className="flashcards-button"
-            >
-              Take Quiz
-            </button>
-            <button
-                className="flashcards-button"
-                style={{ marginLeft: "1rem" }}
+                className="chatbot-button"
+                style={{marginLeft: "1rem"}}
                 onClick={() => handleChatBot()}
             >
-              Go to ChatBot
+              <FaRobot size={22}></FaRobot>
+              Open ChatBot
             </button>
           </div>
         )}
         <h2 className="uploaded-docs">Uploaded Documents</h2>
         {attachments.length === 0 ? (
-          <p>No documents uploaded yet.</p>
+            <p>No documents uploaded yet.</p>
         ) : (
-          <ul className="attachment-list">
-            {attachments.map((attachment) => {
+            <ul className="attachment-list">
+              {attachments.map((attachment) => {
               const state = attachmentStates[attachment.id] || {
                 numFlashcards: 1,
                 isGenerating: false,

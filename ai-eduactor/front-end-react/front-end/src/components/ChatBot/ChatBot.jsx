@@ -12,6 +12,16 @@ function formatAttachmentName(filename) {
         .replace(/\b\w/g, c => c.toUpperCase());
 }
 
+function TypingIndicator() {
+    return (
+    <span>
+        Thinking
+      <span className="dot">.</span>
+      <span className="dot">.</span>
+      <span className="dot">.</span>
+    </span>
+    );
+}
 const ChatBot = () => {
     const location = useLocation();
     const { attachments = [], courseId, courseName } = location.state || {};
@@ -159,7 +169,7 @@ const ChatBot = () => {
                     <div className="chatbot-messages">
                         {messages.length === 0 ? (
                             <div className="empty-chat">
-                                <p>Ask me anything about your studies!</p>
+                                <p>Ask me anything about this attachment!</p>
                             </div>
                         ) : (
                             messages.map((message, index) => (
@@ -167,8 +177,9 @@ const ChatBot = () => {
                                     key={index}
                                     className={`message ${message.isUser ? 'user-message' : 'bot-message'}`}
                                 >
+
                                     <div className="message-bubble">
-                                        {message.text}
+                                        {message.isLoading ? <TypingIndicator /> : message.text}
                                     </div>
                                     <div className="message-time">
                                         {message.timestamp instanceof Date

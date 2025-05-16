@@ -83,7 +83,7 @@ public class FlashCardServiceImpl implements FlashCardService {
             throw new IllegalArgumentException("Course ID cannot be null.");
         }
         try {
-            List<FlashCard> flashCards;
+            List<FlashCard> flashCards = new ArrayList<>();
 
             if (isForUser) {
                 flashCards = userCourseAttachmentService.getAttachmentsByCourseAndUser(courseId)
@@ -95,10 +95,6 @@ public class FlashCardServiceImpl implements FlashCardService {
                         .stream()
                         .flatMap(attachment -> flashCardRepository.findAllByAttachment(attachment).stream())
                         .toList();
-            }
-
-            if (flashCards.isEmpty()) {
-                throw new NoSuchElementException("No flashcards found for course ID: " + courseId);
             }
 
             return flashCards.stream()

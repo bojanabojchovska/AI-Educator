@@ -42,7 +42,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class UserCourseUserCourseAttachmentServiceImpl implements UserCourseAttachmentService {
+public class UserCourseAttachmentServiceImpl implements UserCourseAttachmentService {
 
     private final UserCourseAttachmentRepository userCourseAttachmentRepository;
     private final UserRepository userRepository;
@@ -89,9 +89,9 @@ public class UserCourseUserCourseAttachmentServiceImpl implements UserCourseAtta
 
         String originalFilename = multipartFile.getOriginalFilename();
         String uniqueFilename = id + "_" + originalFilename;
-        String filePath = UPLOAD_DIR_PATH + File.separator + uniqueFilename;
+        Path filePath = Paths.get(UPLOAD_DIR_PATH, uniqueFilename).toAbsolutePath();;
 
-        File dest = new File(filePath);
+        File dest = filePath.toFile();
         try {
             multipartFile.transferTo(dest.toPath());
         } catch (IOException e) {
@@ -103,8 +103,8 @@ public class UserCourseUserCourseAttachmentServiceImpl implements UserCourseAtta
         attachment.setOriginalFileName(dto.getFile().getOriginalFilename());
         attachment.setSavedFileName(uniqueFilename);
         //filepath will be for example uploads/test.pdf while the url to access the file will be localhost:8080/files/test.pdf
-        attachment.setFilePath(filePath);
-        attachment.setFileUrl("/files/" + uniqueFilename);
+        attachment.setFilePath(filePath.toAbsolutePath().toString());
+        attachment.setFileUrl("http://localhost:8080/files/" + uniqueFilename);
 
         attachment.setFileType("pdf");
         attachment.setUploadedAt(LocalDateTime.now());
@@ -207,8 +207,11 @@ public class UserCourseUserCourseAttachmentServiceImpl implements UserCourseAtta
 
         Path filePath = Paths.get(attachment.getFilePath());
         try {
-            if(Files.deleteIfExists(filePath)){
+            boolean isDeleted = Files.deleteIfExists(filePath);
+            if(isDeleted){
                 userCourseAttachmentRepository.delete(attachment);
+            }else{
+                throw new FileNotFoundException();
             }
         } catch (IOException e) {
             throw new FileNotFoundException();

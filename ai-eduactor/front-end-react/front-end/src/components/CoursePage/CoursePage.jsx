@@ -226,7 +226,7 @@ const CoursePage = () => {
         prev.filter((attachment) => attachment.id !== attachmentId)
       );
       setFlashCards((prev) =>
-        prev.filter((fc) => fc.attachment?.id !== attachmentId)
+        prev.filter((fc) => fc.attachmentId !== attachmentId)
       );
 
       setNotification({
@@ -359,64 +359,74 @@ const CoursePage = () => {
               };
 
               return (
-                <li key={attachment.id} className="attachment-item">
-                  <span>{attachment.originalFileName}</span>
-                  <div>
-                    <input
-                      type="number"
-                      id={`flashcard-count-${attachment.id}`}
-                      value={state.numFlashcards}
-                      onChange={(e) =>
-                        handleNumChange(attachment.id, e.target.value)
-                      }
-                      min="1"
-                      max="5"
-                    />
-
-                    <button
-                      onClick={() => handleGenerate(attachment.id)}
-                      className="flashcards-button"
-                      disabled={state.isGenerating}
+                  <li key={attachment.id} className="attachment-item">
+                    <a
+                        href={attachment.fileUrl.startsWith("http")
+                            ? attachment.fileUrl
+                            : `http://localhost:8080${attachment.fileUrl}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="pdf-link"
                     >
-                      {state.isGenerating ? (
-                        <>
-                          Generating... <Spinner animation="border" size="sm" />
-                        </>
-                      ) : (
-                        "Generate Flashcards"
+                      <i className="fas fa-file-pdf pdf-icon"></i>
+                      {attachment.originalFileName}
+                    </a>
+                    <div>
+                      <input
+                          type="number"
+                          id={`flashcard-count-${attachment.id}`}
+                          value={state.numFlashcards}
+                          onChange={(e) =>
+                              handleNumChange(attachment.id, e.target.value)
+                          }
+                          min="1"
+                          max="5"
+                      />
+
+                      <button
+                          onClick={() => handleGenerate(attachment.id)}
+                          className="flashcards-button"
+                          disabled={state.isGenerating}
+                      >
+                        {state.isGenerating ? (
+                            <>
+                              Generating... <Spinner animation="border" size="sm"/>
+                            </>
+                        ) : (
+                            "Generate Flashcards"
+                        )}
+                      </button>
+
+                      <button
+                          onClick={() => handleDelete(attachment.id)}
+                          className="flashcards-button"
+                          title="Delete button"
+                      >
+                        <FaTrash/>
+                      </button>
+
+                      {state.isGenerated && (
+                          <>
+                            <button
+                                onClick={() => handlePdfDownload(attachment.id)}
+                                className="icon-button"
+                                title="Export to PDF"
+                            >
+                              <FiDownload size={18}/>
+                              <span className="button-tooltip">Export to PDF</span>
+                            </button>
+                            <button
+                                onClick={() => handlePlayGame()}
+                                className="icon-button"
+                                title="Take a quiz"
+                            >
+                              <FaPlay size={16}/>
+                              <span className="button-tooltip">Take a quiz</span>
+                            </button>
+                          </>
                       )}
-                    </button>
-
-                    <button
-                      onClick={() => handleDelete(attachment.id)}
-                      className="flashcards-button"
-                      title="Delete button"
-                    >
-                      <FaTrash />
-                    </button>
-
-                    {state.isGenerated && (
-                        <>
-                          <button
-                              onClick={() => handlePdfDownload(attachment.id)}
-                              className="icon-button"
-                              title="Export to PDF"
-                          >
-                            <FiDownload size={18} />
-                            <span className="button-tooltip">Export to PDF</span>
-                          </button>
-                          <button
-                              onClick={() => handlePlayGame()}
-                              className="icon-button"
-                              title="Take a quiz"
-                          >
-                            <FaPlay size={16} />
-                            <span className="button-tooltip">Take a quiz</span>
-                          </button>
-                        </>
-                    )}
-                  </div>
-                </li>
+                    </div>
+                  </li>
               );
             })}
           </ul>

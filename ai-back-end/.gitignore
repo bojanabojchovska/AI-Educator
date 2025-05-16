@@ -12,3 +12,4 @@
 *.vsix
 .env
 __pycache__
+../ai-back-end/.ipynb_checkpoints/

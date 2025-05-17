@@ -83,17 +83,29 @@ const Admin = () => {
   const handleImport = async () => {
     if (!file) {
       toast.warning('⚠️ Please upload a valid CSV or Excel file.');
-    } else {
-      try {
-        const formData = new FormData();
-        formData.append('file', file);
-        await importCourses(formData);
-        toast.success('✅ Courses imported successfully!');
-        setFile(null);
-      } catch (error) {
-        console.error('Error uploading file:', error);
-        toast.error('⚠️ Failed to import courses.');
-      }
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // Add a loading toast
+      const loadingToast = toast.loading('Importing courses...');
+
+      await importCourses(formData);
+
+      // Update success toast and refresh courses
+      toast.dismiss(loadingToast);
+      toast.success('✅ Courses imported successfully!');
+      setFile(null);
+
+      // Refresh the courses list
+      const coursesData = await getCourses();
+      setSubjects(coursesData);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      toast.error(`⚠️ Import failed: ${error.response?.data?.message || error.message}`);
     }
   };
 

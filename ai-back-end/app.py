@@ -30,11 +30,11 @@ async def generate_flashcards(file: UploadFile = File(...), num_flashcards: int 
         temp_file.write(await file.read())
         temp_file.flush()
         temp_path = temp_file.name
-        # question_answer_pairs = await get_flashcards(file=temp_path, num_flashcards=num_flashcards)
+        question_answer_pairs = await get_flashcards(file=temp_path, num_flashcards=num_flashcards)
     os.remove(temp_path)
 
-    # return JSONResponse(content={"question_answer_pairs": question_answer_pairs})
-    return JSONResponse(content={"question_answer_pairs": [{"Question 1": "some question ...1", "Answer 1": "Some answer...1"}, {"Question 2": "some question 2", "Answer 2": "Some answer 2..."}]})
+    return JSONResponse(content={"question_answer_pairs": question_answer_pairs})
+    # return JSONResponse(content={"question_answer_pairs": [{"Question 1": "some question ...1", "Answer 1": "Some answer...1"}, {"Question 2": "some question 2", "Answer 2": "Some answer 2..."}]})
 
 @app.post("/recommend_courses")
 async def recommend_courses(request: CourseRecommendationRequst):

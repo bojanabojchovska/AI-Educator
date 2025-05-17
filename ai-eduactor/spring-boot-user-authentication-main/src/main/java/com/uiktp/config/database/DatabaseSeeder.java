@@ -49,6 +49,16 @@ public class DatabaseSeeder implements CommandLineRunner {
                 if (!userRepository.existsByEmail("student@gmail.com")) {
                         userRepository.save(student);
                 }
+                User admin = new User(
+                        "Example Admin",
+                        "admin@gmail.com",
+                        passwordEncoder.encode("admin123"),
+                        UserRole.ADMIN,
+                        ""
+                );
+                if (!userRepository.existsByEmail("admin@gmail.com")) {
+                        userRepository.save(admin);
+                }
 
                 for (int i = 1; i <= 8; i++) {
                         Semester semester = new Semester();

@@ -27,7 +27,13 @@ const LoginPage = () => {
       setIsLoading(true);
       try{
         await login(email, password);
-        navigate("/");
+        const role = localStorage.getItem("role");
+        if(role === "ADMIN" || "admin"){
+          navigate("/admin");
+        }else{
+          navigate("/");
+        }
+
       }catch (err){
         setError(err);
       }

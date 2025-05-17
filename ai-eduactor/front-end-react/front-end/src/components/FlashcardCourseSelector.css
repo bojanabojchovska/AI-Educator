@@ -1,0 +1,73 @@
+/* Container layout */
+.container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Card-like panel for upload and slider */
+.upload-container {
+    background-color: #f4e8e8;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.upload-box {
+    flex: 1;
+}
+
+.custom-upload-label {
+    display: inline-flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px dashed #ccc;
+    cursor: pointer;
+}
+
+/* Number slider */
+.flashcard-slider {
+    width: 100%;
+}
+
+/* Right-hand button panel */
+.flashcards-action-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.flashcards-action-panel button {
+    background-color: #9f2b2b;
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    text-align: center;
+}
+
+.flashcards-action-panel button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Global button override for pill shape */
+.flashcards-button {
+    border-radius: 24px;
+    background-color: #9f2b2b;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border: none;
+}
+
+.flashcards-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

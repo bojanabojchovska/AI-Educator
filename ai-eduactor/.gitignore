@@ -12,5 +12,7 @@ target/
 *.log
 *.tmp
 
-#Ignore personal configuration files
-spring-boot-user-authentication-main/src/main/resources/application.properties
+spring-boot-user-authentication-main/.mvn/wrapper/MavenWrapperDownloader.java
+spring-boot-user-authentication-main/.mvn/wrapper/maven-wrapper.jar
+spring-boot-user-authentication-main/.mvn/wrapper/maven-wrapper.properties
+

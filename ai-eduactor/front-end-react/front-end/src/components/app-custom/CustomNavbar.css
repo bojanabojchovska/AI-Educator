@@ -1,0 +1,39 @@
+.nav-auth-button {
+    font-size: 14px;
+    padding: 6px 16px;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    margin-left: 10px;
+    box-shadow: 0 0 1px gray;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    background: linear-gradient(135deg, #800000, #3c0101);
+}
+
+.nav-login-btn {
+    background-color: #6b0f1a; /* deep red */
+}
+
+.nav-login-btn:hover {
+    background-color: #5a0d16;
+}
+
+.nav-register-btn {
+    background-color: #2d0a13; /* dark burgundy */
+}
+
+.nav-register-btn:hover {
+    background-color: #1f060d;
+}
+
+.nav-hello-msg {
+    margin-right: 10px;
+    font-weight: bold;
+    align-self: center;
+}
+
+.nav-logout-btn {
+    background-color: #dc3545;
+}
+

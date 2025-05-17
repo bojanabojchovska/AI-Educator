@@ -1,52 +1,67 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";  
-import { getFlashCardsByCourseId, deleteFlashCard } from "../repository/api";
-import CustomNavbar from "./CustomNavbar";
-import "./FlashCardGamePage.css"; 
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import { getFlashCardsByCourseAndUser, deleteFlashCard } from "../services/api";
+import CustomNavbar from "./app-custom/CustomNavbar";
+import "./FlashCardGamePage.css";
+import { Spinner } from "react-bootstrap";
 
 const FlashCardGamePage = () => {
-  const { courseId } = useParams();  
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { courseId } = useParams();
   const [cards, setCards] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [gameStarted, setGameStarted] = useState(false); 
+  const [loading, setLoading] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     const fetchFlashcards = async () => {
       try {
-        const fetchedCards = await getFlashCardsByCourseId(courseId);
+        setLoading(true);
+        const fetchedCards = await getFlashCardsByCourseAndUser(courseId);
         setCards(fetchedCards);
-        setLoading(false);  
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching flashcards:", error);
-        setLoading(false);  
+        setLoading(false);
       }
     };
 
     fetchFlashcards();
-  }, [courseId]);  
+  }, [courseId]);
 
   const flipCard = (id) => {
-    setCards(cards.map(card => 
-      card.id === id ? { ...card, flipped: !card.flipped } : card
-    ));
+    setCards(
+      cards.map((card) =>
+        card.id === id ? { ...card, flipped: !card.flipped } : card
+      )
+    );
   };
 
   const nextCard = () => {
-    setCards([...cards.slice(1), cards[0]]);
+    if (currentIndex < cards.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    } else {
+      // Quiz ended
+      alert("You've reached the end of the flashcards!");
+      navigate(location.state?.from);
+    }
   };
 
   const prevCard = () => {
-    setCards([cards[cards.length - 1], ...cards.slice(0, cards.length - 1)]);
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
   };
 
   const deleteCard = async (id) => {
     if (!window.confirm("Are you sure you want to delete this flashcard?")) {
       return;
     }
-  
+
     try {
-      await deleteFlashCard(id); 
-      setCards(cards.filter(card => card.id !== id)); 
+      await deleteFlashCard(id);
+      setCards(cards.filter((card) => card.id !== id));
     } catch (error) {
       console.error("Error deleting flashcard:", error);
       alert("Failed to delete flashcard.");
@@ -65,8 +80,6 @@ const FlashCardGamePage = () => {
       </div>
     );
   }
-  
-
 
   return (
     <>
@@ -74,13 +87,12 @@ const FlashCardGamePage = () => {
 
       {!gameStarted ? (
         <div className="start-game-container">
-          <h1>Welcome to Flash Cards Game!</h1>
-          <button 
-            className="start-btn" 
-            onClick={() => setGameStarted(true)}
-          >
-            Start Game
-          </button>
+          <div className="start-game-text">
+            <h1>Welcome to Flash Cards Game!</h1>
+            <button className="start-btn" onClick={() => setGameStarted(true)}>
+              Start Game
+            </button>
+          </div>
         </div>
       ) : (
         <div className="flashcard-game-container fade-in">
@@ -88,63 +100,86 @@ const FlashCardGamePage = () => {
             <div className="hero-title">
               <h1>Flash Cards Game</h1>
               <p>
-                Challenge your memory and boost your knowledge 
+                Challenge your memory and boost your knowledge
                 <br />
                 with every card you flip.
               </p>
             </div>
           </header>
 
-          <div className="flashcard-deck">
-            {cards.map((card, index) => (
-              <div 
-                key={card.id}
-                className={`flashcard-container ${index === 0 ? 'active' : ''}`}
-              >
-                <div 
-                  className={`flashcard ${card.flipped ? 'flipped' : ''}`}
-                  onClick={() => flipCard(card.id)}
-                >
-                  <div className="flashcard-front">
-                    <div className="flashcard-header">
-                      <h3>Subject</h3>
-                    </div>
-                    <div className="flashcard-content">
-                      <p>{card.question}</p>
-                      <div className="hint">Click to flip</div>
-                    </div>
-                    <button 
-                      className="delete-btn"
-                      onClick={(e) => {
-                        e.stopPropagation(); 
-                        deleteCard(card.id);
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                  <div className="flashcard-back">
-                    <div className="flashcard-header">
-                      <h3>Subject</h3>
-                    </div>
-                    <div className="flashcard-content">
-                      <p>{card.answer}</p>
-                      <div className="hint">Click to flip back</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          {!loading ? (
+              cards.length > 0 ? (
+                  <div className="flashcard-deck">
+                    <div className="flashcard-container active">
+                      <div
+                          className={`flashcard ${cards[currentIndex]?.flipped ? "flipped" : ""}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            flipCard(cards[currentIndex].id);
+                          }}
+                      >
+                        <div className="flashcard-front">
+                          <div className="flashcard-header">
+                            <div className="flashcard-header-align">
+                              <h3>{cards[currentIndex].courseTitle}</h3>
+                              <button
+                                  className="delete-btn"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteCard(cards[currentIndex].id);
+                                  }}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                          <div className="flashcard-content">
+                            <p>{cards[currentIndex].question}</p>
+                            <div className="hint">Click to flip</div>
+                          </div>
+                        </div>
 
-          <div className="flashcard-controls">
-            <button className="control-btn prev-btn" onClick={prevCard}>
-              Previous Card
-            </button>
-            <button className="control-btn next-btn" onClick={nextCard}>
-              Next Card
-            </button>
-          </div>
+                        <div className="flashcard-back">
+                          <div className="flashcard-header">
+                            <h3>{cards[currentIndex].courseTitle}</h3>
+                          </div>
+                          <div className="flashcard-content">
+                            <p>{cards[currentIndex].answer}</p>
+                            <div className="hint">Click to flip back</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+              ) : (
+                  <div className="flashcard-content">
+                    You do not have flashcards for this course!
+                  </div>
+              )
+          ) : (
+              <div className="flashcard-content">
+                <Spinner animation="border" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>
+          )}
+
+
+          {cards.length > 0 ? (
+            <div className="flashcard-controls">
+              <button className="control-btn prev-btn" onClick={prevCard}>
+                Previous Card
+              </button>
+              <button className="control-btn next-btn" onClick={nextCard}>
+                Next Card
+              </button>
+            </div>
+          ) : (
+            <div className="flashcard-content">
+              You do not have flashcards for this course!
+            </div>
+          )}
         </div>
       )}
     </>

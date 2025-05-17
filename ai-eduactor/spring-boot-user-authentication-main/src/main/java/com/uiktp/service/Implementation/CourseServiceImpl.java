@@ -69,12 +69,12 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course updateCourse(Long id, Course course) {
+    public Course updateCourse(Long id, CourseDTO dto) {
         Optional<Course> existingCourse = courseRepository.findById(id);
         if (existingCourse.isPresent()) {
             Course courseToUpdate = existingCourse.get();
-            courseToUpdate.setTitle(course.getTitle());
-            courseToUpdate.setDescription(course.getDescription());
+            courseToUpdate.setTitle(dto.getTitle());
+            courseToUpdate.setDescription(dto.getDescription());
             // no changes in semestars and courses?
             return courseRepository.save(courseToUpdate);
         }

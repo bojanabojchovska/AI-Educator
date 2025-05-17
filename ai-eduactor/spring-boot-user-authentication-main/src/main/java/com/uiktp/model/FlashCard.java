@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "flashcards")
@@ -20,15 +22,13 @@ public class FlashCard {
     private String answer;
 
     @ManyToOne
-    @JoinColumn(name = "course_id")
-    private Course course;
+    @JoinColumn(name = "attachment_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private UserCourseAttachment attachment;
 
-    @Column(name = "attachment", columnDefinition = "BYTEA")
-    private byte[] attachment;
-
-    public FlashCard(String question, String answer, Course course) {
+    public FlashCard(UserCourseAttachment attachment, String question, String answer) {
+        this.attachment = attachment;
         this.question = question;
         this.answer = answer;
-        this.course = course;
     }
 }

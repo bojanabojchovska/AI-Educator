@@ -52,7 +52,6 @@ public class User implements UserDetails {
         this.password = password;
         this.role = role;
         this.index = index;
-
     }
 
     @Override
@@ -89,4 +88,16 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", role=" + role +
+                ", index='" + index + '\'' +
+                '}';
+    }
+
 }

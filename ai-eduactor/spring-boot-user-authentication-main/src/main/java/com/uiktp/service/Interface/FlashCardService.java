@@ -1,18 +1,22 @@
 package com.uiktp.service.Interface;
 
+import com.lowagie.text.DocumentException;
 import com.uiktp.model.FlashCard;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.uiktp.model.dtos.FlashCardDTO;
-import org.springframework.web.multipart.MultipartFile;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface FlashCardService {
     List<FlashCard> getAllFlashCards();
     List<FlashCardDTO> getAllFlashCardsByCourseId(Long courseId);
-
+    public List<FlashCardDTO> getAllFlashCardsByCourseAndUser(Long courseId);
     Optional<FlashCard> getFlashCardById(Long id);
 
     FlashCard addFlashCard(FlashCard flashCard);
@@ -21,5 +25,10 @@ public interface FlashCardService {
 
     void deleteFlashCard(Long id);
 
-    void generateFlashCard(Long courseId, MultipartFile file, int numFlashcards);
+    List<FlashCard> generateFlashCard(UUID attachmentId, int numFlashcards) throws FileNotFoundException;
+
+    @Transactional
+    public String exportFlashCardsToPdf(Long courseId) throws DocumentException, IOException;
+    @Transactional
+    public String exportAttachmentFlashCardsToPdf(UUID attachmentId) throws DocumentException, IOException;
 }

@@ -1,19 +1,17 @@
 package com.uiktp.web.controller;
 
+import com.lowagie.text.DocumentException;
 import com.uiktp.model.FlashCard;
 import com.uiktp.model.dtos.FlashCardDTO;
-import com.uiktp.model.exceptions.custom.FlashCardGenerationException;
-import com.uiktp.model.exceptions.general.InvalidArgumentsException;
 import com.uiktp.service.Interface.FlashCardService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
-
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/flashcards")
@@ -31,9 +29,14 @@ public class FlashCardController {
         return flashCardService.getAllFlashCards();
     }
 
-    @GetMapping("/game/{courseId}")
+    @GetMapping("/forCourse/{courseId}")
     public List<FlashCardDTO> getAllFlashCardsByCourseId(@PathVariable Long courseId) {
         return flashCardService.getAllFlashCardsByCourseId(courseId);
+    }
+
+    @GetMapping("/forCourseAndUser/{courseId}")
+    public List<FlashCardDTO> getAllFlashCardsByCourseAndUser(@PathVariable Long courseId) {
+        return flashCardService.getAllFlashCardsByCourseAndUser(courseId);
     }
 
     @PostMapping
@@ -62,12 +65,23 @@ public class FlashCardController {
     }
 
     @PostMapping("/generate")
-    public ResponseEntity<?> generateFlashCard(
-            @RequestParam("course_id") Long courseId,
-            @RequestParam("file") MultipartFile file,
-            @RequestParam("num_flashcards") int numFlashcards) {
-        flashCardService.generateFlashCard(courseId, file, numFlashcards);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<List<FlashCard>> generateFlashCard(
+            @RequestParam("attachment_id") UUID attachmentId,
+            @RequestParam("num_flashcards") int numFlashcards) throws FileNotFoundException {
+        return ResponseEntity.ok(flashCardService.generateFlashCard(attachmentId, numFlashcards));
     }
 
+    @GetMapping("/export/{courseId}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<String> exportFlashCardsToPdf(@PathVariable Long courseId)
+            throws DocumentException, IOException {
+        return ResponseEntity.ok().body(flashCardService.exportFlashCardsToPdf(courseId));
+    }
+    @GetMapping("/export-for-attachment")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<String> exportFlashCardsToPdf(@RequestParam("attachment_id") UUID attachmentId)
+            throws DocumentException, IOException {
+        System.out.println("Attachment ID: " + attachmentId);
+        return ResponseEntity.ok().body(flashCardService.exportAttachmentFlashCardsToPdf(attachmentId));
+    }
 }

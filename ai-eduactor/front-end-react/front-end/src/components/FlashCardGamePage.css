@@ -2,21 +2,21 @@
     text-align: center;
     padding: 30px;
     padding-top: 100px !important;
-}
-
-.flashcards-title h1 {
+  }
+  
+  .flashcards-title h1 {
     margin-bottom: 10px;
-}
-
-.flashcards-title p {
+  }
+  
+  .flashcards-title p {
     font-size: 14px;
     color: #333;
-}
-
-/* FlashCardGamePage.css */
-/* FlashCardGamePage.css */
-
-.flashcard-game-container {
+  }
+  
+  /* FlashCardGamePage.css */
+  /* FlashCardGamePage.css */
+  
+  .flashcard-game-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
@@ -74,7 +74,8 @@
     transform: rotateY(180deg);
   }
   
-  .flashcard-front, .flashcard-back {
+  .flashcard-front,
+  .flashcard-back {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -87,9 +88,10 @@
   }
   
   .flashcard-front {
-    background: linear-gradient(135deg, #800000, #3c0101); 
+    background: linear-gradient(135deg, #800000, #3c0101);
     color: white;
   }
+  
   .flashcard-back {
     background: linear-gradient(135deg, #e8e2e2, #ffffff);
     color: #2c3e50;
@@ -106,8 +108,13 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   }
   
+  .flashcard-back h3 {
+    color: #2c3e50;
+  }
+  
   .flashcard-header h3 {
     margin: 0;
+    text-align: left;
     font-size: 1.8rem;
   }
   
@@ -167,7 +174,7 @@
   .next-btn {
     background: linear-gradient(135deg, #800000, #3c0101);
   }
-
+  
   .delete-btn {
     padding: 8px 16px;
     background-color: #ff4d4d;
@@ -176,9 +183,6 @@
     border-radius: 50px;
     font-size: 1rem;
     cursor: pointer;
-    position: absolute;
-    top: 20px;
-    right: 20px; /* Positioned on the top-right corner of the front side */
     transition: background-color 0.3s ease;
   }
   
@@ -194,35 +198,45 @@
   .flashcard-front .flashcard-header {
     z-index: 1;
   }
-
-   .flashcard-header-align{
+  
+  .flashcard-header-align {
     display: flex;
     flex-direction: row;
+    align-items: center;
     justify-content: space-between;
   }
-
+  
   .start-game-container {
-  text-align: center;
-  padding: 100px 20px;
-}
-
-.start-btn {
-  padding: 12px 25px;
-  font-size: 1.2rem;
-  border: none;
-  border-radius: 50px;
-  background: linear-gradient(135deg, #800000, #3c0101);
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.start-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-}
-
-.start-btn:active {
-  transform: translateY(0);
-}
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+  }
+  
+  .start-game-text {
+    align-items: center;
+    text-align: center;
+  }
+  
+  .start-btn {
+    padding: 12px 25px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #800000, #3c0101);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+  }
+  
+  .start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .start-btn:active {
+    transform: translateY(0);
+  }
+  

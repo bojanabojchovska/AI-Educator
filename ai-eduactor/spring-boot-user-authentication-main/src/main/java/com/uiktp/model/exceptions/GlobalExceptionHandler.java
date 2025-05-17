@@ -4,6 +4,8 @@ import com.uiktp.model.exceptions.custom.*;
 import com.uiktp.model.exceptions.general.InvalidArgumentsException;
 import com.uiktp.model.exceptions.general.ResourceNotFoundException;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -64,5 +66,24 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(FileDownloadException.class)
     public ResponseEntity<String> handleFileDownloadException(FileDownloadException ex){
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    }
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(FileUploadFailureException.class)
+    public ResponseEntity<String> handleFileUploadFailureException(FileUploadFailureException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(AskQuestionException.class)
+    public ResponseEntity<String> handleAskQuestionException(AskQuestionException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    public ResponseEntity<String> handleFileNotFoundException(FileNotFoundException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 }

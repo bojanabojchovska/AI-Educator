@@ -1,33 +1,50 @@
 package com.uiktp.service.Implementation;
 
+import com.lowagie.text.*;
+import com.lowagie.text.Font;
+import com.lowagie.text.pdf.PdfWriter;
 import com.uiktp.model.Course;
 import com.uiktp.model.FlashCard;
+import com.uiktp.model.User;
+import com.uiktp.model.UserCourseAttachment;
 import com.uiktp.model.dtos.FlashCardDTO;
 import com.uiktp.model.dtos.FlashCardResponseDTO;
 import com.uiktp.model.exceptions.custom.FlashCardGenerationException;
-import com.uiktp.model.exceptions.custom.PDFLoadingException;
 import com.uiktp.model.exceptions.general.InvalidArgumentsException;
+import com.uiktp.model.exceptions.general.ResourceNotFoundException;
 import com.uiktp.repository.CourseRepository;
 import com.uiktp.repository.FlashCardRepository;
+import com.uiktp.repository.UserRepository;
 import com.uiktp.service.Interface.FlashCardService;
+import com.uiktp.service.Interface.UserCourseAttachmentService;
 import jakarta.persistence.PersistenceException;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletResponse;
+import org.hibernate.Hibernate;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
-import org.apache.pdfbox.pdmodel.PDDocument;
 
+import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,10 +52,15 @@ public class FlashCardServiceImpl implements FlashCardService {
 
     private final FlashCardRepository flashCardRepository;
     private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
+    private final UserCourseAttachmentService userCourseAttachmentService;
+    private static final String UPLOAD_DIR_PATH = "uploads";
 
-    public FlashCardServiceImpl(FlashCardRepository flashCardRepository, CourseRepository courseRepository) {
+    public FlashCardServiceImpl(FlashCardRepository flashCardRepository, CourseRepository courseRepository, UserRepository userRepository, UserCourseAttachmentService userCourseAttachmentService) {
         this.flashCardRepository = flashCardRepository;
         this.courseRepository = courseRepository;
+        this.userRepository = userRepository;
+        this.userCourseAttachmentService = userCourseAttachmentService;
     }
 
     @Override
@@ -48,25 +70,42 @@ public class FlashCardServiceImpl implements FlashCardService {
 
     @Override
     public List<FlashCardDTO> getAllFlashCardsByCourseId(Long courseId) {
+        return getFlashCardsByCourse(courseId, false);
+    }
+
+    @Override
+    public List<FlashCardDTO> getAllFlashCardsByCourseAndUser(Long courseId) {
+        return getFlashCardsByCourse(courseId, true);
+    }
+
+    private List<FlashCardDTO> getFlashCardsByCourse(Long courseId, boolean isForUser) {
         if (courseId == null) {
             throw new IllegalArgumentException("Course ID cannot be null.");
         }
         try {
-            List<FlashCard> flashCards = flashCardRepository.findAllByCourse_Id(courseId);
+            List<FlashCard> flashCards = new ArrayList<>();
 
-            if (flashCards.isEmpty()) {
-                throw new NoSuchElementException("No flashcards found for course ID: " + courseId);
+            if (isForUser) {
+                flashCards = userCourseAttachmentService.getAttachmentsByCourseAndUser(courseId)
+                        .stream()
+                        .flatMap(attachment -> flashCardRepository.findAllByAttachment(attachment).stream())
+                        .toList();
+            } else {
+                flashCards = userCourseAttachmentService.getAttachmentsByCourse(courseId)
+                        .stream()
+                        .flatMap(attachment -> flashCardRepository.findAllByAttachment(attachment).stream())
+                        .toList();
             }
-            List<FlashCardDTO> flashCardDTOs = flashCards.stream()
+
+            return flashCards.stream()
                     .map(flashCard -> new FlashCardDTO(
                             flashCard.getId(),
                             flashCard.getQuestion(),
                             flashCard.getAnswer(),
-                            flashCard.getCourse().getId(),
-                            flashCard.getCourse().getTitle()))
+                            flashCard.getAttachment().getCourse().getId(),
+                            flashCard.getAttachment().getCourse().getTitle(),
+                            flashCard.getAttachment().getId()))
                     .collect(Collectors.toList());
-
-            return flashCardDTOs;
         } catch (DataAccessException e) {
             throw new RuntimeException("Database error while fetching flashcards for course ID: " + courseId, e);
         } catch (PersistenceException e) {
@@ -103,20 +142,22 @@ public class FlashCardServiceImpl implements FlashCardService {
     }
 
     @Override
-    public void generateFlashCard(Long courseId, MultipartFile file, int numFlashcards) {
-        Course course = courseRepository.findById(courseId).orElseThrow(
-                () -> new InvalidArgumentsException(String.format("Course with id: %d not found", courseId)));
-        if (!file.getOriginalFilename().toLowerCase().endsWith(".pdf")) {
-            throw new InvalidArgumentsException("Only PDF files can be accpeted!");
+    public List<FlashCard> generateFlashCard(UUID attachmentId, int numFlashcards) throws FileNotFoundException {
+        UserCourseAttachment attachment = userCourseAttachmentService.getById(attachmentId);
+
+        File file = new File(attachment.getFilePath());
+        if (!file.exists()) {
+            throw new FileNotFoundException("File not found at path: " + attachment.getFileUrl());
         }
-        try (PDDocument document = PDDocument.load(file.getInputStream())) {
-            int numPages = document.getNumberOfPages();
-            if (numPages < 1 || numPages > 3) {
-                throw new InvalidArgumentsException("PDFs must be between 1 and 3 pages!");
-            }
+
+        byte[] fileBytes;
+        try {
+            Path path = file.toPath();
+            fileBytes = Files.readAllBytes(path);
         } catch (IOException e) {
-            throw new PDFLoadingException();
+            throw new RuntimeException("Error reading file bytes", e);
         }
+
         if (numFlashcards < 1 || numFlashcards > 5) {
             throw new InvalidArgumentsException("A maximum of 5 flashcards can be generated!");
         }
@@ -128,10 +169,10 @@ public class FlashCardServiceImpl implements FlashCardService {
 
             MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 
-            ByteArrayResource PDFasResource = new ByteArrayResource(file.getBytes()) {
+            ByteArrayResource PDFasResource = new ByteArrayResource(fileBytes) {
                 @Override
                 public String getFilename() {
-                    return file.getOriginalFilename();
+                    return file.getName();
                 }
             };
 
@@ -142,33 +183,177 @@ public class FlashCardServiceImpl implements FlashCardService {
             ResponseEntity<FlashCardResponseDTO> response = restTemplate.postForEntity("http://localhost:8000/", entity,
                     FlashCardResponseDTO.class);
 
-            List<Map<String, String>> pairs = response.getBody().getQuestion_answer_pairs();
+            List<Map<String, String>> pairs = Objects.requireNonNull(response.getBody()).getQuestion_answer_pairs();
             List<FlashCard> flashCards = new ArrayList<>();
 
             for (Map<String, String> pair : pairs) {
-                String question = "";
-                String answer = "";
-
-                for (Map.Entry<String, String> entry : pair.entrySet()) {
-                    if (entry.getKey().toLowerCase().contains("question")) {
-                        question = entry.getValue();
-                    } else if (entry.getKey().toLowerCase().contains("answer")) {
-                        answer = entry.getValue();
-                    }
-                }
-
-                FlashCard flashCard = new FlashCard();
-                flashCard.setQuestion(question);
-                flashCard.setAnswer(answer);
-                flashCard.setCourse(course);
-                flashCard.setAttachment(file.getBytes());
+                FlashCard flashCard = getFlashCard(pair, attachment);
                 flashCards.add(flashCard);
             }
-            flashCardRepository.saveAll(flashCards);
+            return flashCardRepository.saveAll(flashCards);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            throw new FlashCardGenerationException(course.getTitle());
+            throw new FlashCardGenerationException(attachment.getOriginalFileName());
+        }
+    }
+
+    private FlashCard getFlashCard(Map<String, String> pair, UserCourseAttachment attachment) {
+        String question = "";
+        String answer = "";
+
+        for (Map.Entry<String, String> entry : pair.entrySet()) {
+            if (entry.getKey().toLowerCase().contains("question")) {
+                question = entry.getValue();
+            } else if (entry.getKey().toLowerCase().contains("answer")) {
+                answer = entry.getValue();
+            }
         }
 
+        FlashCard flashCard = new FlashCard();
+        flashCard.setQuestion(question);
+        flashCard.setAnswer(answer);
+        flashCard.setAttachment(attachment);
+        return flashCard;
     }
+
+    @Override
+    @Transactional
+    public String exportFlashCardsToPdf(Long courseId) throws DocumentException, IOException {
+        Course course = courseRepository.findById(courseId).orElseThrow(
+                () -> new InvalidArgumentsException(String.format("Course with id: %d not found", courseId)));
+
+        Path folderPath = Files.createDirectories(Paths.get(UPLOAD_DIR_PATH));
+
+        String uniqueFilename = UUID.randomUUID() + "_" + course.getTitle() + ".pdf";
+        String filePath = folderPath + File.separator + uniqueFilename;
+
+        Document document = new Document(PageSize.A4);
+        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(filePath));
+
+        document.open();
+
+        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+        titleFont.setSize(18);
+        titleFont.setColor(Color.BLUE);
+
+        Paragraph title = new Paragraph("Flashcards for " + course.getTitle(), titleFont);
+        title.setAlignment(Paragraph.ALIGN_CENTER);
+        document.add(title);
+
+        Font dateFont = FontFactory.getFont(FontFactory.HELVETICA);
+        dateFont.setSize(12);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Paragraph date = new Paragraph("Generated on: " + formatter.format(new Date()), dateFont);
+        date.setAlignment(Paragraph.ALIGN_RIGHT);
+        document.add(date);
+
+        document.add(new Paragraph("\n"));
+
+        List<FlashCard> allUserCourseFlashcards = userCourseAttachmentService.getAttachmentsByCourseAndUser(courseId)
+                .stream()
+                .flatMap(attachment -> flashCardRepository.findAllByAttachment(attachment).stream())
+                .toList();
+
+        if (allUserCourseFlashcards.isEmpty()) {
+            throw new InvalidArgumentsException("No flashcards found for this course");
+        }
+
+        for (int i = 0; i < allUserCourseFlashcards.size(); i++) {
+            FlashCard flashCard = allUserCourseFlashcards.get(i);
+
+            Font cardFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+            cardFont.setSize(14);
+            Paragraph cardNumber = new Paragraph("Flashcard #" + (i + 1), cardFont);
+            document.add(cardNumber);
+
+            Font questionFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+            questionFont.setSize(12);
+            Paragraph question = new Paragraph("Question: ", questionFont);
+            question.add(new Chunk(flashCard.getQuestion(), FontFactory.getFont(FontFactory.HELVETICA)));
+            document.add(question);
+
+            Font answerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+            answerFont.setSize(12);
+            Paragraph answer = new Paragraph("Answer: ", answerFont);
+            answer.add(new Chunk(flashCard.getAnswer(), FontFactory.getFont(FontFactory.HELVETICA)));
+            document.add(answer);
+
+            document.add(new Paragraph("\n"));
+        }
+
+        document.close();
+        writer.flush();
+
+        return "http://localhost:8080/files/" + uniqueFilename;
+    }
+
+    @Override
+    @Transactional
+    public String exportAttachmentFlashCardsToPdf(UUID attachmentId) throws DocumentException, IOException {
+        UserCourseAttachment attachment = userCourseAttachmentService.getById(attachmentId);
+        Course course = attachment.getCourse();
+
+        Path folderPath = Files.createDirectories(Paths.get(UPLOAD_DIR_PATH));
+
+        String uniqueFilename = UUID.randomUUID() + "_" + course.getTitle() + ".pdf";
+        String filePath = folderPath + File.separator + uniqueFilename;
+
+        Document document = new Document(PageSize.A4);
+        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(filePath));
+
+        document.open();
+
+        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+        titleFont.setSize(18);
+        titleFont.setColor(Color.BLUE);
+
+        Paragraph title = new Paragraph("Flashcards for " + attachment.getOriginalFileName(), titleFont);
+        title.setAlignment(Paragraph.ALIGN_CENTER);
+        document.add(title);
+
+        Font dateFont = FontFactory.getFont(FontFactory.HELVETICA);
+        dateFont.setSize(12);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Paragraph date = new Paragraph("Generated on: " + formatter.format(new Date()), dateFont);
+        date.setAlignment(Paragraph.ALIGN_RIGHT);
+        document.add(date);
+
+        document.add(new Paragraph("\n"));
+
+        List<FlashCard> flashCards = flashCardRepository.findAllByAttachment(attachment);
+
+        if (flashCards.isEmpty()) {
+            throw new InvalidArgumentsException("No flashcards found for this PDF");
+        }
+
+        for (int i = 0; i < flashCards.size(); i++) {
+            FlashCard flashCard = flashCards.get(i);
+
+            Font cardFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+            cardFont.setSize(14);
+            Paragraph cardNumber = new Paragraph("Flashcard #" + (i + 1), cardFont);
+            document.add(cardNumber);
+
+            Font questionFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+            questionFont.setSize(12);
+            Paragraph question = new Paragraph("Question: ", questionFont);
+            question.add(new Chunk(flashCard.getQuestion(), FontFactory.getFont(FontFactory.HELVETICA)));
+            document.add(question);
+
+            Font answerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+            answerFont.setSize(12);
+            Paragraph answer = new Paragraph("Answer: ", answerFont);
+            answer.add(new Chunk(flashCard.getAnswer(), FontFactory.getFont(FontFactory.HELVETICA)));
+            document.add(answer);
+
+            document.add(new Paragraph("\n"));
+        }
+
+        document.close();
+        writer.flush();
+
+        return "http://localhost:8080/files/" + uniqueFilename;
+    }
+
+
 }

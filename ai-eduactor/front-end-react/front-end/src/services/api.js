@@ -110,6 +110,7 @@ export const createCourse = async (courseData) => {
 
 export const updateCourse = async (id, courseData) => {
     try {
+        console.log(courseData)
         const response = await axios.put(`${API_URL}/courses/${id}`, courseData, {
             withCredentials: true
         });

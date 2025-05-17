@@ -28,7 +28,8 @@ const LoginPage = () => {
       try{
         await login(email, password);
         const role = localStorage.getItem("role");
-        if(role === "ADMIN" || "admin"){
+        console.log(role);
+        if(role === "ADMIN" || role === "admin"){
           navigate("/admin");
         }else{
           navigate("/");

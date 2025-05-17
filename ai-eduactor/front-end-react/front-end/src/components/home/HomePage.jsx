@@ -48,23 +48,12 @@ const HomePage = () => {
                 Your AI-powered academic consultant—guiding you in subject
                 selection, exam prep, and smarter studying.
               </p>
-              {userRole === "User" && (
-                  <button
-                      onClick={() => handleNavigate("/subject-recommendation")}
-                      className="btn-primary"
-                  >
-                    Get Started
-                  </button>
-              )}
-
-              {userRole === "Admin" && (
-                  <button
-                      onClick={() => handleNavigate("/admin")}
-                      className="btn-primary"
-                  >
-                    Go to Admin Panel
-                  </button>
-              )}
+              <button
+                  onClick={() => handleNavigate("/subject-recommendation")}
+                  className="btn-primary"
+              >
+                Get Started
+              </button>
             </div>
           </section>
 
@@ -72,7 +61,7 @@ const HomePage = () => {
           <section className="feature-section">
             <h2>Subject Recommendation</h2>
             <div className="feature-content">
-              <img src={"https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg"}
+            <img src={"https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg"}
                    alt="AI Subject Recommendation" className="feature-image"/>
               <div className="feature-text">
                 <p>

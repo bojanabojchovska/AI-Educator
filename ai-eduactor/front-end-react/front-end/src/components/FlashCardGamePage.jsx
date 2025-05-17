@@ -61,7 +61,8 @@ const FlashCardGamePage = () => {
   };
 
   const handleBack = () => {
-    navigate(location.state?.from || '/');
+    const courseTitle = cards[0]?.courseTitle;
+    navigate(`/course/${courseTitle}`);
   };
 
   const deleteCard = async (id) => {

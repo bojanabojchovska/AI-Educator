@@ -15,7 +15,6 @@ import {
     deleteAttachment,
     exportPdfFlashcards
 } from '../services/api';
-import './FlashcardsPage.css';
 
 const FlashcardCourseSelector = () => {
     const [courses, setCourses] = useState([]);

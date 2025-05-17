@@ -13,6 +13,7 @@ import {
 const Admin = () => {
   const [subjects, setSubjects] = useState([]);
   const [newSubject, setNewSubject] = useState({ title: '', description: '' });
+  const [editSubject, setEditSubject] = useState({ title: '', description: '' });
   const [editing, setEditing] = useState(null);
   const [file, setFile] = useState(null);
 
@@ -59,20 +60,19 @@ const Admin = () => {
   };
 
   const handleEditSubject = (subject) => {
-    setNewSubject({ title: subject.title, description: subject.description });
+    setEditSubject({ title: subject.title, description: subject.description });
     setEditing(subject.id);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
   const handleSaveEdit = async () => {
-    const updatedSubject = { ...newSubject };
+    const updatedSubject = { ...editSubject };
 
     try {
       const updated = await updateCourse(editing, updatedSubject);
       setSubjects((prevSubjects) =>
           prevSubjects.map((subject) => (subject.id === editing ? updated : subject))
       );
-      setNewSubject({ title: '', description: '' });
+      setEditSubject({ title: '', description: '' });
       setEditing(null);
       toast.success('✏️ Changes saved.');
     } catch (error) {
@@ -114,22 +114,30 @@ const Admin = () => {
         <div className="subject-form">
           <label>{editing ? 'Edit Subject' : 'Add Subject'}</label>
           {editing && (
-              <p style={{ color: 'green', fontWeight: 'bold' }}>✏️ Currently editing...</p>
+              <p style={{color: 'green', fontWeight: 'bold'}}>✏️ Currently editing...</p>
           )}
           <input
               type="text"
               placeholder="Title"
-              value={newSubject.title}
-              onChange={(e) => setNewSubject({ ...newSubject, title: e.target.value })}
+              value={editing ? editSubject.title : newSubject.title}
+              onChange={(e) =>
+                  editing
+                      ? setEditSubject({...editSubject, title: e.target.value})
+                      : setNewSubject({...newSubject, title: e.target.value})
+              }
           />
           <input
               type="text"
               placeholder="Description"
-              value={newSubject.description}
-              onChange={(e) => setNewSubject({ ...newSubject, description: e.target.value })}
+              value={editing ? editSubject.description : newSubject.description}
+              onChange={(e) =>
+                  editing
+                      ? setEditSubject({...editSubject, description: e.target.value})
+                      : setNewSubject({...newSubject, description: e.target.value})
+              }
           />
           <button onClick={editing ? handleSaveEdit : handleAddSubject}>
-            <FaPlus />
+            <FaPlus/>
             {editing ? 'Save Changes' : 'Add Subject'}
           </button>
         </div>

@@ -106,7 +106,7 @@ const FlashCardGamePage = () => {
               </div>
             </div>
         ) : (
-            <div className="flashcard-game-container fade-in">
+            <div className={`flashcard-game-container fade-in ${showEndScreen ? 'has-end-screen' : ''}`}>
               <header className="hero-header">
                 <div className="hero-title">
                   <h1>Flash Cards Game</h1>
@@ -118,61 +118,49 @@ const FlashCardGamePage = () => {
                 </div>
               </header>
 
-              {!loading ? (
-                  cards.length > 0 ? (
-                      <div className="flashcard-deck">
-                        <div className="flashcard-container active">
-                          <div
-                              className={`flashcard ${cards[currentIndex]?.flipped ? "flipped" : ""}`}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                flipCard(cards[currentIndex].id);
-                              }}
-                          >
-                            <div className="flashcard-front">
-                              <div className="flashcard-header">
-                                <div className="flashcard-header-align">
-                                  <h3>{cards[currentIndex].courseTitle}</h3>
-                                  <button
-                                      className="delete-btn"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        deleteCard(cards[currentIndex].id);
-                                      }}
-                                  >
-                                    Delete
-                                  </button>
-                                </div>
-                              </div>
-                              <div className="flashcard-content">
-                                <p>{cards[currentIndex].question}</p>
-                                <div className="hint">Click to flip</div>
-                              </div>
+              {!loading && cards.length > 0 && (
+                  <div className="flashcard-deck">
+                    <div className="flashcard-container active">
+                      <div
+                          className={`flashcard ${cards[currentIndex]?.flipped ? "flipped" : ""}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            flipCard(cards[currentIndex].id);
+                          }}
+                      >
+                        <div className="flashcard-front">
+                          <div className="flashcard-header">
+                            <div className="flashcard-header-align">
+                              <h3>{cards[currentIndex].courseTitle}</h3>
+                              <button
+                                  className="delete-btn"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteCard(cards[currentIndex].id);
+                                  }}
+                              >
+                                Delete
+                              </button>
                             </div>
+                          </div>
+                          <div className="flashcard-content">
+                            <p>{cards[currentIndex].question}</p>
+                            <div className="hint">Click to flip</div>
+                          </div>
+                        </div>
 
-                            <div className="flashcard-back">
-                              <div className="flashcard-header">
-                                <h3>{cards[currentIndex].courseTitle}</h3>
-                              </div>
-                              <div className="flashcard-content">
-                                <p>{cards[currentIndex].answer}</p>
-                                <div className="hint">Click to flip back</div>
-                              </div>
-                            </div>
+                        <div className="flashcard-back">
+                          <div className="flashcard-header">
+                            <h3>{cards[currentIndex].courseTitle}</h3>
+                          </div>
+                          <div className="flashcard-content">
+                            <p>{cards[currentIndex].answer}</p>
+                            <div className="hint">Click to flip back</div>
                           </div>
                         </div>
                       </div>
-                  ) : (
-                      <div className="flashcard-content">
-                        You do not have flashcards for this course!
-                      </div>
-                  )
-              ) : (
-                  <div className="flashcard-content">
-                    <Spinner animation="border" role="status">
-                      <span className="visually-hidden">Loading...</span>
-                    </Spinner>
+                    </div>
                   </div>
               )}
 

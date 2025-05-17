@@ -7,10 +7,11 @@ export const login = async (email, password) => {
     try {
         const response = await axios.post(`${AUTH_BASE_URL}/login`, {email, password});
         if (response.status === 200) {
-            const {token, email, name} = response.data;
+            const {token, email, name, role} = response.data;
             localStorage.setItem("token", token);
             localStorage.setItem("email", email);
             localStorage.setItem("name", name);
+            localStorage.setItem("role", role );
             document.cookie = `jwt=${token}; path=/`;
         }
     } catch (err) {

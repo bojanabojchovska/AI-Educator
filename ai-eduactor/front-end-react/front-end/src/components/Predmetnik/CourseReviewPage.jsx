@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaStar } from 'react-icons/fa';
+import { FaStar, FaArrowLeft, FaTrash, FaCommentAlt } from 'react-icons/fa';
 import CustomNavbar from '../app-custom/CustomNavbar';
 import StarRatings from 'react-star-ratings';
 import {
@@ -147,7 +147,7 @@ const CourseReviewPage = () => {
                     className="back-button"
                     onClick={() => navigate('/course-reviews')}
                 >
-                    &larr; Back to Courses
+                    <FaArrowLeft /> Back to Courses
                 </button>
 
                 {error && <div className="error-message">{error}</div>}
@@ -178,8 +178,8 @@ const CourseReviewPage = () => {
                     </div>
 
                     <div className="forms-container">
-                        <form onSubmit={handleSubmitReview} className="new-review-form">
-                            <h3>Add Your Review</h3>
+                        <form onSubmit={handleSubmitReview} className="new-review-form review-section">
+                            <h3><FaStar className="form-icon" /> Add Your Review</h3>
 
                             <div className="rating-selection">
                                 <label>Your Rating:</label>
@@ -199,10 +199,10 @@ const CourseReviewPage = () => {
                             </div>
 
                             <div className="feedback-container">
-                                <label htmlFor="feedback">Your Comments (optional):</label>
+                                <label htmlFor="feedback">Your Review (optional):</label>
                                 <textarea
                                     id="feedback"
-                                    placeholder="Write your feedback here..."
+                                    placeholder="Write your review here..."
                                     value={newReview.feedback}
                                     onChange={(e) => setNewReview({...newReview, feedback: e.target.value})}
                                     rows="4"
@@ -218,13 +218,13 @@ const CourseReviewPage = () => {
                             </button>
                         </form>
 
-                        <form onSubmit={handleSubmitComment} className="new-review-form">
-                            <h3>Ask a question or express your opinion!</h3>
+                        <form onSubmit={handleSubmitComment} className="new-review-form comment-section">
+                            <h3><FaCommentAlt className="form-icon" /> Add a Comment</h3>
 
                             <div className="feedback-container">
                                 <textarea
                                     id="commentFeedback"
-                                    placeholder="Write your comment here..."
+                                    placeholder="Ask a question or share your thoughts..."
                                     value={commentFeedback}
                                     onChange={(e) => setCommentFeedback(e.target.value)}
                                     rows="9"
@@ -246,7 +246,12 @@ const CourseReviewPage = () => {
                         <h3>All Reviews</h3>
                         {reviews.comments && reviews.comments.length > 0 ? (
                             reviews.comments.map((comment, index) => (
-                                <div key={index} className="review-card">
+                                <div key={index} className={`review-card ${comment.rating ? 'rating' : 'comment'}`}>
+                                    {/* Content type label */}
+                                    <div className={`content-type-label ${comment.rating ? 'rating' : 'comment'}`}>
+                                        {comment.rating ? 'Review' : 'Comment'}
+                                    </div>
+
                                     {/* Review Header: User info */}
                                     <div className="review-header">
                                         <div className="review-user">
@@ -264,11 +269,14 @@ const CourseReviewPage = () => {
                                     <div className="review-body">
                                         <p>{comment.commentBody}</p>
                                     </div>
-                                    {studentEmail === comment.student.email ? (
+
+                                    {studentEmail === comment.student.email && (
                                         <div className="comment-buttons">
-                                            <button onClick={() => handleDeleteButton(comment.id)}>Delete</button>
+                                            <button onClick={() => handleDeleteButton(comment.id)}>
+                                                <FaTrash /> Delete
+                                            </button>
                                         </div>
-                                    ) : null}
+                                    )}
                                 </div>
                             ))
                         ) : (

@@ -1,14 +1,10 @@
- import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Admin.css';
-import { FaEdit, FaTrash, FaPlus, FaFileExport } from 'react-icons/fa';
+import { FaEdit, FaPlus, FaHome, FaFileUpload, FaTrash, FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {
-  getCourses,
-  createCourse,
-  updateCourse,
-  deleteCourse, importCourses
-} from '../../services/api.js';
+import { useNavigate } from "react-router-dom";
+import { logout, getCourses, createCourse, updateCourse, deleteCourse, importCourses } from '../../services/api.js';
 
 const Admin = () => {
   const [subjects, setSubjects] = useState([]);
@@ -16,33 +12,32 @@ const Admin = () => {
   const [editSubject, setEditSubject] = useState({ title: '', description: '' });
   const [editing, setEditing] = useState(null);
   const [file, setFile] = useState(null);
+  const [sortOrder, setSortOrder] = useState('latest');
+  const navigate = useNavigate();
+  const formRef = useRef(null);
 
-  // Fetch courses from the backend when component mounts
+  // Helper to reload subjects from backend
+  const reloadSubjects = async () => {
+    try {
+      const coursesData = await getCourses();
+      setSubjects(coursesData);
+    } catch (error) {
+      toast.error('⚠️ Failed to load subjects.');
+    }
+  };
+
   useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const coursesData = await getCourses(); // Get courses from the backend
-        setSubjects(coursesData);
-      } catch (error) {
-        console.error('Error fetching courses:', error);
-        toast.error('⚠️ Failed to load subjects.');
-      }
-    };
-
-    fetchCourses();
+    reloadSubjects();
   }, []);
 
   const handleAddSubject = async () => {
     if (newSubject.title && newSubject.description) {
-      const newItem = { ...newSubject };
-
       try {
-        const createdCourse = await createCourse(newItem);
-        setSubjects((prevSubjects) => [...prevSubjects, createdCourse]);
+        await createCourse({ ...newSubject });
         setNewSubject({ title: '', description: '' });
         toast.success('✅ Subject added successfully!');
+        await reloadSubjects();
       } catch (error) {
-        console.error('Error creating course:', error);
         toast.error('⚠️ Failed to add subject.');
       }
     }
@@ -51,32 +46,47 @@ const Admin = () => {
   const handleDeleteSubject = async (id) => {
     try {
       await deleteCourse(id);
-      setSubjects((prevSubjects) => prevSubjects.filter((subject) => subject.id !== id));
       toast.error('🗑️ Subject deleted.');
+      await reloadSubjects();
     } catch (error) {
-      console.error('Error deleting course:', error);
-      toast.error('⚠️ Failed to delete subject.');
+      const msg =
+        error?.response?.data?.message ||
+        error?.response?.data ||
+        error?.message ||
+        '';
+      if (
+        msg.toLowerCase().includes('attachment') ||
+        msg.toLowerCase().includes('dependent') ||
+        msg.toLowerCase().includes('foreign key') ||
+        msg.toLowerCase().includes('constraint')
+      ) {
+        toast.error('❌ Cannot delete subject: It has attachments or dependencies.');
+      } else {
+        toast.error('⚠️ Failed to delete subject.');
+      }
     }
   };
 
   const handleEditSubject = (subject) => {
     setEditSubject({ title: subject.title, description: subject.description });
     setEditing(subject.id);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   };
-  const handleSaveEdit = async () => {
-    const updatedSubject = { ...editSubject };
 
+  const handleSaveEdit = async () => {
+    if (!editSubject.title || !editSubject.description) {
+      toast.warning('⚠️ Please fill in all fields');
+      return;
+    }
     try {
-      const updated = await updateCourse(editing, updatedSubject);
-      setSubjects((prevSubjects) =>
-          prevSubjects.map((subject) => (subject.id === editing ? updated : subject))
-      );
+      await updateCourse(editing, { ...editSubject });
       setEditSubject({ title: '', description: '' });
       setEditing(null);
       toast.success('✏️ Changes saved.');
+      await reloadSubjects();
     } catch (error) {
-      console.error('Error saving edit:', error);
       toast.error('⚠️ Failed to save changes.');
     }
   };
@@ -84,98 +94,187 @@ const Admin = () => {
   const handleImport = async () => {
     if (!file) {
       toast.warning('⚠️ Please upload a valid CSV or Excel file.');
-    }else{
-      try {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const response = await importCourses(formData);
-        toast.success('✅ Courses imported successfully!');
-
-        setFile(null);
-      } catch (error) {
-        console.error('Error uploading file:', error);
-        toast.error('⚠️ Failed to import courses.');
-      }
+      return;
+    }
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const loadingToast = toast.loading('Importing courses...');
+      await importCourses(formData);
+      toast.dismiss(loadingToast);
+      toast.success('✅ Courses imported successfully!');
+      setFile(null);
+      await reloadSubjects();
+    } catch (error) {
+      toast.error(`⚠️ Import failed: ${error.response?.data?.message || error.message}`);
     }
   };
 
-  return (
-      <div className="admin-container">
-        <ToastContainer position="top-center" />
-        <h1>Admin Panel</h1>
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      toast.error('⚠️ Logout failed');
+    }
+  };
 
-        <div className="upload-section">
-          <label>Import PDF with subjects:</label>
-          <input type="file" accept=".csv, .xls, .xlsx" onChange={(e) => setFile(e.target.files[0])}/>
-          <button onClick={handleImport}>Import Courses</button>
+  const handleGoHome = () => {
+    navigate('/');
+  };
+
+  const getSortedSubjects = () => {
+    if (!subjects) return [];
+    const sorted = [...subjects].sort((a, b) => {
+      const idA = a.id ?? a.courseId;
+      const idB = b.id ?? b.courseId;
+      return sortOrder === 'latest'
+        ? idB - idA
+        : idA - idB;
+    });
+    return sorted;
+  };
+
+  return (
+    <>
+      <ToastContainer
+        position="top-center"
+        style={{ zIndex: 9999, position: "fixed" }}
+        toastClassName="sticky-toast"
+        bodyClassName="sticky-toast-body"
+      />
+      <div className="admin-container">
+        <div className="admin-header">
+          <h1>Admin Panel</h1>
+          <div className="admin-header-buttons">
+            <button className="home-btn" onClick={handleGoHome}>
+              <FaHome style={{ marginRight: 8 }} />
+              Homepage
+            </button>
+            <button className="logout-btn" onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
         </div>
 
-        <div className="subject-form">
-          <label>{editing ? 'Edit Subject' : 'Add Subject'}</label>
+        <div className="upload-section">
+          <h2 className="upload-title">Import Subjects</h2>
+          <p className="upload-subtitle">
+            Upload a file (PDF, CSV, Excel) containing subject information.
+          </p>
+          <div className="upload-box">
+            <label htmlFor="admin-file-upload" className="custom-upload-label">
+              <FaFileUpload size={20} />
+              {file ? file.name : "Choose File"}
+            </label>
+            <input
+                id="admin-file-upload"
+                type="file"
+                accept=".csv, .xls, .xlsx, .pdf"
+                onChange={(e) => setFile(e.target.files[0])}
+                style={{ display: "none" }}
+            />
+          </div>
+          <div className="upload-actions">
+            <button className="import-btn" onClick={handleImport} disabled={!file}>
+              <FaFileUpload style={{ marginRight: 8 }} />
+              Import Subjects
+            </button>
+          </div>
+        </div>
+
+        <div className="subject-form" ref={formRef}>
+          <label className="form-title">{editing ? 'Edit Subject' : 'Add Subject'}</label>
           {editing && (
-              <p style={{color: 'green', fontWeight: 'bold'}}>✏️ Currently editing...</p>
+              <p className="editing-indicator">✏️ Currently editing...</p>
           )}
-          <input
-              type="text"
-              placeholder="Title"
-              value={editing ? editSubject.title : newSubject.title}
-              onChange={(e) =>
-                  editing
-                      ? setEditSubject({...editSubject, title: e.target.value})
-                      : setNewSubject({...newSubject, title: e.target.value})
-              }
-          />
-          <input
-              type="text"
-              placeholder="Description"
-              value={editing ? editSubject.description : newSubject.description}
-              onChange={(e) =>
-                  editing
-                      ? setEditSubject({...editSubject, description: e.target.value})
-                      : setNewSubject({...newSubject, description: e.target.value})
-              }
-          />
-          <button onClick={editing ? handleSaveEdit : handleAddSubject}>
-            <FaPlus/>
-            {editing ? 'Save Changes' : 'Add Subject'}
+          <div className="input-group">
+            <label>Title</label>
+            <input
+                type="text"
+                placeholder="Enter subject title"
+                value={editing ? editSubject.title : newSubject.title}
+                onChange={(e) =>
+                    editing
+                        ? setEditSubject({...editSubject, title: e.target.value})
+                        : setNewSubject({...newSubject, title: e.target.value})
+                }
+            />
+          </div>
+          <div className="input-group">
+            <label>Description</label>
+            <input
+                type="text"
+                placeholder="Enter subject description"
+                value={editing ? editSubject.description : newSubject.description}
+                onChange={(e) =>
+                    editing
+                        ? setEditSubject({...editSubject, description: e.target.value})
+                        : setNewSubject({...newSubject, description: e.target.value})
+                }
+            />
+          </div>
+          <button className="form-btn" onClick={(e) => {
+            e.preventDefault();
+            editing ? handleSaveEdit() : handleAddSubject();
+          }}>
+            {editing ? <FaEdit/> : <FaPlus/>}
+            <span style={{marginLeft: '8px'}}>
+              {editing ? 'Save Changes' : 'Add Subject'}
+            </span>
           </button>
         </div>
 
-        <h2>Subjects List</h2>
-        <table>
-          <thead>
-          <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Actions</th>
-          </tr>
-          </thead>
-          <tbody>
+        <div className="subjects-list">
+          <div className="subjects-list-header-row">
+            <h2 className="subjects-list-title">Subjects List</h2>
+            <div className="subject-sort-toggle">
+              <button
+                className={`sort-btn ${sortOrder === 'latest' ? 'active' : ''}`}
+                onClick={() => setSortOrder('latest')}
+                aria-label="Sort by latest"
+              >
+                <FaArrowDown /> Latest
+              </button>
+              <button
+                className={`sort-btn ${sortOrder === 'oldest' ? 'active' : ''}`}
+                onClick={() => setSortOrder('oldest')}
+                aria-label="Sort by oldest"
+              >
+                <FaArrowUp /> Oldest
+              </button>
+            </div>
+          </div>
+
+          <div className="subject-table-header">
+            <div>Title</div>
+            <div>Description</div>
+            <div>Actions</div>
+          </div>
+
           {subjects.length === 0 ? (
-              <tr>
-                <td colSpan="3">No subjects yet.</td>
-              </tr>
+            <div className="no-subjects">No subjects yet.</div>
           ) : (
-              subjects.map((subject) => (
-                  <tr key={subject.id}>
-                    <td>{subject.title}</td>
-                    <td>{subject.description}</td>
-                    <td>
-                      <button onClick={() => handleEditSubject(subject)} title="Edit">
-                        <FaEdit />
-                      </button>
-                      <button onClick={() => handleDeleteSubject(subject.id)} title="Delete">
-                        <FaTrash />
-                      </button>
-                    </td>
-                  </tr>
-              ))
+            getSortedSubjects().map((subject) => (
+              <div key={subject.id ?? subject.courseId} className="subject-table-row">
+                <div className="subject-title">{subject.title}</div>
+                <div className="subject-description">{subject.description}</div>
+                <div className="subject-actions">
+                  <button className="action-btn edit-action" onClick={() => handleEditSubject(subject)} title="Edit">
+                    <FaEdit />
+                  </button>
+                  <button className="action-btn delete-action" onClick={() => handleDeleteSubject(subject.id)} title="Delete">
+                    <FaTrash />
+                  </button>
+                </div>
+              </div>
+            ))
           )}
-          </tbody>
-        </table>
+        </div>
       </div>
+    </>
   );
 };
 
 export default Admin;
+

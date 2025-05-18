@@ -10,10 +10,7 @@ const PrivateRoute = ({ element }) => {
         return <Navigate to="/login" replace />;
     }
 
-    if(role === 'ADMIN' && location.pathname !== '/admin'){
-        return <Navigate to="/admin" replace />
-    }
-
+    // Forbid USER from visiting /admin, but allow ADMIN everywhere
     if (role === 'USER' && location.pathname === '/admin') {
         return <Navigate to="/" replace />;
     }

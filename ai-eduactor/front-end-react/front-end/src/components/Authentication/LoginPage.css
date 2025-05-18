@@ -1,95 +1,180 @@
-/* LoginPage.css */
-
-.login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: white;
-    flex-direction: column;
+/* Unique and improved styles for LoginPage */
+.login-auth-image-container {
+    position: relative !important;
+    background: #800000 !important;
+    overflow: hidden !important;
+    min-height: 100vh !important;
 }
 
-.login-box {
-    width: 500px;
-    padding: 30px;
-    background: #601010; /* Dark Red */
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    text-align: center;
+.login-auth-overlay {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(128, 0, 0, 0.55) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    color: #fff !important;
+    text-align: center !important;
+    padding: 2.5rem 1.5rem !important;
+    z-index: 2 !important;
 }
 
-h1 {
-    color: black;
-    font-size: 24px;
-    margin-bottom: 20px;
+.login-auth-overlay h1 {
+    font-size: 2.2rem !important;
+    font-weight: 800 !important;
+    margin-bottom: 1rem !important;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.25) !important;
+    letter-spacing: 1px !important;
 }
 
-.login-form {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
+.login-auth-overlay p {
+    font-size: 1.13rem !important;
+    max-width: 420px !important;
+    line-height: 1.7 !important;
+    margin: 0 auto !important;
+    font-weight: 500 !important;
 }
 
-.login-form label {
-    font-size: 14px;
-    margin-bottom: 5px;
-    color: white;
-    font-weight: bold;
-}
-
-.login-form input {
-    padding: 12px;
-    margin-bottom: 20px; /* Increased spacing */
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
-    width: calc(100% - 24px); /* Fix width */
-    background: white;
-}
-.buttons{
-    margin: 30px;
-    text-align: center;
-    align-content: center;
-}
-/* Unified button styles */
-.loginFormBtn {
-    background-color: lightgray !important;
-    color: black;
-    padding: 12px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    width: 100%;
-    margin-top: 10px; /* Add spacing */
-    margin-bottom: 20px;
-    transition: background 0.3s ease;
-}
-
-.btn:hover {
-    background-color: #bbb;
-}
-
-.btn:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
-
-.footer{
-    margin-top: 80px;
+.login-auth-form-container {
+    background: linear-gradient(135deg, #f8f9fa 60%, #fff 100%) !important;
+    min-height: 100vh !important;
 }
 
 .login-card {
-    max-width: 400px;
-    width: 100%;
-    border-radius: 15px;
-    background-color: #ffffff;
-  }
-
-.login-button-align{
-    display:flex;
-    align-items: center;
-    justify-content: center;
+    max-width: 390px !important;
+    width: 100% !important;
+    border-radius: 20px !important;
+    background: #fff !important;
+    box-shadow: 0 8px 32px rgba(128,0,0,0.13) !important;
+    border: 1.5px solid #f3eaea !important;
+    margin: 0 auto !important;
 }
 
-  
+.login-auth-title {
+    color: #800000 !important;
+    font-weight: 800 !important;
+    font-size: 1.55rem !important;
+    letter-spacing: 0.5px !important;
+}
+
+.login-auth-submit-btn {
+    width: 100% !important;
+    background: linear-gradient(45deg, #800000, #a83232) !important;
+    border: none !important;
+    padding: 14px 20px !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.8px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    font-size: 1.1rem !important;
+    color: #fff !important;
+    position: relative !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 15px rgba(128, 0, 0, 0.2) !important;
+    margin-top: 10px !important;
+    margin-bottom: 5px !important;
+    text-transform: uppercase !important;
+    z-index: 1 !important;
+}
+
+.login-auth-submit-btn::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(45deg, #a83232, #cc4040) !important;
+    transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    z-index: -1 !important;
+}
+
+.login-auth-submit-btn:hover::before {
+    left: 0 !important;
+}
+
+.login-auth-submit-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(128, 0, 0, 0.25) !important;
+    color: #fff !important;
+}
+
+.login-auth-submit-btn:active {
+    transform: translateY(1px) !important;
+    box-shadow: 0 2px 10px rgba(128, 0, 0, 0.15) !important;
+}
+
+.login-auth-submit-btn:disabled {
+    background: linear-gradient(45deg, #999, #777) !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.login-auth-link-text {
+    color: #666 !important;
+    font-size: 0.97rem !important;
+    margin-top: 10px !important;
+}
+
+.login-auth-link {
+    color: #800000 !important;
+    text-decoration: none !important;
+    font-weight: 700 !important;
+    transition: color 0.2s !important;
+}
+
+.login-auth-link:hover, .login-auth-link:focus {
+    color: #a83232 !important;
+    text-decoration: underline !important;
+}
+
+.login-form-control {
+    padding: 12px !important;
+    border-radius: 10px !important;
+    border: 2px solid #e0e0e0 !important;
+    transition: all 0.22s !important;
+    font-size: 1.01rem !important;
+    background: rgba(255,255,255,0.97) !important;
+    font-weight: 500 !important;
+    margin-bottom: 2px !important;
+}
+
+.login-form-control:focus {
+    border-color: #800000 !important;
+    box-shadow: 0 0 0 0.15rem rgba(128,0,0,0.09) !important;
+    outline: none !important;
+}
+
+.login-form-label {
+    color: #800000 !important;
+    font-weight: 700 !important;
+    font-size: 1.01rem !important;
+    margin-bottom: 4px !important;
+}
+
+.login-button-align {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-top: 10px !important;
+}
+
+@media (max-width: 768px) {
+    .login-auth-form-container {
+        padding: 1rem !important;
+    }
+    .login-card {
+        max-width: 100% !important;
+    }
+    .login-auth-overlay h1 {
+        font-size: 1.3rem !important;
+    }
+    .login-auth-overlay p {
+        font-size: 0.97rem !important;
+    }
+}

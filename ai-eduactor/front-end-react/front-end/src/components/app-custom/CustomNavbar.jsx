@@ -37,9 +37,10 @@ const CustomNavbar = () => {
                     <Link to="/semester-planning" className="nav-link">
                         Semesters
                     </Link>
-                    <Link to="/flashcards/game/1" className="nav-link">
+                    <Link to="/flashcards" className="nav-link">
                         Flash Cards
                     </Link>
+
                     <Link to="/subject-recommendation" className="nav-link">
                         Subject Recommendation
                     </Link>

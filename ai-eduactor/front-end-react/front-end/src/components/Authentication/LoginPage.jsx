@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./LoginPage.css";
-import axios from "axios";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
-//axios.defaults.withCredentials = true;
-import aiImage from "../../assets/books.png";
-import {login} from "../../services/api";
+import { login } from "../../services/api";
+
+const aiLoginImage = "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -25,17 +24,16 @@ const LoginPage = () => {
 
     try {
       setIsLoading(true);
-      try{
+      try {
         await login(email, password);
         const role = localStorage.getItem("role");
         console.log(role);
-        if(role === "ADMIN" || role === "admin"){
+        if (role === "ADMIN" || role === "admin") {
           navigate("/admin");
-        }else{
+        } else {
           navigate("/");
         }
-
-      }catch (err){
+      } catch (err) {
         setError(err);
       }
     } finally {
@@ -48,22 +46,26 @@ const LoginPage = () => {
       <Row className="g-0" style={{ height: "100vh" }}>
         <Col
           md={6}
-          className="d-flex align-items-center justify-content-center"
+          className="d-none d-md-flex align-items-center justify-content-center auth-image-container"
         >
           <img
-            src={aiImage}
-            alt="AI helping students"
+            src={aiLoginImage}
+            alt="AI login"
             className="img-fluid w-100 h-100 object-fit-cover"
+            style={{ objectFit: "cover" }}
           />
+          <div className="auth-overlay">
+            <h1>Welcome Back!</h1>
+            <p>Continue your learning journey with AI Educator</p>
+          </div>
         </Col>
-
         <Col
           md={6}
-          className="d-flex align-items-center justify-content-center"
+          className="d-flex align-items-center justify-content-center auth-form-container"
         >
-          <Card className="p-4 shadow-sm login-card w-75">
+          <Card className="p-4 shadow-lg login-card">
             <Card.Body>
-              <h2 className="text-center mb-4">Log In</h2>
+              <h2 className="text-center mb-4 auth-title">Sign In</h2>
               <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="formEmail" className="mb-3">
                   <Form.Label>Email</Form.Label>
@@ -75,7 +77,6 @@ const LoginPage = () => {
                     required
                   />
                 </Form.Group>
-
                 <Form.Group controlId="formPassword" className="mb-4">
                   <Form.Label>Password</Form.Label>
                   <Form.Control
@@ -86,22 +87,22 @@ const LoginPage = () => {
                     required
                   />
                 </Form.Group>
-
                 <div className="d-grid gap-2 login-button-align">
                   <Button
                     variant="primary"
                     type="submit"
-                    style={{
-                      border: "none",
-                      background: "linear-gradient(135deg, #800000, #3c0101)",
-                    }}
+                    className="auth-submit-btn"
                   >
                     Sign In
                   </Button>
-                  <div className="text-center mt-3 login-link">
-                    New User? <Link to="/register">Register Now</Link>
+                  <div className="text-center mt-3 auth-link-text">
+                    New to AI Educator?{" "}
+                    <Link to="/register" className="auth-link">
+                      Create an account
+                    </Link>
                   </div>
                 </div>
+                {error && <div className="text-danger text-center mt-3">{error}</div>}
               </Form>
             </Card.Body>
           </Card>

@@ -1,16 +1,16 @@
 .fc-main-wrapper {
-    max-width: 1000px;
-    margin: 2rem auto;
-    background: linear-gradient(to bottom right, #fff, #fff9f9);
-    border-radius: 2rem;
-    box-shadow: 0 10px 40px rgba(159,43,43,0.1);
-    padding: 3rem;
+    max-width: 800px !important;
+    margin: 2rem auto !important;
+    background: linear-gradient(to bottom right, #fff, #fff9f9) !important;
+    border-radius: 1.5rem !important;
+    box-shadow: 0 10px 40px rgba(159,43,43,0.1) !important;
+    padding: 2rem !important;
 }
 
 .fc-heading {
     font-weight: 800;
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
+    font-size: 2rem !important;
+    margin-bottom: 0.75rem !important;
     background: #800000;
     -webkit-background-clip: text;
     background-clip: text;
@@ -20,31 +20,31 @@
 }
 
 .fc-instructions {
-    margin-bottom: 3rem;
+    margin-bottom: 2rem !important;
     color: #666;
-    font-size: 1.2rem;
+    font-size: 1rem !important;
     text-align: center;
     line-height: 1.6;
-    max-width: 700px;
+    max-width: 600px !important;
     margin-left: auto;
     margin-right: auto;
 }
 
 .fc-content-grid {
-    display: grid;
-    grid-template-columns: 2.5fr 1fr;
-    gap: 3rem;
+    display: grid !important;
+    grid-template-columns: 2fr 1fr !important;
+    gap: 2rem !important;
     align-items: start;
 }
 
 .fc-upload-container {
     background: linear-gradient(145deg, #fff5f5, #fff);
-    padding: 2.5rem;
+    padding: 1.5rem !important;
     border-radius: 1.5rem;
     box-shadow: 0 8px 25px rgba(159,43,43,0.08);
     display: flex;
     flex-direction: column;
-    gap: 2.5rem;
+    gap: 1.5rem !important;
     border: 1px solid rgba(159,43,43,0.1);
 }
 
@@ -54,10 +54,10 @@
 
 .fc-dropdown {
     width: 100%;
-    padding: 1rem 1.2rem;
+    padding: 0.75rem 1rem !important;
     border-radius: 1rem;
     border: 2px solid rgba(159,43,43,0.2);
-    font-size: 1.1rem;
+    font-size: 1rem !important;
     color: #800000;
     background: #fff;
     font-weight: 500;
@@ -86,9 +86,9 @@
     align-items: center;
     gap: 0.8rem;
     font-weight: 600;
-    font-size: 1.2rem;
+    font-size: 1.1rem !important;
     color: #800000;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem !important;
 }
 
 .fc-upload-label {
@@ -96,14 +96,14 @@
     align-items: center;
     justify-content: center;
     background-color: #fff;
-    padding: 1.2rem;
+    padding: 1rem !important;
     border-radius: 1rem;
     border: 2px dashed rgba(159,43,43,0.3);
     cursor: pointer;
     font-weight: 500;
     color: #800000;
     transition: all 0.2s ease;
-    font-size: 1.1rem;
+    font-size: 1rem !important;
 }
 
 .fc-upload-label:hover {
@@ -119,32 +119,32 @@
 .fc-form-label {
     font-weight: 600;
     color: #800000;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem !important;
     display: block;
-    font-size: 1.1rem;
+    font-size: 1rem !important;
 }
 
 .fc-slider-container {
     background: #fff;
-    padding: 1.5rem;
+    padding: 1rem !important;
     border-radius: 1rem;
     box-shadow: 0 4px 15px rgba(159,43,43,0.05);
 }
 
 .fc-slider {
     width: 100%;
-    height: 8px;
+    height: 6px !important;
     border-radius: 8px;
     background: #ffe5e5;
     outline: none;
-    margin: 1rem 0;
+    margin: 0.75rem 0 !important;
     -webkit-appearance: none;
 }
 
 .fc-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 24px;
-    height: 24px;
+    width: 20px !important;
+    height: 20px !important;
     border-radius: 50%;
     background: #800000;
     cursor: pointer;
@@ -183,8 +183,8 @@
     border-radius: 1rem;
     background: #800000;
     color: #fff;
-    padding: 1.2rem 2rem;
-    font-size: 1.1rem;
+    padding: 0.9rem 1.5rem !important;
+    font-size: 1rem !important;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -216,18 +216,28 @@
     border: 1.5px solid #cccccc !important;
 }
 
+/* Responsive adjustments */
 @media (max-width: 768px) {
     .fc-content-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
     }
 
     .fc-main-wrapper {
-        margin: 1rem;
-        padding: 2rem;
+        margin: 1rem !important;
+        padding: 1.5rem !important;
     }
 
     .fc-heading {
-        font-size: 2rem;
+        font-size: 1.75rem !important;
+    }
+
+    .fc-instructions {
+        font-size: 0.95rem !important;
+    }
+
+    .fc-upload-container {
+        padding: 1.25rem !important;
+        gap: 1.25rem !important;
     }
 }
-

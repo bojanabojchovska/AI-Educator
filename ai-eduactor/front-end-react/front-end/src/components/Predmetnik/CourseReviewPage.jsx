@@ -12,6 +12,7 @@ import {
     submitSubjectReview
 } from '../../services/api';
 import './CourseReviewPage.css';
+import {FiUpload} from "react-icons/fi";
 
 const CourseReviewPage = () => {
     const studentEmail = localStorage.getItem("email");
@@ -194,6 +195,18 @@ const CourseReviewPage = () => {
         return sorted;
     };
 
+    const getSortedComments = () => {
+        if (!comments) return [];
+        const sorted = [...comments].sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            return sortOrder === 'latest'
+                ? dateB - dateA
+                : dateA - dateB;
+        });
+        return sorted;
+    }
+
     const handleFileChange = (e) => {
         setSelectedFiles(Array.from(e.target.files));
     };
@@ -270,7 +283,7 @@ const CourseReviewPage = () => {
                             flashcards available. As more students upload attachments and generate flashcards for this course, there will be more!
                         </p>
                         <button
-                            className="view-flashcards-button"
+                            className="back-button"
                             onClick={() => navigate(`/flashcard-game/${courseId}`, { state: { default: true, from: location.pathname } })}
                         >
                             Try Quiz
@@ -362,6 +375,12 @@ const CourseReviewPage = () => {
                                             </div>
                                             <div className="review-table-date">
                                                 {new Date(review.date).toLocaleString()}
+                                                {studentEmail === review.student.email && (
+                                                    <button className="review-table-delete-btn"
+                                                            onClick={() => handleDeleteButton(review.id)}>
+                                                        <FaTrash/>
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
 
@@ -370,12 +389,7 @@ const CourseReviewPage = () => {
                                         </div>
 
                                         <div className="review-table-actions">
-                                            {studentEmail === review.student.email && (
-                                                <button className="review-table-delete-btn"
-                                                        onClick={() => handleDeleteButton(review.id)}>
-                                                    <FaTrash/> Delete
-                                                </button>
-                                            )}
+
                                         </div>
                                     </div>
 
@@ -394,23 +408,29 @@ const CourseReviewPage = () => {
                         <form onSubmit={handleSubmitComment} className="new-review-form">
                             <h3><FaCommentAlt className="form-icon"/> Ask a question or express your opinion!</h3>
                             <div className="feedback-container">
-            <textarea
-                id="commentFeedback"
-                placeholder="Write your comment here..."
-                value={commentFeedback}
-                onChange={(e) => setCommentFeedback(e.target.value)}
-                rows="6"
-            />
+                                <textarea
+                                    id="commentFeedback"
+                                    placeholder="Write your comment here..."
+                                    value={commentFeedback}
+                                    onChange={(e) => setCommentFeedback(e.target.value)}
+                                    rows="6"
+                                />
                             </div>
 
                             <div className="file-upload-container">
-                                <label htmlFor="fileUpload">Attach files:</label>
+                                <label htmlFor="file-upload" className="custom-upload-label">
+                                    <FiUpload size={20}/>
+                                    {selectedFiles.length > 0
+                                        ? `${selectedFiles.length} file(s) selected`
+                                        : "Attach files"}
+                                </label>
                                 <input
+                                    id="file-upload"
                                     type="file"
-                                    id="fileUpload"
-                                    multiple
-                                    onChange={handleFileChange}
                                     accept=".pdf,.doc,.docx,.jpg,.png,.jpeg,.gif"
+                                    onChange={handleFileChange}
+                                    multiple
+                                    style={{display: "none"}}
                                 />
                             </div>
 
@@ -435,9 +455,26 @@ const CourseReviewPage = () => {
                         </form>
 
                         <div className="comments-list">
-                            <h3>All Comments</h3>
-                            {comments && comments.length > 0 ? (
-                                comments.map((comment, index) => (
+                            <div className={"reviews-list-header-row mt-5"}>
+                                <h3>All Comments</h3>
+                                <div className="review-sort-toggle">
+                                    <button
+                                        className={`sort-btn ${sortOrder === 'latest' ? 'active' : ''}`}
+                                        onClick={() => setSortOrder('latest')}
+                                    >
+                                        <FaArrowDown/> Latest
+                                    </button>
+                                    <button
+                                        className={`sort-btn ${sortOrder === 'oldest' ? 'active' : ''}`}
+                                        onClick={() => setSortOrder('oldest')}
+                                    >
+                                        <FaArrowUp/> Oldest
+                                    </button>
+                                </div>
+                            </div>
+
+                            {getSortedComments() && getSortedComments().length > 0 ? (
+                                getSortedComments().map((comment, index) => (
                                     <div key={index} className="review-card-table">
                                         <div className="review-table-header">
                                             <div className="review-table-user">
@@ -446,10 +483,18 @@ const CourseReviewPage = () => {
                                             </div>
                                             <div className="review-table-date">
                                                 {new Date(comment.date).toLocaleString()}
+                                                {studentEmail === comment.student.email && (
+                                                        <button
+                                                            className="review-table-delete-btn"
+                                                            onClick={() => handleDeleteButton(comment.id)}
+                                                        >
+                                                            <FaTrash/>
+                                                        </button>
+                                                )}
                                             </div>
                                         </div>
 
-                                        <button onClick={() => toggleAttachments(comment.id)}>
+                                        <button onClick={() => toggleAttachments(comment.id)} className={"view-attachments-button"}>
                                             {expandedComments.has(comment.id) ? 'Hide Attachments' : 'Show Attachments'}
                                         </button>
 
@@ -481,17 +526,6 @@ const CourseReviewPage = () => {
                                         <div className="review-table-body">
                                             <p>{comment.commentBody}</p>
                                         </div>
-
-                                        {studentEmail === comment.student.email && (
-                                            <div className="review-table-actions">
-                                                <button
-                                                    className="review-table-delete-btn"
-                                                    onClick={() => handleDeleteButton(comment.id)}
-                                                >
-                                                    <FaTrash/> Delete
-                                                </button>
-                                            </div>
-                                        )}
                                     </div>
                                 ))
                             ) : (

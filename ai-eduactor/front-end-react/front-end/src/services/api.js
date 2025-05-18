@@ -623,3 +623,20 @@ export const deleteAttachment = async (attachmentId) => {
         throw error;
     }
 }
+
+export const getFlashCardsForAttachment = async (attachmentId) => {
+    try {
+        const response = await axios.get(`${API_URL}/flashcards/forAttachment/${attachmentId}`, {
+            withCredentials: true
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching flashcards:', error);
+        if (error.response?.status === 403) {
+            console.error("You are not authorized. Maybe session expired?");
+            localStorage.clear();
+            window.location.href = "/login";
+        }
+        throw error;
+    }
+}

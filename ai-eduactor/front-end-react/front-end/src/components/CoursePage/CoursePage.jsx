@@ -200,9 +200,13 @@ const CoursePage = () => {
         }
     };
 
-    const handlePlayGame = () => {
+    const handlePlayGame = (isIndividual, attId) => {
         navigate(`/flashcard-game/${courseDetails.id}`, {
-            state: {from: location.pathname},
+            state: {
+                from: location.pathname,
+                isIndividual: isIndividual,
+                attId: attId
+            },
         });
     };
 
@@ -353,7 +357,7 @@ const CoursePage = () => {
                                 </button>
                                 {isDownloading && <Spinner animation="border" role="status"/>}
                                 <button
-                                    onClick={() => handlePlayGame()}
+                                    onClick={() => handlePlayGame(false)}
                                     className="flashcards-button"
                                 >
                                     <FaPlay style={{marginRight: 4}}/>
@@ -460,7 +464,7 @@ const CoursePage = () => {
                                                         <span className="button-tooltip">Export to PDF</span>
                                                     </button>
                                                     <button
-                                                        onClick={() => handlePlayGame()}
+                                                        onClick={() => handlePlayGame(true, attachment.id)}
                                                         className="icon-button"
                                                         title="Take a quiz"
                                                     >

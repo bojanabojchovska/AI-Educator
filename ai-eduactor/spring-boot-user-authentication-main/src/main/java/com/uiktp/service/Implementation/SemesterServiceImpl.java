@@ -3,8 +3,10 @@ package com.uiktp.service.Implementation;
 import com.uiktp.model.Course;
 import com.uiktp.model.Semester;
 import com.uiktp.model.User;
+import com.uiktp.model.dtos.CourseDTO;
 import com.uiktp.model.dtos.SemesterCreateUpdateDTO;
 import com.uiktp.model.exceptions.general.ResourceNotFoundException;
+import com.uiktp.repository.CourseRepository;
 import com.uiktp.repository.SemesterRepository;
 import com.uiktp.repository.UserRepository;
 import com.uiktp.service.Interface.SemesterService;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -38,7 +41,7 @@ public class SemesterServiceImpl implements SemesterService {
             SemesterCreateUpdateDTO dto = new SemesterCreateUpdateDTO();
             dto.setId(semester.getId());
             dto.setName(semester.getName());
-            dto.setCourses(semester.getCourses().stream().map(Course::getTitle).toList());
+            dto.setCourses(semester.getCourses().stream().map(c -> new CourseDTO(c.getId(), c.getTitle(), c.getDescription())).toList());
             return dto;
         }).toList();
     }
@@ -104,7 +107,8 @@ public class SemesterServiceImpl implements SemesterService {
         }
 
         semester.setName(dto.getName());
-        List<Course> courses = courseService.getCoursesByTitleIn(dto.getCourses());
+        List<Long> ids = dto.getCourses().stream().map(CourseDTO::getId).toList();
+        List<Course> courses = courseService.getCoursesById(ids);
         semester.setCourses(courses);
         User student = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException(User.class, email));

@@ -28,7 +28,10 @@ public interface FlashCardService {
     List<FlashCard> generateFlashCard(UUID attachmentId, int numFlashcards) throws FileNotFoundException;
 
     @Transactional
-    public String exportFlashCardsToPdf(Long courseId) throws DocumentException, IOException;
+    String exportFlashCardsToPdf(Long courseId) throws DocumentException, IOException;
     @Transactional
-    public String exportAttachmentFlashCardsToPdf(UUID attachmentId) throws DocumentException, IOException;
+    String exportAttachmentFlashCardsToPdf(UUID attachmentId) throws DocumentException, IOException;
+
+    List<FlashCardDTO> getAllFlashCardsByAttachment(UUID attachmentId);
+
 }

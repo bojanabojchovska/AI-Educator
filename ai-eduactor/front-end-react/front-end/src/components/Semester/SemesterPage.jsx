@@ -9,16 +9,21 @@ import Notification from '../app-custom/Notification';
 
 const SemesterPage = () => {
     const MAX_CHOSEN_COURSES = 5;
+
     const [semesters, setSemesters] = useState([]);
+
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
+
     const [semesterName, setSemesterName] = useState('');
     const [availableSubjects, setAvailableSubjects] = useState([]);
     const [chosenSubjects, setChosenSubjects] = useState([]);
     const [selectedAvailable, setSelectedAvailable] = useState([]);
     const [selectedChosen, setSelectedChosen] = useState([]);
+
     const [notification, setNotification] = useState({message: '', type: ''});
+
     const [editingSemesterId, setEditingSemesterId] = useState(null);
     const [subjectLimitReached, setSubjectLimitReached] = useState(false);
 
@@ -28,7 +33,7 @@ const SemesterPage = () => {
             const response = await getCourses();
             console.log("Fetched courses:", response);
             if (Array.isArray(response)) {
-                setAvailableSubjects(response.map(course => course.title));
+                setAvailableSubjects(response);
             } else {
                 console.error('Fetched courses is not an array:', response);
             }
@@ -51,10 +56,17 @@ const SemesterPage = () => {
 
 
     const moveToChosen = () => {
-        const totalSelected = chosenSubjects.length + selectedAvailable.length;
+        const newSelections = availableSubjects.filter(course =>
+            selectedAvailable.includes(course.id.toString()) &&
+            !chosenSubjects.find(c => c.id === course.id)
+        );
+        const totalSelected = chosenSubjects.length + newSelections.length;
+
         if (totalSelected <= MAX_CHOSEN_COURSES) {
-            setAvailableSubjects(prev => prev.filter(sub => !selectedAvailable.includes(sub)));
-            setChosenSubjects(prev => [...prev, ...selectedAvailable]);
+            setAvailableSubjects(prev =>
+                prev.filter(course => !selectedAvailable.includes(course.id.toString()))
+            );
+            setChosenSubjects(prev => [...prev, ...newSelections]);
             setSelectedAvailable([]);
             setSubjectLimitReached(false);
         } else {
@@ -63,8 +75,15 @@ const SemesterPage = () => {
     };
 
     const moveToAvailable = () => {
-        setChosenSubjects(prev => prev.filter(sub => !selectedChosen.includes(sub)));
-        setAvailableSubjects(prev => [...prev, ...selectedChosen]);
+        const movedCourses = chosenSubjects.filter(course =>
+            selectedChosen.includes(course.id.toString())
+        );
+
+        setChosenSubjects(prev =>
+            prev.filter(course => !selectedChosen.includes(course.id.toString()))
+        );
+
+        setAvailableSubjects(prev => [...prev, ...movedCourses]);
         setSelectedChosen([]);
     };
 
@@ -101,8 +120,9 @@ const SemesterPage = () => {
             setEditingSemesterId(semesterToEdit.id);
             setSemesterName(semesterToEdit.name);
             setChosenSubjects(semesterToEdit.courses || []);
+            const chosenIds = semesterToEdit.courses.map(c => c.id);
             const remainingSubjects = availableSubjects.filter(
-                course => !semesterToEdit.courses.includes(course)
+                course => !chosenIds.includes(course.id)
             );
             setAvailableSubjects(remainingSubjects);
             setShowModal(true);
@@ -169,9 +189,9 @@ const SemesterPage = () => {
                                             <li key={index}>
                                                 <button
                                                     className="semester-page-course-btn"
-                                                    onClick={() => navigate(`/course/${course}`)}
+                                                    onClick={() => navigate(`/course/${course.title}`)}
                                                 >
-                                                    {course}
+                                                    {course.title}
                                                 </button>
                                             </li>
                                         ))
@@ -261,7 +281,7 @@ const SemesterPage = () => {
                                     }}
                                 >
                                     {chosenSubjects.map((sub, index) => (
-                                        <option key={index} value={sub}>{sub}</option>
+                                        <option key={index} value={sub.id}>{sub.title}</option>
                                     ))}
                                 </select>
 
@@ -290,7 +310,7 @@ const SemesterPage = () => {
                                     }}
                                 >
                                     {availableSubjects.map((sub, index) => (
-                                        <option key={index} value={sub}>{sub}</option>
+                                        <option key={index} value={sub.id}>{sub.title}</option>
                                     ))}
                                 </select>
                             </div>
@@ -312,7 +332,9 @@ const SemesterPage = () => {
                                 const semesterData = {
                                     id: editingSemesterId,
                                     name: semesterName,
-                                    courses: chosenSubjects,
+                                    courses: chosenSubjects.map(cs => ({
+                                        id: cs.id
+                                    }) )
                                 };
 
                                 try {

@@ -369,5 +369,13 @@ public class FlashCardServiceImpl implements FlashCardService {
         return "http://localhost:8080/files/" + uniqueFilename;
     }
 
+    @Override
+    public List<FlashCardDTO> getAllFlashCardsByAttachment(UUID attachmentId) {
+        UserCourseAttachment attachment = userCourseAttachmentService.getById(attachmentId);
+        return flashCardRepository.findAllByAttachment(attachment).stream()
+                .map(fc -> new FlashCardDTO(fc.getId(), fc.getQuestion(), fc.getAnswer()))
+                .collect(Collectors.toList());
+    }
+
 
 }

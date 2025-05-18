@@ -8,6 +8,5 @@ import java.util.List;
 public class SemesterCreateUpdateDTO {
     private Long id;
     private String name;
-    private List<String> courses;
-
+    private List<CourseDTO> courses;
 }

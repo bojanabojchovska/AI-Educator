@@ -26,4 +26,10 @@ public class FlashCardDTO {
         this.attachmentId = attachmentId;
     }
 
+    public FlashCardDTO(Long id, String question, String answer) {
+        this.id = id;
+        this.question = question;
+        this.answer = answer;
+    }
+
 }

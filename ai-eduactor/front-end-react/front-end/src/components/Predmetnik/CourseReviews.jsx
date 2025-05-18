@@ -106,7 +106,7 @@ const CourseReviews = () => {
                 <div className="header-controls">
                     <div className="filter-toggle-container">
                         <button
-                            className={`filter-toggle-button ${showOnlyFavorites ? 'active' : ''}`}
+                            className={`favorites-toggle-btn ${showOnlyFavorites ? 'active' : ''}`}
                             onClick={() => setShowOnlyFavorites(prev => !prev)}
                         >
                             {showOnlyFavorites ? 'Show All Courses' : 'Show Favorites Only'}
@@ -127,15 +127,6 @@ const CourseReviews = () => {
             {error && <div className="global-error-message">{error}</div>}
 
             <div className="subject-reviews-container">
-                <div className="favorites-toggle-row">
-                    <button
-                        className={`favorites-toggle-btn${favoritesFirst ? ' active' : ''}`}
-                        onClick={() => setFavoritesFirst(f => !f)}
-                    >
-                        {favoritesFirst ? 'Showing Favorites First' : 'Show Favorites First'}
-                    </button>
-                </div>
-
                 <div className="subjects-grid">
                     {sortedSubjects.length > 0 ? (
                         sortedSubjects.map(subject => (

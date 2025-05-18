@@ -22,15 +22,21 @@
 .header-section {
     width: 100%;
     padding: 2rem 1rem 1rem;
-    padding-top: 100px;
-    background-color: white;
+    background: linear-gradient(135deg, rgba(107, 144, 128, 0.85), rgba(164, 195, 178, 0.75)) !important;
     border-bottom: 1px solid #eee;
     text-align: center;
 }
 
 .header-section h1 {
-    margin-bottom: 1.5rem;
-    color: #333;
+    font-size: 3rem !important;
+    font-weight: 800 !important;
+    margin-bottom: 20px !important;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.18) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    grid-gap: 8px !important;
+    gap: 8px !important;
 }
 
 .header-controls {

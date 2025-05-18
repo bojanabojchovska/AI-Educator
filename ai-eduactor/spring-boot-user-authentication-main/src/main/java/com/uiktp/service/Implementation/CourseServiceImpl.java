@@ -251,4 +251,9 @@ public class CourseServiceImpl implements CourseService {
                 .toList();
         return courseRepository.findByTitleInIgnoreCase(lowerCaseTitles);
     }
+
+    @Override
+    public List<Course> getCoursesById(List<Long> ids) {
+        return courseRepository.findAllById(ids);
+    }
 }

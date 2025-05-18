@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {FiUpload, FiZap, FiDownload} from 'react-icons/fi';
 import {FaPlay} from 'react-icons/fa';
 import {Spinner} from "react-bootstrap";
@@ -14,11 +14,13 @@ import {
 import './FlashcardCourseSelector.css';
 
 const FlashcardCourseSelector = () => {
+    const location = useLocation();
     const [courses, setCourses] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
     const [numFlashcards, setNumFlashcards] = useState(3);
     const [isUploading, setIsUploading] = useState(false);
+    const [attachment, setAttachment] = useState(null);
     const [isGenerating, setIsGenerating] = useState(false);
     const [isGenerated, setIsGenerated] = useState(false);
     const [notification, setNotification] = useState(null);
@@ -68,6 +70,7 @@ const FlashcardCourseSelector = () => {
             formData.append("file", selectedFile);
             formData.append("courseId", selectedCourse);
             const uploadedFile = await uploadCourseAttachment(formData);
+            setAttachment(uploadedFile);
 
             setIsUploading(false);
             setIsGenerating(true);
@@ -101,7 +104,13 @@ const FlashcardCourseSelector = () => {
     };
 
     const handlePlayGame = () => {
-        navigate(`/flashcard-game/${selectedCourse}`);
+        navigate(`/flashcard-game/${selectedCourse}`, {
+            state: {
+                from: location.pathname,
+                isIndividual: true,
+                attId: attachment.id
+            }
+        });
     };
 
     return (

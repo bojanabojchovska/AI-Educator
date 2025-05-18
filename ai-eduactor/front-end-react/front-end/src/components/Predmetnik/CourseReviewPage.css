@@ -1,41 +1,40 @@
 .tab-buttons {
     display: flex;
-    gap: 15px;
+    gap: 10px;
     margin: 20px 0;
-    justify-content: flex-start; /* Keep the tabs aligned to the left */
+    justify-content: flex-start;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 4px;
 }
 
 .tab-buttons button {
-    border: 1px solid #ccc !important;
-    padding: 10px 20px;
+    background-color: #f0f4f8;
+    color: #333;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px 8px 0 0; /* ← make top-rounded, flat bottom */
     font-size: 16px;
-    border-radius: 20px 20px 0 0;
+    font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease, border-color 0.3s ease;
-    color: white;
-    background-color: transparent;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .tab-buttons button:hover {
-    background-color: #b5575e !important;
+    background-color: #dce3ea;
 }
 
 .tab-buttons button.active {
-    background-color: #b5575e !important;
+    background-color: #007acc;
     color: white;
-    border-color: #bbb !important;
-    font-weight: bold;
-}
-
-.tab-buttons button:not(.active) {
-    background-color: transparent;
-    color: white;
-    border-bottom: 3px solid transparent;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(0, 122, 204, 0.3);
+    transform: translateY(-2px);
 }
 
 .tab-buttons button:focus {
     outline: none;
-    border-color: #aaa !important;
+    box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.4);
 }
 
 .flashcards-info {
@@ -284,6 +283,8 @@ textarea:focus {
 .submit-btn-comment {
     background: linear-gradient(90deg, #1565c0 60%, #2196f3 100%);
     color: #fff;
+
+
 }
 
 .submit-btn-review:hover {
@@ -386,11 +387,10 @@ textarea:focus {
 }
 
 .review-card-table {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr 3fr 0.6fr; /* Adjusting columns for better proportion */
-    align-items: center; /* Center the content vertically */
+    display: flex;
+    flex-direction: column;
     background: #fff;
-    border-radius: 8px; /* Rounded corners for the card */
+    border-radius: 8px;
     border-left: 5px solid transparent;
     border-right: 1.5px solid #e0e0e0;
     border-bottom: 1.5px solid #e0e0e0;
@@ -437,6 +437,9 @@ textarea:focus {
 }
 
 .review-table-date {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
     color: #757575;
     font-size: 0.97rem;
     font-weight: 500;
@@ -571,41 +574,6 @@ textarea:focus {
     box-shadow: 0 1px 4px rgba(128,0,0,0.02);
 }
 
-.review-card-table {
-    display: grid;
-    grid-template-columns: 1.2fr 0.9fr 2.5fr 0.6fr;
-    align-items: flex-start;
-    background: #fff;
-    border-radius: 0;
-    border-left: 5px solid transparent;
-    border-right: 1.5px solid #e0e0e0;
-    border-bottom: 1.5px solid #e0e0e0;
-    border-top: none;
-    min-width: 0;
-    font-size: 1rem;
-    padding: 1.05rem 1.2rem;
-    gap: 0.5rem;
-    transition: box-shadow 0.15s, border 0.15s, background 0.15s;
-}
-
-.review-card-table.rating {
-    border-left: 5px solid #2196f3;
-}
-.review-card-table.comment {
-    border-left: 5px solid #800000;
-}
-
-/* Alternating row background */
-.review-card-table:nth-of-type(even) {
-    background: #f7fafd;
-}
-
-.review-card-table:hover {
-    box-shadow: 0 4px 16px rgba(128,0,0,0.10);
-    border-color: #bdbdbd;
-    background: #f3f6fa;
-}
-
 .review-table-user {
     display: flex;
     flex-direction: column;
@@ -665,4 +633,50 @@ textarea:focus {
 
 .review-table-delete-btn:hover {
     background: linear-gradient(90deg, #600000 60%, #a83232 100%);
+}
+
+.view-attachments-button {
+    background: linear-gradient(90deg, #4682b4 60%, #1e90ff 100%);
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.3rem;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    box-shadow: 0 2px 8px rgba(128, 0, 0, 0.08);
+    transition: background 0.2s;
+}
+
+.view-attachments-button:hover{
+    background: linear-gradient(90deg, #add8e6 60%, #87cefa 100%);
+}
+
+.attachment-item div{
+    justify-content: flex-start !important;
+}
+
+.file-upload-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1.2rem;
+}
+
+.custom-upload-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: white;
+    color: black;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.custom-upload-label:hover {
+    background-color: lightgray;
 }

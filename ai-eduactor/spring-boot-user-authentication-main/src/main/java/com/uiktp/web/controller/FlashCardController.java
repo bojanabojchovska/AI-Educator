@@ -39,6 +39,11 @@ public class FlashCardController {
         return flashCardService.getAllFlashCardsByCourseAndUser(courseId);
     }
 
+    @GetMapping("/forAttachment/{attachmentId}")
+    public List<FlashCardDTO> getAllFlashcardsByAttachment(@PathVariable UUID attachmentId){
+        return flashCardService.getAllFlashCardsByAttachment(attachmentId);
+    }
+
     @PostMapping
     public FlashCard createFlashCard(@RequestBody FlashCard flashCard) {
         return flashCardService.addFlashCard(flashCard);

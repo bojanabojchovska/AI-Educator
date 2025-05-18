@@ -33,4 +33,5 @@ public interface CourseService {
     List<CourseDTO> getStudentFavorites();
 
     List<Course> getCoursesByTitleIn(List<String> titles);
+    List<Course> getCoursesById(List<Long> ids);
 }

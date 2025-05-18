@@ -14,13 +14,16 @@ const RegisterPage = () => {
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [notification, setNotification] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     if (password !== repeatPassword) {
       setNotification({ message: "Passwords do not match!", type: "error" });
+      setIsLoading(false);
       return;
     }
 
@@ -36,6 +39,8 @@ const RegisterPage = () => {
         message: err,
         type: "error",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -114,8 +119,16 @@ const RegisterPage = () => {
                         variant="primary"
                         type="submit"
                         className="register-auth-submit-btn"
+                        disabled={isLoading}
                     >
-                      Register
+                      {isLoading ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                          Creating Account...
+                        </>
+                      ) : (
+                        'Create Account'
+                      )}
                     </Button>
                   </div>
                   <div className="text-center mt-3 register-auth-link-text">

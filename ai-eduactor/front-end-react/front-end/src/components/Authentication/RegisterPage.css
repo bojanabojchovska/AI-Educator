@@ -63,26 +63,56 @@
 
 .register-auth-submit-btn {
     width: 100% !important;
-    background: linear-gradient(135deg, #800000 60%, #a83232 100%) !important;
+    background: linear-gradient(45deg, #800000, #a83232) !important;
     border: none !important;
-    padding: 12px 0 !important;
-    border-radius: 10px !important;
+    padding: 14px 20px !important;
+    border-radius: 12px !important;
     font-weight: 700 !important;
-    letter-spacing: 0.7px !important;
-    transition: all 0.22s cubic-bezier(.4,0,.2,1) !important;
-    font-size: 1.07rem !important;
+    letter-spacing: 0.8px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    font-size: 1.1rem !important;
     color: #fff !important;
-    box-shadow: 0 2px 10px rgba(128,0,0,0.08) !important;
-    margin-top: 8px !important;
-    margin-bottom: 2px !important;
-    outline: none !important;
+    position: relative !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 15px rgba(128, 0, 0, 0.2) !important;
+    margin-top: 10px !important;
+    margin-bottom: 5px !important;
+    text-transform: uppercase !important;
+    z-index: 1 !important;
 }
 
-.register-auth-submit-btn:hover, .register-auth-submit-btn:focus {
-    background: linear-gradient(135deg, #a83232 60%, #800000 100%) !important;
-    transform: translateY(-2px) scale(1.03) !important;
-    box-shadow: 0 6px 18px rgba(128,0,0,0.16) !important;
+.register-auth-submit-btn::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(45deg, #a83232, #cc4040) !important;
+    transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    z-index: -1 !important;
+}
+
+.register-auth-submit-btn:hover::before {
+    left: 0 !important;
+}
+
+.register-auth-submit-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(128, 0, 0, 0.25) !important;
     color: #fff !important;
+}
+
+.register-auth-submit-btn:active {
+    transform: translateY(1px) !important;
+    box-shadow: 0 2px 10px rgba(128, 0, 0, 0.15) !important;
+}
+
+.register-auth-submit-btn:disabled {
+    background: linear-gradient(45deg, #999, #777) !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
 }
 
 .register-auth-link-text {
@@ -148,3 +178,4 @@
         font-size: 0.97rem !important;
     }
 }
+

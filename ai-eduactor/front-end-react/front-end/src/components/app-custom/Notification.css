@@ -1,4 +1,5 @@
 .notification {
+    position: sticky !important;
     position: fixed !important;
     top: 80px !important; /* Position below navbar */
     right: 20px !important;
@@ -12,7 +13,7 @@
     font-weight: 500 !important;
     color: #333 !important;
     animation: slideIn 0.3s ease-in-out !important;
-    z-index: 999 !important; /* Below navbar's z-index */
+    z-index: 2001 !important; /* Above navbar and other content */
     min-width: 300px !important;
 }
 

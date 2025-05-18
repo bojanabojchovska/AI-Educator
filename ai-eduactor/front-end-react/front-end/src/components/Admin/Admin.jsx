@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Admin.css';
-import { FaEdit, FaPlus, FaHome, FaFileUpload, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaPlus, FaHome, FaFileUpload, FaTrash, FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
@@ -12,7 +12,9 @@ const Admin = () => {
   const [editSubject, setEditSubject] = useState({ title: '', description: '' });
   const [editing, setEditing] = useState(null);
   const [file, setFile] = useState(null);
+  const [sortOrder, setSortOrder] = useState('latest');
   const navigate = useNavigate();
+  const formRef = useRef(null);
 
   // Helper to reload subjects from backend
   const reloadSubjects = async () => {
@@ -68,7 +70,9 @@ const Admin = () => {
   const handleEditSubject = (subject) => {
     setEditSubject({ title: subject.title, description: subject.description });
     setEditing(subject.id);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   };
 
   const handleSaveEdit = async () => {
@@ -119,9 +123,27 @@ const Admin = () => {
     navigate('/');
   };
 
+  const getSortedSubjects = () => {
+    if (!subjects) return [];
+    const sorted = [...subjects].sort((a, b) => {
+      const idA = a.id ?? a.courseId;
+      const idB = b.id ?? b.courseId;
+      return sortOrder === 'latest'
+        ? idB - idA
+        : idA - idB;
+    });
+    return sorted;
+  };
+
   return (
+    <>
+      <ToastContainer
+        position="top-center"
+        style={{ zIndex: 9999, position: "fixed" }}
+        toastClassName="sticky-toast"
+        bodyClassName="sticky-toast-body"
+      />
       <div className="admin-container">
-        <ToastContainer position="top-center" />
         <div className="admin-header">
           <h1>Admin Panel</h1>
           <div className="admin-header-buttons">
@@ -161,7 +183,7 @@ const Admin = () => {
           </div>
         </div>
 
-        <div className="subject-form">
+        <div className="subject-form" ref={formRef}>
           <label className="form-title">{editing ? 'Edit Subject' : 'Add Subject'}</label>
           {editing && (
               <p className="editing-indicator">✏️ Currently editing...</p>
@@ -203,41 +225,54 @@ const Admin = () => {
           </button>
         </div>
 
-        <h2 className="subjects-list-title">Subjects List</h2>
-        <table>
-          <thead>
-          <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Actions</th>
-          </tr>
-          </thead>
-          <tbody>
+        <div className="subjects-list">
+          <div className="subjects-list-header-row">
+            <h2 className="subjects-list-title">Subjects List</h2>
+            <div className="subject-sort-toggle">
+              <button
+                className={`sort-btn ${sortOrder === 'latest' ? 'active' : ''}`}
+                onClick={() => setSortOrder('latest')}
+                aria-label="Sort by latest"
+              >
+                <FaArrowDown /> Latest
+              </button>
+              <button
+                className={`sort-btn ${sortOrder === 'oldest' ? 'active' : ''}`}
+                onClick={() => setSortOrder('oldest')}
+                aria-label="Sort by oldest"
+              >
+                <FaArrowUp /> Oldest
+              </button>
+            </div>
+          </div>
+
+          <div className="subject-table-header">
+            <div>Title</div>
+            <div>Description</div>
+            <div>Actions</div>
+          </div>
+
           {subjects.length === 0 ? (
-              <tr>
-                <td colSpan="3">No subjects yet.</td>
-              </tr>
+            <div className="no-subjects">No subjects yet.</div>
           ) : (
-              subjects.map((subject) => (
-                  <tr key={subject.id}>
-                    <td>{subject.title}</td>
-                    <td>{subject.description}</td>
-                    <td>
-                      <div className="action-buttons">
-                        <button className="edit-btn" onClick={() => handleEditSubject(subject)} title="Edit">
-                          <FaEdit />
-                        </button>
-                        <button className="delete-btn" onClick={() => handleDeleteSubject(subject.id)} title="Delete">
-                          <FaTrash />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-              ))
+            getSortedSubjects().map((subject) => (
+              <div key={subject.id ?? subject.courseId} className="subject-table-row">
+                <div className="subject-title">{subject.title}</div>
+                <div className="subject-description">{subject.description}</div>
+                <div className="subject-actions">
+                  <button className="action-btn edit-action" onClick={() => handleEditSubject(subject)} title="Edit">
+                    <FaEdit />
+                  </button>
+                  <button className="action-btn delete-action" onClick={() => handleDeleteSubject(subject.id)} title="Delete">
+                    <FaTrash />
+                  </button>
+                </div>
+              </div>
+            ))
           )}
-          </tbody>
-        </table>
+        </div>
       </div>
+    </>
   );
 };
 

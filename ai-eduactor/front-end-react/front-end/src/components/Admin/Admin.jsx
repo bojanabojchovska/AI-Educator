@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Admin.css';
-import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
+import { FaEdit, FaPlus, FaHome, FaFileUpload, FaTrash } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
@@ -14,28 +14,28 @@ const Admin = () => {
   const [file, setFile] = useState(null);
   const navigate = useNavigate();
 
+  // Helper to reload subjects from backend
+  const reloadSubjects = async () => {
+    try {
+      const coursesData = await getCourses();
+      setSubjects(coursesData);
+    } catch (error) {
+      toast.error('⚠️ Failed to load subjects.');
+    }
+  };
+
   useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const coursesData = await getCourses();
-        setSubjects(coursesData);
-      } catch (error) {
-        console.error('Error fetching courses:', error);
-        toast.error('⚠️ Failed to load subjects.');
-      }
-    };
-    fetchCourses();
+    reloadSubjects();
   }, []);
 
   const handleAddSubject = async () => {
     if (newSubject.title && newSubject.description) {
       try {
-        const createdCourse = await createCourse({ ...newSubject });
-        setSubjects((prevSubjects) => [...prevSubjects, createdCourse]);
+        await createCourse({ ...newSubject });
         setNewSubject({ title: '', description: '' });
         toast.success('✅ Subject added successfully!');
+        await reloadSubjects();
       } catch (error) {
-        console.error('Error creating course:', error);
         toast.error('⚠️ Failed to add subject.');
       }
     }
@@ -44,11 +44,24 @@ const Admin = () => {
   const handleDeleteSubject = async (id) => {
     try {
       await deleteCourse(id);
-      setSubjects((prevSubjects) => prevSubjects.filter((subject) => subject.id !== id));
       toast.error('🗑️ Subject deleted.');
+      await reloadSubjects();
     } catch (error) {
-      console.error('Error deleting course:', error);
-      toast.error('⚠️ Failed to delete subject.');
+      const msg =
+        error?.response?.data?.message ||
+        error?.response?.data ||
+        error?.message ||
+        '';
+      if (
+        msg.toLowerCase().includes('attachment') ||
+        msg.toLowerCase().includes('dependent') ||
+        msg.toLowerCase().includes('foreign key') ||
+        msg.toLowerCase().includes('constraint')
+      ) {
+        toast.error('❌ Cannot delete subject: It has attachments or dependencies.');
+      } else {
+        toast.error('⚠️ Failed to delete subject.');
+      }
     }
   };
 
@@ -63,19 +76,13 @@ const Admin = () => {
       toast.warning('⚠️ Please fill in all fields');
       return;
     }
-
     try {
-      const updated = await updateCourse(editing, { ...editSubject });
-      setSubjects((prevSubjects) =>
-          prevSubjects.map((subject) =>
-              subject.id === editing ? updated : subject
-          )
-      );
+      await updateCourse(editing, { ...editSubject });
       setEditSubject({ title: '', description: '' });
       setEditing(null);
       toast.success('✏️ Changes saved.');
+      await reloadSubjects();
     } catch (error) {
-      console.error('Error saving edit:', error);
       toast.error('⚠️ Failed to save changes.');
     }
   };
@@ -85,26 +92,16 @@ const Admin = () => {
       toast.warning('⚠️ Please upload a valid CSV or Excel file.');
       return;
     }
-
     try {
       const formData = new FormData();
       formData.append('file', file);
-
-      // Add a loading toast
       const loadingToast = toast.loading('Importing courses...');
-
       await importCourses(formData);
-
-      // Update success toast and refresh courses
       toast.dismiss(loadingToast);
       toast.success('✅ Courses imported successfully!');
       setFile(null);
-
-      // Refresh the courses list
-      const coursesData = await getCourses();
-      setSubjects(coursesData);
+      await reloadSubjects();
     } catch (error) {
-      console.error('Error uploading file:', error);
       toast.error(`⚠️ Import failed: ${error.response?.data?.message || error.message}`);
     }
   };
@@ -114,9 +111,12 @@ const Admin = () => {
       await logout();
       navigate('/login');
     } catch (error) {
-      console.error('Logout failed:', error);
       toast.error('⚠️ Logout failed');
     }
+  };
+
+  const handleGoHome = () => {
+    navigate('/');
   };
 
   return (
@@ -124,25 +124,47 @@ const Admin = () => {
         <ToastContainer position="top-center" />
         <div className="admin-header">
           <h1>Admin Panel</h1>
-          <button className="logout-btn" onClick={handleLogout}>
-            Logout
-          </button>
+          <div className="admin-header-buttons">
+            <button className="home-btn" onClick={handleGoHome}>
+              <FaHome style={{ marginRight: 8 }} />
+              Homepage
+            </button>
+            <button className="logout-btn" onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
         </div>
 
         <div className="upload-section">
-          <label>Import PDF with subjects:</label>
-          <input
-              type="file"
-              accept=".csv, .xls, .xlsx"
-              onChange={(e) => setFile(e.target.files[0])}
-          />
-          <button onClick={handleImport}>Import Courses</button>
+          <h2 className="upload-title">Import Subjects</h2>
+          <p className="upload-subtitle">
+            Upload a file (PDF, CSV, Excel) containing subject information.
+          </p>
+          <div className="upload-box">
+            <label htmlFor="admin-file-upload" className="custom-upload-label">
+              <FaFileUpload size={20} />
+              {file ? file.name : "Choose File"}
+            </label>
+            <input
+                id="admin-file-upload"
+                type="file"
+                accept=".csv, .xls, .xlsx, .pdf"
+                onChange={(e) => setFile(e.target.files[0])}
+                style={{ display: "none" }}
+            />
+          </div>
+          <div className="upload-actions">
+            <button className="import-btn" onClick={handleImport} disabled={!file}>
+              <FaFileUpload style={{ marginRight: 8 }} />
+              Import Subjects
+            </button>
+          </div>
         </div>
 
         <div className="subject-form">
-          <label>{editing ? 'Edit Subject' : 'Add Subject'}</label>
+          <label className="form-title">{editing ? 'Edit Subject' : 'Add Subject'}</label>
           {editing && (
-              <p style={{color: 'green', fontWeight: 'bold'}}>✏️ Currently editing...</p>
+              <p className="editing-indicator">✏️ Currently editing...</p>
           )}
           <div className="input-group">
             <label>Title</label>
@@ -170,18 +192,18 @@ const Admin = () => {
                 }
             />
           </div>
-          <button onClick={(e) => {
+          <button className="form-btn" onClick={(e) => {
             e.preventDefault();
             editing ? handleSaveEdit() : handleAddSubject();
           }}>
             {editing ? <FaEdit/> : <FaPlus/>}
             <span style={{marginLeft: '8px'}}>
-        {editing ? 'Save Changes' : 'Add Subject'}
-    </span>
+              {editing ? 'Save Changes' : 'Add Subject'}
+            </span>
           </button>
         </div>
 
-        <h2>Subjects List</h2>
+        <h2 className="subjects-list-title">Subjects List</h2>
         <table>
           <thead>
           <tr>
@@ -202,10 +224,10 @@ const Admin = () => {
                     <td>{subject.description}</td>
                     <td>
                       <div className="action-buttons">
-                        <button onClick={() => handleEditSubject(subject)} title="Edit">
+                        <button className="edit-btn" onClick={() => handleEditSubject(subject)} title="Edit">
                           <FaEdit />
                         </button>
-                        <button onClick={() => handleDeleteSubject(subject.id)} title="Delete">
+                        <button className="delete-btn" onClick={() => handleDeleteSubject(subject.id)} title="Delete">
                           <FaTrash />
                         </button>
                       </div>
@@ -220,3 +242,4 @@ const Admin = () => {
 };
 
 export default Admin;
+

@@ -178,11 +178,23 @@ const FlashCardGamePage = () => {
         <CustomNavbar />
 
         {!gameStarted ? (
-            <div className="start-game-container">
-              <div className="start-game-text">
-                <h1>Welcome to Flash Cards Game!</h1>
-                <button className="start-btn" onClick={() => setGameStarted(true)}>
-                  Start Game
+            <div className="flashcard-welcome-container">
+              <div className="flashcard-welcome-content improved-welcome">
+                <h1 className="welcome-main-title">
+                  Welcome to Flash Cards Quiz
+                </h1>
+                {courseTitle && (
+                  <h2 className="welcome-course-title">
+                    for <span className="flashcard-welcome-course">{courseTitle}</span>
+                  </h2>
+                )}
+                <p className="flashcard-welcome-desc improved-welcome-desc">
+                  Ready to test your knowledge? Flip through the cards to reveal answers and track your progress.
+                  <br />
+                  Let's begin your learning journey!
+                </p>
+                <button className="start-btn welcome-start-btn" onClick={() => setGameStarted(true)}>
+                  Start Quiz
                 </button>
               </div>
             </div>
@@ -191,11 +203,8 @@ const FlashCardGamePage = () => {
               <header className="hero-header">
                 <div className="hero-title">
                   <h1>Flash Cards Game</h1>
-                  <p>
-                    Challenge your memory and boost your knowledge
-                    <br />
-                    with every card you flip.
-                  </p>
+                  <h2 className="hero-subtitle">for {courseTitle}</h2>
+                  <p>Challenge your memory and boost your knowledge with every card you flip.</p>
                 </div>
               </header>
 
@@ -230,34 +239,48 @@ const FlashCardGamePage = () => {
                           >
                             <div className="flashcard-front">
                               <div className="flashcard-header">
-                                <div className="flashcard-header-align">
-                                  <h3>{cards[currentIndex].courseTitle}</h3>
-                                  <button
-                                      className="delete-btn"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        deleteCard(cards[currentIndex].id);
-                                      }}
-                                  >
-                                    Delete
-                                  </button>
+                                <div className="ai-flashcard-header-align">
+                                  <div className="ai-flashcard-label ai-flashcard-label-question">
+                                    Question {currentIndex + 1}
+                                  </div>
+                                  <span className="ai-flashcard-hint">Click to reveal answer</span>
                                 </div>
                               </div>
-                              <div className="flashcard-content">
-                                <div className="flashcard-label question-label">Question</div>
+                              <div className="flashcard-content ai-flashcard-content">
                                 <p>{cards[currentIndex].question}</p>
-                                <div className="hint">Click to flip</div>
+                                <button
+                                  className="ai-flashcard-delete-btn"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteCard(cards[currentIndex].id);
+                                  }}
+                                >
+                                  Delete Flashcard
+                                </button>
                               </div>
                             </div>
 
                             <div className="flashcard-back">
                               <div className="flashcard-header">
-                                <h3>{cards[currentIndex].courseTitle}</h3>
+                                <div className="ai-flashcard-header-align">
+                                  <div className="ai-flashcard-label ai-flashcard-label-answer">
+                                    Answer {currentIndex + 1}
+                                  </div>
+                                  <span className="ai-flashcard-hint">Click to go back</span>
+                                </div>
                               </div>
-                              <div className="flashcard-content">
-                                <div className="flashcard-label answer-label">Answer</div>
+                              <div className="flashcard-content ai-flashcard-content">
                                 <p>{cards[currentIndex].answer}</p>
-                                <div className="hint">Click to flip back</div>
+                                <span className="ai-flashcard-hint">Click to go back</span>
+                                <button
+                                  className="ai-flashcard-delete-btn"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteCard(cards[currentIndex].id);
+                                  }}
+                                >
+                                  Delete Flashcard
+                                </button>
                               </div>
                             </div>
                           </div>
@@ -282,17 +305,25 @@ const FlashCardGamePage = () => {
               {showEndScreen && (
                   <div className="end-screen-container">
                     <div className="end-screen-content">
-                      <h2>You've completed all flashcards!</h2>
-                      <p>Would you like to review them again or go back?</p>
+                      <div className="end-screen-icon">🎉</div>
+                      <h2>Congratulations!</h2>
+                      <p>You've completed reviewing all {cards.length} flashcards for {courseTitle}.</p>
+                      <div className="end-screen-stats">
+                        <div className="stat-item">
+                          <span className="stat-number">{cards.length}</span>
+                          <span className="stat-label">Cards Reviewed</span>
+                        </div>
+                      </div>
+                      <p className="end-screen-question">What would you like to do next?</p>
                       <div className="end-screen-buttons">
                         <button className="end-screen-button restart" onClick={handleRestart}>
-                          <FaRedo /> Start Over
+                          <FaRedo /> Review Again
                         </button>
                         <button className="end-screen-button back" onClick={handleBack}>
                           <FaArrowLeft /> Back to Course
                         </button>
                         <button className="end-screen-button flashcard-gen" onClick={handleGoToFlashcards}>
-                          Go to Flashcard generation
+                          Create More Cards
                         </button>
                       </div>
                     </div>
@@ -305,4 +336,3 @@ const FlashCardGamePage = () => {
 };
 
 export default FlashCardGamePage;
-

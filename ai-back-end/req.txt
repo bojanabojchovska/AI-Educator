@@ -8,3 +8,5 @@ langchain_experimental
 langchain-huggingface
 pinecone-client
 pypdf
+sentence-transformers
+numpy

@@ -2,8 +2,8 @@ package com.uiktp.service.Implementation;
 
 import com.uiktp.model.Course;
 import com.uiktp.model.dtos.*;
-import com.uiktp.model.exceptions.CourseRecommendationException;
-import com.uiktp.model.exceptions.NoTakenCoursesException;
+import com.uiktp.model.exceptions.custom.CourseRecommendationException;
+import com.uiktp.model.exceptions.custom.NoTakenCoursesException;
 import com.uiktp.model.User;
 import com.uiktp.model.dtos.CreateCourseDto;
 import com.uiktp.model.exceptions.custom.CourseAlreadyLikedByStudentException;
@@ -11,18 +11,19 @@ import com.uiktp.model.exceptions.custom.CourseNotLikedByStudentException;
 import com.uiktp.model.exceptions.general.ResourceNotFoundException;
 import com.uiktp.repository.CourseRepository;
 import com.uiktp.repository.UserRepository;
+import com.uiktp.service.Interface.AuthenticationService;
 import com.uiktp.service.Interface.CourseService;
+import com.uiktp.service.Interface.RatingService;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,21 +43,27 @@ public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
+    private final RatingService ratingService;
+    private final AuthenticationService authenticationService;
 
-    public CourseServiceImpl(CourseRepository courseRepository, UserRepository userRepository) {
+    public CourseServiceImpl(CourseRepository courseRepository, UserRepository userRepository, RatingService ratingService, AuthenticationService authenticationService) {
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
+        this.ratingService = ratingService;
+        this.authenticationService = authenticationService;
     }
 
     @Override
     public List<CourseDTO> getAllCourses() {
-        return courseRepository.findAll().stream().map(course -> {
+        List<CourseDTO> courses = courseRepository.findAll().stream().map(course -> {
             CourseDTO dto = new CourseDTO();
             dto.setId(course.getId());
             dto.setTitle(course.getTitle());
             dto.setDescription(course.getDescription());
+            dto.setAvgRating(ratingService.getAverageRating(course.getId()));
             return dto;
         }).toList();
+        return courses;
     }
 
     @Override
@@ -171,7 +178,7 @@ public class CourseServiceImpl implements CourseService {
                     .collect(Collectors.toList());
             List<Course> recommendedCourses = courseRepository.findByTitleInIgnoreCase(lowercaseTitles);
             List<CourseDTO> recommendedCourseDTOs = recommendedCourses.stream()
-                    .map(course -> new CourseDTO(course.getId(), course.getTitle(), course.getDescription()))
+                    .map(course -> new CourseDTO(course.getId(), course.getTitle(), course.getDescription(), 0))
                     .collect(Collectors.toList());
 
             return recommendedCourseDTOs;
@@ -223,11 +230,18 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<Course> getStudentFavorites(String email) {
-        User student = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException(User.class, email));
+    @Transactional(readOnly = true)
+    public List<CourseDTO> getStudentFavorites() {
+        User student = authenticationService.getCurrentlyLoggedInUser();
+        List<Course> courses = courseRepository.findFavoritesByUserId(student.getId());
 
-        return student.getFavoriteCourses();
+        return courses.stream()
+                .map(course -> new CourseDTO(
+                        course.getId(),
+                        course.getTitle(),
+                        course.getDescription()
+                ))
+                .collect(Collectors.toList());
     }
 
     @Override

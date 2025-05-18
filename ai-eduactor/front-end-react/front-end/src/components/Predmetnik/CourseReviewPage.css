@@ -1,3 +1,59 @@
+.tab-buttons {
+    display: flex;
+    gap: 15px;
+    margin: 20px 0;
+    justify-content: flex-start; /* Keep the tabs aligned to the left */
+}
+
+.tab-buttons button {
+    border: 1px solid #ccc !important;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 20px 20px 0 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, border-color 0.3s ease;
+    color: white;
+    background-color: transparent;
+}
+
+.tab-buttons button:hover {
+    background-color: #b5575e !important;
+}
+
+.tab-buttons button.active {
+    background-color: #b5575e !important;
+    color: white;
+    border-color: #bbb !important;
+    font-weight: bold;
+}
+
+.tab-buttons button:not(.active) {
+    background-color: transparent;
+    color: white;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-buttons button:focus {
+    outline: none;
+    border-color: #aaa !important;
+}
+
+.flashcards-info {
+    background-color: #f5f9ff;
+    border-left: 5px solid #4a90e2;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.flashcards-info p {
+    margin-bottom: 16px;
+    line-height: 1.6;
+}
+
 .course-review-container {
     max-width: 900px;
     margin: 2.5rem auto;
@@ -331,26 +387,25 @@ textarea:focus {
 
 .review-card-table {
     display: grid;
-    grid-template-columns: 1.2fr 0.9fr 2.5fr 0.6fr;
-    align-items: flex-start;
+    grid-template-columns: 1.4fr 1fr 3fr 0.6fr; /* Adjusting columns for better proportion */
+    align-items: center; /* Center the content vertically */
     background: #fff;
-    border-radius: 0;
+    border-radius: 8px; /* Rounded corners for the card */
     border-left: 5px solid transparent;
     border-right: 1.5px solid #e0e0e0;
     border-bottom: 1.5px solid #e0e0e0;
     border-top: none;
-    min-width: 0;
     font-size: 0.98rem;
-    padding: 0.85rem 1.2rem;
-    gap: 0.5rem;
+    padding: 1rem 1.5rem; /* Adding more padding for better spacing */
+    gap: 0.75rem; /* Increased gap between items */
     transition: box-shadow 0.15s, border 0.15s, background 0.15s;
 }
 
 .review-card-table.rating {
-    border-left: 5px solid #2196f3;
+    border-left: 5px solid #2196f3; /* Blue left border for rating */
 }
 .review-card-table.comment {
-    border-left: 5px solid #800000;
+    border-left: 5px solid #800000; /* Red left border for comments */
 }
 
 /* Alternating row background */
@@ -358,6 +413,7 @@ textarea:focus {
     background: #f7fafd;
 }
 
+/* Hover effect to highlight the card */
 .review-card-table:hover {
     box-shadow: 0 4px 16px rgba(128,0,0,0.10);
     border-color: #bdbdbd;
@@ -501,18 +557,18 @@ textarea:focus {
 
 .review-table-header {
     display: grid;
-    grid-template-columns: 1.2fr 0.9fr 2.5fr 0.6fr;
+    grid-template-columns: 2fr 1fr; /* Spacing for user info and date */
+    gap: 1rem; /* Add space between user info and date */
     align-items: center;
-    background: #f8f8fc;
+    background: #f3f3f7;
     color: #800000;
     font-weight: 700;
-    font-size: 1.04rem;
-    border-radius: 8px 8px 0 0;
-    padding: 0.85rem 1.2rem 0.85rem 1.2rem;
-    margin-bottom: 0;
+    font-size: 1.01rem;
+    padding: 0.7rem 1.2rem;
+    margin-bottom: 0.5rem; /* More space below the header */
     border-bottom: 2px solid #e0e0e0;
     letter-spacing: 0.1px;
-    box-shadow: 0 2px 8px rgba(128,0,0,0.03);
+    box-shadow: 0 1px 4px rgba(128,0,0,0.02);
 }
 
 .review-card-table {
@@ -577,16 +633,18 @@ textarea:focus {
 
 .review-table-body {
     color: #444;
-    font-size: 1.04rem;
+    font-size: 1.01rem;
     word-break: break-word;
     padding-right: 0.5rem;
+    padding-top: 0.5rem; /* Adding padding at the top for better spacing */
 }
+
 
 .review-table-actions {
     display: flex;
-    align-items: flex-start;
-    justify-content: flex-end;
-    min-width: 60px;
+    align-items: center;
+    justify-content: flex-end; /* Align the delete button to the right */
+    gap: 1rem; /* Adding gap for alignment */
 }
 
 .review-table-delete-btn {
@@ -596,64 +654,15 @@ textarea:focus {
     background: linear-gradient(90deg, #800000 60%, #a83232 100%);
     color: #fff;
     border: none;
-    padding: 0.4rem 0.9rem;
+    padding: 0.35rem 0.8rem;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.97rem;
+    font-size: 0.95rem;
     font-weight: 500;
     box-shadow: 0 1px 4px rgba(128,0,0,0.06);
     transition: background 0.18s;
 }
+
 .review-table-delete-btn:hover {
     background: linear-gradient(90deg, #600000 60%, #a83232 100%);
 }
-
-@media (max-width: 900px) {
-    .course-review-container {
-        max-width: 100%;
-        padding: 0 0.5rem;
-    }
-    .forms-container,
-    .forms-symmetrical {
-        flex-direction: column;
-        gap: 18px;
-    }
-    .form-flex-item {
-        min-width: 0;
-    }
-    .review-section {
-        padding: 1.2rem 0.5rem;
-    }
-    .new-review-form {
-        min-width: 0;
-    }
-    .review-card {
-        padding: 1.2rem 0.8rem 1rem 0.8rem;
-    }
-    .reviews-list-header-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-    .review-table-header,
-    .review-card-table {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto auto;
-        font-size: 0.97rem;
-        padding: 0.7rem 0.5rem;
-    }
-    .review-table-header > :nth-child(3),
-    .review-table-header > :nth-child(4),
-    .review-card-table > :nth-child(3),
-    .review-card-table > :nth-child(4) {
-        grid-column: 1 / span 2;
-    }
-    .review-table-actions {
-        justify-content: flex-start;
-        margin-top: 0.5rem;
-    }
-    .review-table-user, .review-table-date, .review-table-body {
-        padding-right: 0;
-    }
-}
-

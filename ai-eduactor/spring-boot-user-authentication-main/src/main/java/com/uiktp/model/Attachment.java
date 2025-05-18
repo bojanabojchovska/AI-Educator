@@ -6,13 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @MappedSuperclass
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Attachment {
+
     private String originalFileName;
 
     private String savedFileName;

@@ -261,6 +261,23 @@ export const getFlashCardsByCourseAndUser = async (courseId) => {
     }
 };
 
+export const getFlashCardsByCourse = async (courseId) => {
+    try {
+        const response = await axios.get(`${API_URL}/flashcards/forCourse/${courseId}`, {
+            withCredentials: true
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching flashcards:', error);
+        if (error.response?.status === 403) {
+            console.error("You are not authorized. Maybe session expired?");
+            localStorage.clear();
+            window.location.href = "/login";
+        }
+        throw error;
+    }
+};
+
 export const getSemesters = async (email, token) => {
     try {
 
@@ -320,29 +337,30 @@ export const getCourseRecommendations = async (takenSubjects) => {
 
 export const submitSubjectReview = async (courseId, reviewData) => {
     try {
-        const email = localStorage.getItem('email');
         const requests = [];
 
+        const rating = parseInt(reviewData.rating);
         // Submit rating
         if (reviewData.rating) {
             requests.push(
-                axios.post(`${API_URL}/courses/${courseId}/ratings`, {
-                    ratingValue: parseInt(reviewData.rating),
-                    studentEmail: email
-                }, {
-                    withCredentials: true
+                axios.post(`${API_URL}/courses/${courseId}/ratings`, {},{
+                    withCredentials: true,
+                    params: {
+                        ratingValue: rating
+                    }
                 })
             );
         }
 
         // Submit comment
         if (reviewData.feedback && reviewData.feedback.trim()) {
+            console.log(reviewData.isReview)
             requests.push(
-                axios.post(`${API_URL}/courses/${courseId}/comments`, {
-                    commentBody: reviewData.feedback.trim(),
-                    studentEmail: email
-                }, {
-                    withCredentials: true
+                axios.post(`${API_URL}/courses/${courseId}/comments/reviews`, {}, {
+                    withCredentials: true,
+                    params: {
+                        commentBody: reviewData.feedback
+                    }
                 })
             );
         }
@@ -360,18 +378,12 @@ export const submitSubjectReview = async (courseId, reviewData) => {
     }
 };
 
-export const submitSubjectComment = async (courseId, commentFeedback) => {
+export const submitSubjectComment = async (courseId, formData) => {
+    console.log('POST COMMENT')
     try {
-        const email = localStorage.getItem('email');
-
-        if (commentFeedback && commentFeedback.trim()) {
-            await axios.post(`${API_URL}/courses/${courseId}/comments`, {
-                commentBody: commentFeedback.trim(),
-                studentEmail: email
-            }, {
-                withCredentials: true
-            })
-        }
+        return await axios.post(`${API_URL}/courses/${courseId}/comments`, formData, {
+            withCredentials: true
+        })
     } catch (error) {
         console.error('Error submitting review:', error);
         if (error.response?.status === 403) {
@@ -385,8 +397,11 @@ export const submitSubjectComment = async (courseId, commentFeedback) => {
 
 export const getSubjectReviews = async (courseId) => {
     try {
-        const [commentsResponse, ratingResponse] = await Promise.all([
-            axios.get(`${API_URL}/courses/${courseId}/comments`, {
+        const [reviewsResponse, commentsResponse, ratingResponse] = await Promise.all([
+            axios.get(`${API_URL}/courses/${courseId}/comments?forReviews=${true}`, {
+                withCredentials: true
+            }),
+            axios.get(`${API_URL}/courses/${courseId}/comments?forReviews=${false}`, {
                 withCredentials: true
             }),
             axios.get(`${API_URL}/courses/${courseId}/ratings/average`, {
@@ -396,9 +411,11 @@ export const getSubjectReviews = async (courseId) => {
 
         // Logging both responses to make sure the structure is correct
         console.log('Comments:', commentsResponse.data);
+        console.log('Reviews:', reviewsResponse.data);
         console.log('Average Rating:', ratingResponse.data);
 
         return {
+            reviews: reviewsResponse.data,
             comments: commentsResponse.data,
             averageRating: ratingResponse.data
         };
@@ -458,13 +475,8 @@ export const removeCourseFromFavorites = async (courseId) => {
 
 export const getFavoriteCourses = async () => {
     try {
-        const email = localStorage.getItem('email');
-
         const response = await axios.get(`${API_URL}/courses/favorites`, {
-            withCredentials: true,
-            params: {
-                email: email
-            }
+            withCredentials: true
         });
         return response.data;
     } catch (error) {
@@ -488,6 +500,24 @@ export const deleteComment = async (courseId, commentId) => {
                 email: email
             }
         });
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting comment:', error);
+        if (error.response?.status === 403) {
+            console.error("You are not authorized. Maybe session expired?");
+            localStorage.clear();
+            window.location.href = "/login";
+        }
+        throw error;
+    }
+}
+
+export const fetchCommentAttachments = async (courseId, commentId) => {
+    try {
+        const response = await axios.get(`${API_URL}/courses/${courseId}/comments/${commentId}/attachments`, {
+            withCredentials: true
+        });
+        console.log(response.data)
         return response.data;
     } catch (error) {
         console.error('Error deleting comment:', error);

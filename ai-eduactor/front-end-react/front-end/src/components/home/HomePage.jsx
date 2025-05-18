@@ -154,7 +154,7 @@ const HomePage = () => {
 
           {/* Course Reviews Section */}
           <section className="feature-section">
-            <h2>Course Reviews</h2>
+            <h2>Course Hub</h2>
             <div className="feature-content">
               <img
                 src="https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?auto=format&fit=crop&w=600&q=80"
@@ -164,7 +164,7 @@ const HomePage = () => {
               <div className="feature-text">
                 <p>
                   Unsure about which courses or subjects to choose?
-                  Our Course Reviews feature lets you view ratings and comments from other students, helping you make
+                  Our Course Hub lets you view ratings and comments from other students, helping you make
                   informed decisions before you commit to any subject or course.
                 </p>
                 <button

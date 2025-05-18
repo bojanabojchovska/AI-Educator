@@ -174,7 +174,11 @@
     top: 2rem;
 }
 
-.fc-button {
+.fc-generate-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
     border: none;
     border-radius: 1rem;
     background: #800000;
@@ -188,17 +192,28 @@
     box-shadow: 0 4px 15px rgba(159,43,43,0.2);
 }
 
-.fc-button:hover:not(:disabled) {
+.fc-generate-btn:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(159,43,43,0.25);
-    background: linear-gradient(45deg, #8a2525, #b33434);
+    background: #a10000;
 }
 
-.fc-button:disabled {
-    background: linear-gradient(45deg, #ccc, #ddd);
+.fc-generate-btn:disabled {
+    background: #ededed;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
+    color: #b0b0b0;
+    border: 1.5px solid #cccccc;
+}
+
+.fc-action-panel .fc-generate-btn:disabled {
+    background: #ededed !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+    color: #b0b0b0 !important;
+    border: 1.5px solid #cccccc !important;
 }
 
 @media (max-width: 768px) {
@@ -215,3 +230,4 @@
         font-size: 2rem;
     }
 }
+

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { FiUpload } from 'react-icons/fi';
+import { FiUpload, FiZap, FiDownload } from 'react-icons/fi';
+import { FaPlay } from 'react-icons/fa';
 import { Spinner } from "react-bootstrap";
 import CustomNavbar from './app-custom/CustomNavbar';
 import Notification from './app-custom/Notification';
@@ -189,7 +190,7 @@ const FlashcardCourseSelector = () => {
                     <div className="fc-action-panel">
                         {!isGenerated ? (
                             <button
-                                className="fc-button"
+                                className="fc-generate-btn"
                                 onClick={handleUploadAndGenerate}
                                 disabled={!selectedFile || !selectedCourse || isUploading || isGenerating}
                             >
@@ -198,21 +199,26 @@ const FlashcardCourseSelector = () => {
                                         Processing... <Spinner animation="border" size="sm" />
                                     </>
                                 ) : (
-                                    "Generate"
+                                    <>
+                                        <FiZap style={{marginRight: 4}} />
+                                        Generate
+                                    </>
                                 )}
                             </button>
                         ) : (
                             <>
                                 <button
                                     onClick={handleDownload}
-                                    className="fc-button"
+                                    className="fc-generate-btn"
                                 >
+                                    <FiDownload style={{marginRight: 4}} />
                                     Download
                                 </button>
                                 <button
                                     onClick={handlePlayGame}
-                                    className="fc-button"
+                                    className="fc-generate-btn"
                                 >
+                                    <FaPlay style={{marginRight: 4}} />
                                     Play game
                                 </button>
                             </>

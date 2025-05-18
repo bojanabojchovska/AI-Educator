@@ -131,10 +131,11 @@ input[type="file"] {
 }
 
 .flashcards-button:disabled {
-    background: linear-gradient(45deg, #ccc, #ddd);
-    color: #888;
-    cursor: not-allowed;
-    box-shadow: none;
+    background: #ededed !important;
+    color: #b0b0b0 !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+    border: 1.5px solid #cccccc !important;
 }
 
 .flashcards-button[title="Delete button"] {
@@ -314,4 +315,3 @@ input[type="number"]:focus {
     margin-left: 0.5rem;
     vertical-align: middle;
 }
-

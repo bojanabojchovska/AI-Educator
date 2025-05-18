@@ -44,6 +44,8 @@ const CourseReviewPage = () => {
 
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
+    const [ratingError, setRatingError] = useState('');
+    const [commentError, setCommentError] = useState('');
 
     useEffect(() => {
         fetchCourseData();
@@ -92,32 +94,27 @@ const CourseReviewPage = () => {
     }
 
     const handleSubmitReview = async (e) => {
-        console.log(">>> Submitting REVIEW with rating + feedback");
         e.preventDefault();
+        setRatingError('');
+        setError(null);
 
-        // Validation
         if (!newReview.rating || newReview.rating < 1) {
-            setError('Please provide a rating (1-5 stars)');
+            setRatingError('Please select a rating between 1 and 5 stars');
             return;
         }
 
         setIsSubmittingReview(true);
-        setError(null);
         setSuccessMessage('');
 
         try {
-            // Make sure courseId is treated as a number
             await submitSubjectReview(courseId, {
                 rating: newReview.rating,
                 feedback: newReview.feedback,
                 isReview: "true"
             });
 
-            // Reset form and show success message
             setNewReview({rating: 0, feedback: ''});
             setSuccessMessage('Your review was submitted successfully!');
-
-            // Refresh reviews to show the new one
             await fetchReviews();
         } catch (err) {
             console.error('Error submitting review:', err);
@@ -128,16 +125,16 @@ const CourseReviewPage = () => {
     };
 
     const handleSubmitComment = async (e) => {
-        console.log(">>> Submitting COMMENT");
         e.preventDefault();
+        setCommentError('');
+        setError(null);
 
-        if (!commentFeedback) {
-            setError('Please provide a comment');
+        if (!commentFeedback.trim()) {
+            setCommentError('Please write a comment before submitting');
             return;
         }
 
         setIsSubmittingComment(true);
-        setError(null);
         setSuccessMessage('');
 
         try {
@@ -147,13 +144,9 @@ const CourseReviewPage = () => {
                 formData.append('attachments', file);
             });
 
-            const comment = await submitSubjectComment(courseId, formData);
-
+            await submitSubjectComment(courseId, formData);
             setCommentFeedback('');
-            setSuccessMessage('Your comment was submitted successfully!');
-
             setSelectedFiles([]);
-            setAttachmentsMap({});
             setSuccessMessage('Your comment was submitted successfully!');
             await fetchReviews();
         } catch (err) {
@@ -326,6 +319,7 @@ const CourseReviewPage = () => {
                                     isSelectable={true}
                                     starHoverColor="#ffc107"
                                 />
+                                {ratingError && <div className="error-tooltip">{ratingError}</div>}
                             </div>
                             <div className="feedback-container">
                                 <label htmlFor="feedback">Your Comments (optional):</label>
@@ -415,6 +409,7 @@ const CourseReviewPage = () => {
                                     onChange={(e) => setCommentFeedback(e.target.value)}
                                     rows="6"
                                 />
+                                {commentError && <div className="error-tooltip">{commentError}</div>}
                             </div>
 
                             <div className="file-upload-container">
@@ -447,7 +442,7 @@ const CourseReviewPage = () => {
 
                             <button
                                 type="submit"
-                                className="submit-btn"
+                                className="submit-btn blue-theme"
                                 disabled={isSubmittingComment}
                             >
                                 {isSubmittingComment ? 'Submitting...' : 'Submit Comment'}
@@ -541,4 +536,3 @@ const CourseReviewPage = () => {
 };
 
 export default CourseReviewPage;
-

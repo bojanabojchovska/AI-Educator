@@ -4,9 +4,6 @@ import CustomNavbar from "../app-custom/CustomNavbar";
 import { useNavigate } from "react-router-dom";
 import gradCap from "../../assets/grad-cap.png";
 import books from "../../assets/books.png";
-// import semesterImage from "../../assets/semester-planning.png";  // Placeholder image
-// import flashcardImage from "../../assets/flashcards.png";  // Placeholder image
-// import reviewsImage from "../../assets/reviews.png";  // Placeholder image
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -61,8 +58,11 @@ const HomePage = () => {
           <section className="feature-section">
             <h2>Subject Recommendation</h2>
             <div className="feature-content">
-            <img src={"https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg"}
-                   alt="AI Subject Recommendation" className="feature-image"/>
+              <img
+                src="https://images.unsplash.com/photo-1517520287167-4bbf64a00d66?auto=format&fit=crop&w=600&q=80"
+                alt="Student choosing subjects with AI assistance"
+                className="feature-image feature-animate"
+              />
               <div className="feature-text">
                 <p>
                   Struggling to choose the right subjects for your academic path?
@@ -83,9 +83,7 @@ const HomePage = () => {
           {/* Semester Planning Section */}
           <section className="feature-section">
             <h2>Semester Planning</h2>
-            <div className="feature-content">
-              <img src={"https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg"}
-                   alt="Semester Planning" className="feature-image"/>
+            <div className="feature-content reverse-row">
               <div className="feature-text">
                 <p>
                   Structure your academic term with ease. Our Semester Planning tool allows you to create semesters, add
@@ -100,6 +98,11 @@ const HomePage = () => {
                   Start Planning Your Semester
                 </button>
               </div>
+              <img
+                src="https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=600&q=80"
+                alt="Student organizing semester schedule"
+                className="feature-image feature-animate"
+              />
             </div>
           </section>
 
@@ -107,8 +110,11 @@ const HomePage = () => {
           <section className="feature-section">
             <h2>Flashcards AI Generator</h2>
             <div className="feature-content">
-              <img src={"https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg"}
-                   alt="Flashcards Generator" className="feature-image"/>
+              <img
+                src="https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=600&q=80"
+                alt="Student using flashcards for studying"
+                className="feature-image feature-animate"
+              />
               <div className="feature-text">
                 <p>
                   Make studying more efficient with AI-generated flashcards!
@@ -126,11 +132,10 @@ const HomePage = () => {
             </div>
           </section>
 
+          {/* AI Chatbot Assistant Section */}
           <section className="feature-section">
             <h2>AI Chatbot Assistant</h2>
-            <div className="feature-content">
-              <img src={"https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg"}
-                   alt="AI Chatbot" className="feature-image"/>
+            <div className="feature-content reverse-row">
               <div className="feature-text">
                 <p>
                   Have questions about your study material? Our intelligent chatbot is here to help! After uploading
@@ -138,8 +143,12 @@ const HomePage = () => {
                   clarifications, or explanations—instantly and contextually.
                   It's like having a tutor available 24/7 for every piece of content you upload.
                 </p>
-
               </div>
+              <img
+                src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&q=80"
+                alt="Student chatting with AI assistant"
+                className="feature-image feature-animate"
+              />
             </div>
           </section>
 
@@ -147,8 +156,11 @@ const HomePage = () => {
           <section className="feature-section">
             <h2>Course Reviews</h2>
             <div className="feature-content">
-              <img src={"https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg"}
-                   alt="Course Reviews" className="feature-image"/>
+              <img
+                src="https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?auto=format&fit=crop&w=600&q=80"
+                alt="Students giving feedback and reviews"
+                className="feature-image feature-animate"
+              />
               <div className="feature-text">
                 <p>
                   Unsure about which courses or subjects to choose?
@@ -174,3 +186,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+

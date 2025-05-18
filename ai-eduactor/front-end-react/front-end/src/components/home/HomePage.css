@@ -87,12 +87,24 @@
     gap: 40px;
 }
 
+.feature-content.reverse-row {
+    flex-direction: row-reverse;
+}
+
 .feature-image {
     width: 400px;
     height: 250px;
     object-fit: cover;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.feature-image.feature-animate {
+    transition: transform 0.4s cubic-bezier(.4,2,.6,1);
+}
+
+.feature-image.feature-animate:hover {
+    transform: scale(1.04) rotate(-2deg);
 }
 
 .feature-text {
@@ -122,6 +134,14 @@
     background-color: #4a7c61;
 }
 
+/* Responsive: Stack on mobile */
+@media (max-width: 900px) {
+    .feature-content,
+    .feature-content.reverse-row {
+        flex-direction: column !important;
+    }
+}
+
 /* Footer */
 footer {
     margin-top: 40px;
@@ -132,4 +152,3 @@ footer {
 footer p {
     margin-bottom: 10px;
 }
-

@@ -23,8 +23,8 @@ public class CommentAttachment extends Attachment{
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    public CommentAttachment(String fileName, String fileType, String fileUrl, LocalDateTime uploadedAt, Comment comment){
-        super(fileName, fileType, fileUrl, uploadedAt);
+    public CommentAttachment(String originalFileName, String savedFileName, String fileType, String filePath, String fileUrl, LocalDateTime uploadedAt, Comment comment){
+        super(originalFileName, savedFileName, fileType, filePath, fileUrl, uploadedAt);
         this.comment = comment;
     }
 

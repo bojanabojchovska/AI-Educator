@@ -27,6 +27,8 @@ public class Comment {
 
     private LocalDateTime date;
 
+    private boolean isReview;
+
     @ManyToOne
     @JoinColumn(name = "student_id")
     @JsonManagedReference

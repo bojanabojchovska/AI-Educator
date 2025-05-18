@@ -1,42 +1,63 @@
 package com.uiktp.service.Implementation;
 
 import com.uiktp.model.Comment;
+import com.uiktp.model.CommentAttachment;
 import com.uiktp.model.Course;
 import com.uiktp.model.User;
 import com.uiktp.model.dtos.CommentDTO;
+import com.uiktp.model.exceptions.custom.FileUploadFailureException;
+import com.uiktp.model.exceptions.custom.PDFLoadingException;
 import com.uiktp.model.exceptions.custom.UserCannotDeleteCommentException;
+import com.uiktp.model.exceptions.general.InvalidArgumentsException;
 import com.uiktp.model.exceptions.general.ResourceNotFoundException;
+import com.uiktp.repository.CommentAttachmentRepository;
 import com.uiktp.repository.CommentRepository;
 import com.uiktp.repository.CourseRepository;
 import com.uiktp.repository.UserRepository;
+import com.uiktp.service.Interface.AuthenticationService;
+import com.uiktp.service.Interface.CommentAttachmentService;
 import com.uiktp.service.Interface.CommentService;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
     private final CourseRepository courseRepository;
+    private final CommentAttachmentService commentAttachmentService;
+    private final AuthenticationService authenticationService;
 
-    public CommentServiceImpl(CommentRepository commentRepository, UserRepository userRepository,
-                          CourseRepository courseRepository) {
+    private static final String UPLOAD_DIR_PATH = "uploads/comments/";
+    private static final String UPLOAD_URL = "http://localhost:8080/comments/files/";
+
+
+    public CommentServiceImpl(CommentRepository commentRepository,
+                              CourseRepository courseRepository, CommentAttachmentService commentAttachmentService, AuthenticationService authenticationService) {
         this.commentRepository = commentRepository;
-        this.userRepository = userRepository;
         this.courseRepository = courseRepository;
+        this.commentAttachmentService = commentAttachmentService;
+        this.authenticationService = authenticationService;
     }
 
     @Override
-    public List<Comment> getAllCommentsForCourse(Long courseId) {
+    public List<Comment> getAllCommentsForCourse(Long courseId, boolean forReviews) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId.toString()));
 
-        return commentRepository.findAllByCourse(course);
+        return commentRepository.findAllByCourse(course)
+                .stream()
+                .filter(com -> com.isReview() == forReviews)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -46,8 +67,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     public Comment addCommentToCourse(Long courseId, CommentDTO dto) {
-        User user = userRepository.findByEmail(dto.getStudentEmail())
-                .orElseThrow(() -> new ResourceNotFoundException(User.class, dto.getStudentEmail()));
+        User user = authenticationService.getCurrentlyLoggedInUser();
 
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(Course.class, courseId.toString()));
@@ -57,8 +77,16 @@ public class CommentServiceImpl implements CommentService {
         comment.setStudent(user);
         comment.setCourse(course);
         comment.setDate(LocalDateTime.now());
+        comment.setReview(dto.isReview());
 
-        return commentRepository.save(comment);
+        Comment savedComment = commentRepository.save(comment);
+        List<MultipartFile> files = dto.getFiles();
+
+        if (files != null && !files.isEmpty() && !dto.isReview()) {
+            commentAttachmentService.uploadFiles(files, savedComment);
+        }
+
+        return savedComment;
     }
 
     @Override

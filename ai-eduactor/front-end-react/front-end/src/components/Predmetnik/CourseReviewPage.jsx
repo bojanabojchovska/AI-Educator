@@ -1,30 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { FaStar } from 'react-icons/fa';
+import React, {useEffect, useState} from 'react';
+import {useLocation, useNavigate, useParams} from 'react-router-dom';
+import {FaDownload, FaFilePdf} from 'react-icons/fa';
 import CustomNavbar from '../app-custom/CustomNavbar';
 import StarRatings from 'react-star-ratings';
-import { FaDownload, FaFilePdf, FaPaperclip } from 'react-icons/fa';
 import {
+    deleteComment, fetchCommentAttachments,
+    getCourses, getFlashCardsByCourse,
     getSubjectReviews,
-    submitSubjectReview,
-    getCourses,
     submitSubjectComment,
-    deleteComment, downloadCommentAttachment, uploadCommentAttachments, fetchAttachments
-}  from '../../services/api';
+    submitSubjectReview
+} from '../../services/api';
 import './CourseReviewPage.css';
 
 const CourseReviewPage = () => {
     const studentEmail = localStorage.getItem("email");
-
-    const { courseId } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const {courseId} = useParams();
     const [courseName, setCourseName] = useState('');
     const [courseDescription, setCourseDescription] = useState('');
-    const [reviews, setReviews] = useState({ comments: [], averageRating: 0 });
-    const [newReview, setNewReview] = useState({ rating: 0, feedback: '' });
+
+    const [reviews, setReviews] = useState({comments: [], averageRating: 0});
+    const [averageRating, setAverageRating] = useState(0);
+    const [comments, setComments] = useState([]);
+
+    const [newReview, setNewReview] = useState({rating: 0, feedback: ''});
     const [commentFeedback, setCommentFeedback] = useState('');
-    const [error, setError] = useState(null);
-    const [successMessage, setSuccessMessage] = useState('');
+
     const [isSubmittingReview, setIsSubmittingReview] = useState(false);
     const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
@@ -32,9 +35,17 @@ const CourseReviewPage = () => {
     const [attachmentsMap, setAttachmentsMap] = useState({}); // commentId -> [attachments]
     const [expandedComments, setExpandedComments] = useState(new Set());
 
+    const [defaultFlashCards, setDefaultFlashCards] = useState([]);
+
+    const [activeTab, setActiveTab] = useState('reviews');
+
+    const [error, setError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState('');
+
     useEffect(() => {
         fetchCourseData();
         fetchReviews();
+        fetchCourseFlashCards();
     }, [courseId]);
 
     const fetchCourseData = async () => {
@@ -56,16 +67,29 @@ const CourseReviewPage = () => {
     const fetchReviews = async () => {
         try {
             setError(null);
-            const data = await getSubjectReviews(courseId);
-            console.log("Fetched reviews:", data);
-            setReviews(data);
+            const {reviews, comments, averageRating} = await getSubjectReviews(courseId);
+
+            setReviews(reviews);
+            setComments(comments);
+            setAverageRating(averageRating);
         } catch (err) {
-            console.error('Error fetching reviews:', err);
-            setError('Failed to fetch reviews. Please try again later.');
+            console.error('Error fetching data:', err);
+            setError('Failed to fetch data. Please try again later.');
         }
     };
 
+    const fetchCourseFlashCards = async () => {
+        try{
+            const flashcards = await getFlashCardsByCourse(courseId);
+            setDefaultFlashCards(flashcards);
+        }catch (err) {
+            console.error('Error fetching falshCards:', err);
+            setError('Failed to fetch falshCards. Please try again later.');
+        }
+    }
+
     const handleSubmitReview = async (e) => {
+        console.log(">>> Submitting REVIEW with rating + feedback");
         e.preventDefault();
 
         // Validation
@@ -82,11 +106,12 @@ const CourseReviewPage = () => {
             // Make sure courseId is treated as a number
             await submitSubjectReview(courseId, {
                 rating: newReview.rating,
-                feedback: newReview.feedback
+                feedback: newReview.feedback,
+                isReview: "true"
             });
 
             // Reset form and show success message
-            setNewReview({ rating: 0, feedback: '' });
+            setNewReview({rating: 0, feedback: ''});
             setSuccessMessage('Your review was submitted successfully!');
 
             // Refresh reviews to show the new one
@@ -100,6 +125,7 @@ const CourseReviewPage = () => {
     };
 
     const handleSubmitComment = async (e) => {
+        console.log(">>> Submitting COMMENT");
         e.preventDefault();
 
         if (!commentFeedback) {
@@ -112,16 +138,17 @@ const CourseReviewPage = () => {
         setSuccessMessage('');
 
         try {
-            const comment = await submitSubjectComment(courseId, commentFeedback);
+            const formData = new FormData();
+            formData.append('commentBody', commentFeedback.trim());
+            selectedFiles.forEach((file) => {
+                formData.append('attachments', file);
+            });
+
+            const comment = await submitSubjectComment(courseId, formData);
 
             setCommentFeedback('');
             setSuccessMessage('Your comment was submitted successfully!');
 
-            if (selectedFiles.length > 0) {
-                await uploadCommentAttachments(comment.id, selectedFiles);
-            }
-
-            setCommentFeedback('');
             setSelectedFiles([]);
             setAttachmentsMap({});
             setSuccessMessage('Your comment was submitted successfully!');
@@ -135,7 +162,7 @@ const CourseReviewPage = () => {
     };
 
     const handleRatingClick = (rating) => {
-        setNewReview(prev => ({ ...prev, rating: Number(rating) }));
+        setNewReview(prev => ({...prev, rating: Number(rating)}));
     };
 
     const handleDeleteButton = async (commentId) => {
@@ -167,8 +194,8 @@ const CourseReviewPage = () => {
             // Fetch only if not already loaded
             if (!attachmentsMap[commentId]) {
                 try {
-                    const attachments = await fetchAttachments(commentId); // Using the new function
-                    setAttachmentsMap(prev => ({ ...prev, [commentId]: attachments }));
+                    const attachments = await fetchCommentAttachments(courseId, commentId); // Using the new function
+                    setAttachmentsMap(prev => ({...prev, [commentId]: attachments}));
                 } catch (err) {
                     console.error(err.message); // Handle error (if any)
                 }
@@ -180,7 +207,7 @@ const CourseReviewPage = () => {
 
     return (
         <>
-            <CustomNavbar />
+            <CustomNavbar/>
             <div className="course-review-container">
                 <button
                     className="back-button"
@@ -192,17 +219,17 @@ const CourseReviewPage = () => {
                 {error && <div className="error-message">{error}</div>}
                 {successMessage && <div className="success-message">{successMessage}</div>}
 
-                <div className="review-section">
+                <div className="course-info">
                     <h2>{courseName}</h2>
                     <p>{courseDescription}</p>
                     <div className="average-rating">
                         <p>Average Rating:
                             <span className="rating-value">
-    {reviews.averageRating ? Number(reviews.averageRating).toFixed(1) : 'No ratings yet'}
+    {averageRating ? Number(averageRating).toFixed(1) : 'No ratings yet'}
 </span>
-                            {reviews.averageRating > 0 && (
+                            {averageRating > 0 && (
                                 <StarRatings
-                                    rating={Number(reviews.averageRating) || 0}  // Ensure it's a number
+                                    rating={Number(averageRating) || 0}  // Ensure it's a number
                                     starRatedColor="#ffc107"
                                     numberOfStars={5}
                                     name="average-rating"
@@ -214,9 +241,41 @@ const CourseReviewPage = () => {
                                 />
                             )}
                         </p>
-                    </div>
+                        </div>
+                </div>
 
-                    <div className="forms-container">
+                {/* Flashcards section */}
+                {defaultFlashCards && defaultFlashCards.length > 0 && (
+                    <div className="flashcards-info">
+                        <p>There is default quiz available for this course!The flashcards every student has generated
+                            for this course are used to make a default quiz available for all students! Currently there are {defaultFlashCards.length}
+                            unique flashcards available. As more students upload attachments and generate flashcards for this course, there will be more!</p>
+                        <button
+                            className="view-flashcards-button"
+                            onClick={() =>  navigate(`/flashcard-game/${courseId}`, { state: { default: true, from: location.pathname } })}
+                        >
+                            View Flashcards
+                        </button>
+                    </div>
+                )}
+
+                <div className="tab-buttons">
+                    <button
+                        className={activeTab === 'reviews' ? 'active' : ''}
+                        onClick={() => setActiveTab('reviews')}
+                    >
+                        Reviews
+                    </button>
+                    <button
+                        className={activeTab === 'comments' ? 'active' : ''}
+                        onClick={() => setActiveTab('comments')}
+                    >
+                        Comments
+                    </button>
+                </div>
+
+                {activeTab === 'reviews' && (
+                    <div className="reviews-section">
                         <form onSubmit={handleSubmitReview} className="new-review-form">
                             <h3>Add Your Review</h3>
 
@@ -232,7 +291,7 @@ const CourseReviewPage = () => {
                                     starSpacing="2px"
                                     starEmptyColor="#ddd"
                                     isHalf={true}
-                                    isSelectable={true}  // Add this
+                                    isSelectable={true}
                                     starHoverColor="#ffc107"
                                 />
                             </div>
@@ -257,6 +316,37 @@ const CourseReviewPage = () => {
                             </button>
                         </form>
 
+                        <div className="reviews-list">
+                            <h3>All Reviews</h3>
+                            {reviews && reviews.length > 0 ? (
+                                reviews.map((review, index) => (
+                                    <div key={index} className="review-card">
+                                        <div className="review-header">
+                                            <div className="review-user">
+                                                <div className="user-info">
+                                                    <p className="student-name"><strong>{review.student.name}</strong>
+                                                    </p>
+                                                    <p className="user-email"><small>{review.student.email}</small></p>
+                                                </div>
+                                            </div>
+                                            <div className="review-date">
+                                                <p>{new Date(review.date).toLocaleDateString()}</p>
+                                            </div>
+                                        </div>
+                                        <div className="review-body">
+                                            <p>{review.commentBody}</p>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="no-reviews">No reviews yet. Be the first to review!</p>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'comments' && (
+                    <div className="comments-section">
                         <form onSubmit={handleSubmitComment} className="new-review-form">
                             <h3>Ask a question or express your opinion!</h3>
 
@@ -289,70 +379,79 @@ const CourseReviewPage = () => {
                                 {isSubmittingComment ? 'Submitting...' : 'Submit Comment'}
                             </button>
                         </form>
-                    </div>
 
 
-                    <div className="reviews-list">
-                        <h3>All Reviews</h3>
-                        {reviews.comments && reviews.comments.length > 0 ? (
-                            reviews.comments.map((comment, index) => (
-                                <div key={index} className="review-card">
-                                    {/* Review Header: User info */}
-                                    <div className="review-header">
-                                    <div className="review-user">
-                                            <div className="user-info">
-                                                <p className="student-name"><strong>{comment.student.name}</strong></p>
-                                                <p className="user-email"><small>{comment.student.email}</small></p>
+                        <div className="comments-list">
+                            <h3>All Comments</h3>
+                            {comments && comments.length > 0 ? (
+                                comments.map((comment, index) => (
+                                    <div key={index} className="review-card">
+                                        <div className="review-header">
+                                            <div className="review-user">
+                                                <div className="user-info">
+                                                    <p className="student-name"><strong>{comment.student.name}</strong>
+                                                    </p>
+                                                    <p className="user-email"><small>{comment.student.email}</small></p>
+                                                </div>
+                                            </div>
+                                            <div className="review-date">
+                                                <p>{new Date(comment.date).toLocaleDateString()}</p>
                                             </div>
                                         </div>
-                                        <div className="review-date">
-                                            <p>{new Date(comment.date).toLocaleDateString()}</p>
-                                        </div>
-                                    </div>
 
-                                    <button onClick={() => toggleAttachments(comment.id)}>
-                                        {expandedComments.has(comment.id) ? 'Hide Attachments' : 'Show Attachments'}
-                                    </button>
+                                            <button onClick={() => toggleAttachments(comment.id)}>
+                                                {expandedComments.has(comment.id) ? 'Hide Attachments' : 'Show Attachments'}
+                                            </button>
 
-                                    {expandedComments.has(comment.id) && attachmentsMap[comment.id]?.length > 0 && (
-                                        <ul className="attachments-list">
-                                            {attachmentsMap[comment.id].map((att) => (
-                                                <li key={att.id} className="attachment-item">
-                                                    <div className="attachment-details">
-                                                        {/* PDF Icon */}
-                                                        <FaFilePdf size={24} color="#ff6f61" />
-                                                        {/* Attachment Name */}
-                                                        <span>{att.fileName}</span>
+                                        {expandedComments.has(comment.id) && (
+                                            <>
+                                                {attachmentsMap[comment.id]?.length > 0 ? (
+                                                    <ul className="attachments-list">
+                                                        {attachmentsMap[comment.id].map((att) => {
+                                                            return (
+                                                                <li key={att.id} className="attachment-item">
+                                                                    <div className="attachment-details">
+                                                                        <FaFilePdf size={24} color="#ff6f61" style={{ cursor: 'pointer' }} />
+                                                                        <a
+                                                                            href={att.fileUrl}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            className="attachment-link"
+                                                                        >
+                                                                            {att.originalFileName}
+                                                                        </a>
+                                                                    </div>
+                                                                </li>
+                                                            );
+                                                        })}
+                                                    </ul>
+                                                ) : (
+                                                    <div className="no-attachments">
+                                                        <p>No attachments available for this comment.</p>
                                                     </div>
-                                                    {/* Download Button */}
-                                                    <button
-                                                        className="download-button"
-                                                        onClick={() => downloadCommentAttachment(att.id, comment.id)}
-                                                    >
-                                                        <FaDownload size={20} />
-                                                    </button>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
+                                                )}
+                                            </>
+                                        )}
 
-                                    {/* Review Content */}
-                                    <div className="review-body">
-                                        <p>{comment.commentBody}</p>
-                                    </div>
-                                    {studentEmail === comment.student.email ? (
-                                        <div className="comment-buttons">
-                                            <button onClick={() => handleDeleteButton(comment.id)}>Delete</button>
+
+                                        <div className="review-body">
+                                            <p>{comment.commentBody}</p>
                                         </div>
-                                    ) : null}
-                                </div>
-                            ))
-                        ) : (
-                            <p className="no-reviews">No reviews yet. Be the first to review!</p>
-                        )}
-                    </div>
 
-                </div>
+                                        {studentEmail === comment.student.email && (
+                                            <div className="comment-buttons">
+                                                <button onClick={() => handleDeleteButton(comment.id)}>Delete</button>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="no-reviews">No comments yet. Start a conversation!</p>
+                            )}
+                        </div>
+
+                    </div>
+                )}
             </div>
         </>
     );

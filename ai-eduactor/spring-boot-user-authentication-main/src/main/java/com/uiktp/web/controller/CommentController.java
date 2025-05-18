@@ -12,28 +12,52 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/courses/{courseId}/comments")
 public class CommentController {
     private final CommentService commentService;
-    private  final CourseService courseService;
     private final CommentAttachmentService commentAttachmentService;
+    private  final CourseService courseService;
 
-    public CommentController(CommentService commentService, CourseService courseService, CommentAttachmentService commentAttachmentService) {
+    public CommentController(CommentService commentService, CommentAttachmentService commentAttachmentService, CourseService courseService) {
         this.commentService = commentService;
-        this.courseService = courseService;
         this.commentAttachmentService = commentAttachmentService;
+        this.courseService = courseService;
     }
 
     @GetMapping
-    public ResponseEntity<List<Comment>> getComments(@PathVariable Long courseId) {
-        return ResponseEntity.ok(commentService.getAllCommentsForCourse(courseId));
+    public ResponseEntity<List<Comment>> getComments(@PathVariable Long courseId, @RequestParam boolean forReviews) {
+        return ResponseEntity.ok(commentService.getAllCommentsForCourse(courseId, forReviews));
     }
 
-    @PostMapping
-    public ResponseEntity<Comment> addComment(@PathVariable Long courseId, @RequestBody CommentDTO dto) {
+    @PostMapping(consumes = {"multipart/form-data"})
+    public ResponseEntity<Comment> addComment(@PathVariable Long courseId,
+                                              @RequestParam("commentBody") String commentBody,
+                                              @RequestParam(value = "attachments", required = false) MultipartFile[] attachments) {
+        CommentDTO dto = new CommentDTO();
+        dto.setCommentBody(commentBody);
+        dto.setReview(false);
+        if (attachments == null || attachments.length == 0) {
+            dto.setFiles(Collections.emptyList());
+        } else {
+            dto.setFiles(Arrays.stream(Objects.requireNonNull(attachments)).toList());
+        }
+
+        return ResponseEntity.ok(commentService.addCommentToCourse(courseId, dto));
+    }
+
+    @PostMapping("/reviews")
+    public ResponseEntity<Comment> addReview(@PathVariable Long courseId, @RequestParam String commentBody) {
+        CommentDTO dto = new CommentDTO();
+        dto.setCommentBody(commentBody);
+        dto.setReview(true);
+        dto.setFiles(null);
         return ResponseEntity.ok(commentService.addCommentToCourse(courseId, dto));
     }
 
@@ -49,6 +73,9 @@ public class CommentController {
         return ResponseEntity.ok().build();
     }
 
-
+    @GetMapping("/{commentId}/attachments")
+    public ResponseEntity<List<CommentAttachment>> getCommentAttachments(@PathVariable Long courseId, @PathVariable Long commentId){
+        return ResponseEntity.ok(commentAttachmentService.getCommentAttachments(courseId,commentId));
+    }
 }
 

@@ -226,3 +226,41 @@ textarea {
     display: flex;
     justify-content: space-between;
 }
+
+.tab-buttons {
+    display: flex;
+    gap: 15px;
+    margin: 20px 0;
+    justify-content: flex-start; /* Keep the tabs aligned to the left */
+}
+
+.tab-buttons button {
+    border: 1px solid #ccc !important;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 20px 20px 0 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, border-color 0.3s ease;
+    color: white;
+}
+
+.tab-buttons button:hover {
+    background-color: #b5575e !important;
+}
+
+.tab-buttons button.active {
+    background-color: #b5575e !important;
+    color: white;
+    border-color: #bbb !important;
+    font-weight: bold;
+}
+
+.tab-buttons button:not(.active) {
+    border-bottom: 3px solid transparent;
+}
+
+.tab-buttons button:focus {
+    outline: none;
+    border-color: #aaa !important;
+}
+

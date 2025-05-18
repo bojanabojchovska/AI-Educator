@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import { getFlashCardsByCourseAndUser, deleteFlashCard } from "../services/api";
+import {getFlashCardsByCourseAndUser, deleteFlashCard, getFlashCardsByCourse} from "../services/api";
 import CustomNavbar from "./app-custom/CustomNavbar";
 import "./FlashCardGamePage.css";
 import { Spinner } from "react-bootstrap";
@@ -18,7 +18,12 @@ const FlashCardGamePage = () => {
     const fetchFlashcards = async () => {
       try {
         setLoading(true);
-        const fetchedCards = await getFlashCardsByCourseAndUser(courseId);
+        let fetchedCards = [];
+        if(location.state.default){
+          fetchedCards = await getFlashCardsByCourse(courseId);
+        }else{
+          fetchedCards = await getFlashCardsByCourseAndUser(courseId);
+        }
         setCards(fetchedCards);
         setLoading(false);
       } catch (error) {

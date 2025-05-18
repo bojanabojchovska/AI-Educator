@@ -12,7 +12,8 @@ import java.util.List;
 @Setter
 public class CommentDTO {
     private String commentBody;
-    private String studentEmail;
+    private boolean isReview;
+    private List<MultipartFile> files;
     public CommentDTO() {}
 
 }

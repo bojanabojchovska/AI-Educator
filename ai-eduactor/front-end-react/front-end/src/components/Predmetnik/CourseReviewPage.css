@@ -70,11 +70,22 @@
 }
 
 .tab-buttons button.active {
-    background: linear-gradient(90deg, #800000 60%, #a83232 100%);
+    background: linear-gradient(90deg, var(--button-gradient-start, #800000) 60%, var(--button-gradient-end, #a83232) 100%);
     color: white;
-    font-weight: 700;
-    box-shadow: 0 4px 18px rgba(128,0,0,0.13);
-    transform: translateY(-2px);
+}
+
+.tab-buttons button[data-tab="comments"] {
+    --button-gradient-start: #1976d2;
+    --button-gradient-end: #2196f3;
+}
+
+.tab-buttons button[data-tab="comments"].active {
+    background: linear-gradient(90deg, #1976d2 60%, #2196f3 100%);
+}
+
+.tab-buttons button[data-tab="comments"]:hover:not(.active) {
+    background: #e3f2fd;
+    color: #1976d2;
 }
 
 .tab-buttons button:focus {

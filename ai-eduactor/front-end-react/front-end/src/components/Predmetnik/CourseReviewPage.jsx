@@ -234,7 +234,7 @@ const CourseReviewPage = () => {
                     className="back-button"
                     onClick={() => navigate('/course-reviews')}
                 >
-                    <FaArrowLeft /> Back to Courses
+                    <FaArrowLeft /> Back to Course Hub
                 </button>
 
                 {error && <div className="error-message">{error}</div>}
@@ -288,12 +288,14 @@ const CourseReviewPage = () => {
                     <button
                         className={activeTab === 'reviews' ? 'active' : ''}
                         onClick={() => setActiveTab('reviews')}
+                        data-tab="reviews"
                     >
                         Reviews
                     </button>
                     <button
                         className={activeTab === 'comments' ? 'active' : ''}
                         onClick={() => setActiveTab('comments')}
+                        data-tab="comments"
                     >
                         Comments
                     </button>

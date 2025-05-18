@@ -99,19 +99,8 @@ const CourseReviews = () => {
                 <h1>Course Hub</h1>
                 <p>Welcome to the Course Hub – your all-in-one space for academic collaboration and engagement.
                     Here, you can mark your favorite courses for easy access, rate and review them based on your experience,
-                    and share valuable feedback with your peers. The hub also allows you to upload and access study materials,
-                    enabling file-sharing between students. Plus, you can take default quizzes created from the flashcards contributed
-                    by other students in your course – making learning more dynamic and collective.
-                </p>
+                    and share valuable feedback with your peers.</p>
                 <div className="header-controls">
-                    <div className="filter-toggle-container">
-                        <button
-                            className={`favorites-toggle-btn ${showOnlyFavorites ? 'active' : ''}`}
-                            onClick={() => setShowOnlyFavorites(prev => !prev)}
-                        >
-                            {showOnlyFavorites ? 'Show All Courses' : 'Show Favorites Only'}
-                        </button>
-                    </div>
                     <div className="search-container">
                         <input
                             type="text"
@@ -127,6 +116,14 @@ const CourseReviews = () => {
             {error && <div className="global-error-message">{error}</div>}
 
             <div className="subject-reviews-container">
+                <div className="filter-toggle-container">
+                    <button
+                        className={`favorites-toggle-btn ${showOnlyFavorites ? 'active' : ''}`}
+                        onClick={() => setShowOnlyFavorites(prev => !prev)}
+                    >
+                        {showOnlyFavorites ? 'Show All Courses' : 'Show Favorites Only'}
+                    </button>
+                </div>
                 <div className="subjects-grid">
                     {sortedSubjects.length > 0 ? (
                         sortedSubjects.map(subject => (

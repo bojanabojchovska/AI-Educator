@@ -5,78 +5,136 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    background-color: #fafafa;
+    background-color: #ffffff;
     padding: 20px;
     font-family: Arial, sans-serif;
 }
 
 /* Hero Section */
 .hero-section {
-    background: linear-gradient(135deg, #b5575e, #F4F7F6); /* Soft gradient */
-    color: #333;
-    width: 100%;
-    padding: 40px 20px; /* Reduced padding for a shorter section */
-    margin-bottom: 40px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
-    text-align: center;
+    position: relative !important;
+    width: 100% !important;
+    min-height: 400px !important;
+    padding: 60px 20px !important;
+    margin-bottom: 60px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+}
+
+/* Add a background container */
+.hero-section::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background-image: url('https://images.pexels.com/photos/8386434/pexels-photo-8386434.jpeg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    z-index: 1 !important;
+}
+
+/* Add overlay */
+.hero-section::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: linear-gradient(135deg, 
+        rgba(107, 144, 128, 0.85), 
+        rgba(164, 195, 178, 0.75)
+    ) !important;
+    z-index: 2 !important;
+}
+
+.hero-content {
+    position: relative !important;
+    z-index: 3 !important;
+    max-width: 1200px !important;
+    width: 100% !important;
+    text-align: center !important;
+    padding: 32px 24px !important;
+    background: rgba(0, 0, 0, 0.2) !important;
+    border-radius: 18px !important;
+    backdrop-filter: blur(4px) !important;
 }
 
 .hero-content h1 {
-    font-size: 2.5rem; /* Reduced size for better balance */
-    font-weight: 700;
-    margin-bottom: 15px; /* Reduced space between the title and text */
-    display: inline-flex;
-    align-items: center; /* Center vertically */
-    justify-content: center;
-    gap: 8px;
+    font-size: 3rem !important;
+    font-weight: 800 !important;
+    margin-bottom: 20px !important;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.18) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
 }
 
 .hero-content p {
-    font-size: 1.1rem;
-    margin-bottom: 20px; /* Reduced margin */
-    line-height: 1.5;
-    color: #444;
-    max-width: 700px;
-    margin: 0 auto;
+    font-size: 1.2rem !important;
+    line-height: 1.5 !important;
+    color: #f3f3f3 !important;
+    max-width: 800px !important;
+    margin: 0 auto 25px auto !important;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.15) !important;
 }
 
 .hero-content .btn-primary {
-    background-color: #5B9E77; /* Earthy, calm color */
-    color: white;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 50px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    background-color: #800000 !important; /* Maroon */
+    color: #ffffff !important;
+    padding: 15px 35px !important;
+    border: none !important;
+    border-radius: 50px !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 15px rgba(128, 0, 0, 0.2) !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
 }
 
 .hero-content .btn-primary:hover {
-    background-color: #4a7c61;
-    transform: translateY(-3px); /* Subtle lift on hover */
+    background-color: #660000 !important; /* Darker maroon */
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(128, 0, 0, 0.3) !important;
 }
 
 /* Grad Cap Image */
 .grad-cap-img {
-    height: 40px; /* Reduced size */
-    vertical-align: middle; /* Align with text */
-    margin-left: 8px; /* Small gap between text and image */
+    height: 40px;
+    vertical-align: middle;
+    margin-left: 8px;
 }
 
 /* Feature Sections */
 .feature-section {
-    width: 100%;
-    padding: 40px 20px;
-    margin-bottom: 40px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
+    width: 90% !important;
+    max-width: 1200px !important;
+    padding: 40px 30px !important;
+    margin-bottom: 40px !important;
+    background-color: #ffffff !important;
+    border-radius: 15px !important;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px !important;
+    border: 1px solid rgba(128, 0, 0, 0.1) !important;
+    transition: transform 0.3s ease !important;
+}
+
+.feature-section:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: rgba(128, 0, 0, 0.1) 0px 10px 20px !important;
 }
 
 .feature-section h2 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    color: #333;
+    font-size: 2.2rem !important;
+    margin-bottom: 30px !important;
+    color: #800000 !important;
+    font-weight: 700 !important;
+    border-bottom: 2px solid rgba(128, 0, 0, 0.1) !important;
+    padding-bottom: 10px !important;
 }
 
 .feature-content {
@@ -84,7 +142,8 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 40px;
+    gap: 40px !important;
+    padding: 0 !important;
 }
 
 .feature-content.reverse-row {
@@ -92,46 +151,49 @@
 }
 
 .feature-image {
-    width: 400px;
-    height: 250px;
+    width: 400px !important;
+    height: 250px !important;
     object-fit: cover;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.feature-image.feature-animate {
+    border-radius: 12px !important;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px !important;
+    border: 3px solid #fff !important;
     transition: transform 0.4s cubic-bezier(.4,2,.6,1);
 }
 
 .feature-image.feature-animate:hover {
-    transform: scale(1.04) rotate(-2deg);
+    transform: scale(1.03) rotate(-1deg);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
 .feature-text {
     flex: 1;
-    max-width: 500px;
+    max-width: 500px !important;
 }
 
 .feature-text p {
-    font-size: 1.2rem;
-    color: #555;
-    line-height: 1.6;
-    margin-bottom: 20px;
+    font-size: 1.1rem !important;
+    color: #546e7a;
+    line-height: 1.6 !important;
+    margin-bottom: 20px !important;
 }
 
 .feature-text .btn-secondary {
-    background-color: #5B9E77;
-    color: white;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 50px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    background-color: #800000 !important; /* Maroon */
+    color: white !important;
+    padding: 14px 30px !important;
+    border: none !important;
+    border-radius: 50px !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 15px rgba(128, 0, 0, 0.2) !important;
+    transition: all 0.3s ease !important;
 }
 
 .feature-text .btn-secondary:hover {
-    background-color: #4a7c61;
+    background-color: #660000 !important; /* Darker maroon */
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(128, 0, 0, 0.3) !important;
 }
 
 /* Responsive: Stack on mobile */
@@ -140,15 +202,45 @@
     .feature-content.reverse-row {
         flex-direction: column !important;
     }
+
+    .feature-section {
+        width: 95% !important;
+        padding: 30px 20px !important;
+    }
+
+    .feature-section h2 {
+        font-size: 1.8rem !important;
+    }
+
+    .feature-image {
+        width: 100% !important;
+        height: 200px !important;
+    }
+
+    .feature-text p {
+        font-size: 1rem !important;
+    }
+    
+    .hero-content h1 {
+        font-size: 2.2rem !important;
+    }
+    
+    .hero-content p {
+        font-size: 1rem !important;
+    }
 }
 
 /* Footer */
 footer {
-    margin-top: 40px;
+    margin-top: 60px;
+    padding: 30px 0;
     font-size: 14px;
-    color: #777;
+    color: #546e7a;
+    border-top: 1px solid #eee;
+    width: 100%;
 }
 
 footer p {
     margin-bottom: 10px;
 }
+

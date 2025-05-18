@@ -12,8 +12,6 @@ import CoursePage from './components/CoursePage/CoursePage';
 import CourseReviews from "./components/Predmetnik/CourseReviews";
 import CourseReviewPage from './components/Predmetnik/CourseReviewPage';
 // Flashcards
-import FlashcardsPage from "./components/FlashcardsPage";
-import FlashcardActions from "./components/FlashcardActions";
 import FlashCardGamePage from "./components/FlashCardGamePage";
 import FlashcardCourseSelector from "./components/FlashcardCourseSelector";
 // Other components
@@ -57,11 +55,11 @@ function App() {
                     <Route path="/subject-recommendation" element={<PrivateRoute element={<SubjectRecommendation />} />} />
                     <Route path="/course-reviews" element={<PrivateRoute element={<CourseReviews />} />} />
                     <Route path="/course/:courseId/reviews" element={<PrivateRoute element={<CourseReviewPage />} />} />
-                    <Route path="/flashcards" element={<PrivateRoute element={<FlashcardCourseSelector />} />} />                    <Route path="/flashcardactions" element={<PrivateRoute element={<FlashcardActions />} />} />
+                    <Route path="/flashcards" element={<PrivateRoute element={<FlashcardCourseSelector />} />} />
                     <Route path="/course/:courseName" element={<PrivateRoute element={<CoursePage />} />} />
                     <Route path="/flashcard-game/:courseId" element={<PrivateRoute element={<FlashCardGamePage />} />} />
                     <Route path="/chatbot" element={<PrivateRoute element={<ChatBot />} />} />
-                                </Routes>
+                </Routes>
             </div>
         </Router>
     );

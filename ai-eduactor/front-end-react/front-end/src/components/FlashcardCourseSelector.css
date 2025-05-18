@@ -11,7 +11,7 @@
     font-weight: 800;
     font-size: 2.5rem;
     margin-bottom: 1rem;
-    background: linear-gradient(45deg, #9f2b2b, #ff4b4b);
+    background: #800000;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -58,7 +58,7 @@
     border-radius: 1rem;
     border: 2px solid rgba(159,43,43,0.2);
     font-size: 1.1rem;
-    color: #9f2b2b;
+    color: #800000;
     background: #fff;
     font-weight: 500;
     transition: all 0.2s ease;
@@ -71,13 +71,13 @@
 }
 
 .fc-dropdown:hover {
-    border-color: #9f2b2b;
+    border-color: #800000;
     background-color: #fff9f9;
 }
 
 .fc-dropdown:focus {
     outline: none;
-    border-color: #9f2b2b;
+    border-color: #800000;
     box-shadow: 0 0 0 3px rgba(159,43,43,0.1);
 }
 
@@ -87,7 +87,7 @@
     gap: 0.8rem;
     font-weight: 600;
     font-size: 1.2rem;
-    color: #9f2b2b;
+    color: #800000;
     margin-bottom: 1rem;
 }
 
@@ -101,14 +101,14 @@
     border: 2px dashed rgba(159,43,43,0.3);
     cursor: pointer;
     font-weight: 500;
-    color: #9f2b2b;
+    color: #800000;
     transition: all 0.2s ease;
     font-size: 1.1rem;
 }
 
 .fc-upload-label:hover {
     background: #fff9f9;
-    border-color: #9f2b2b;
+    border-color: #800000;
     transform: translateY(-2px);
 }
 
@@ -118,7 +118,7 @@
 
 .fc-form-label {
     font-weight: 600;
-    color: #9f2b2b;
+    color: #800000;
     margin-bottom: 1rem;
     display: block;
     font-size: 1.1rem;
@@ -146,7 +146,7 @@
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: #9f2b2b;
+    background: #800000;
     cursor: pointer;
     border: 3px solid #fff;
     box-shadow: 0 2px 8px rgba(159,43,43,0.2);
@@ -161,7 +161,7 @@
 .fc-slider-labels {
     display: flex;
     justify-content: space-between;
-    color: #9f2b2b;
+    color: #800000;
     font-weight: 500;
     margin-top: 0.5rem;
 }
@@ -177,7 +177,7 @@
 .fc-button {
     border: none;
     border-radius: 1rem;
-    background: linear-gradient(45deg, #9f2b2b, #cc3b3b);
+    background: #800000;
     color: #fff;
     padding: 1.2rem 2rem;
     font-size: 1.1rem;

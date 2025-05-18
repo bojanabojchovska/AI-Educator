@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { FiUpload } from 'react-icons/fi';
+import { Spinner } from "react-bootstrap";
 import CustomNavbar from './app-custom/CustomNavbar';
-import { Spinner } from 'react-bootstrap';
 import Notification from './app-custom/Notification';
-import {
-    getCourses,
-    uploadCourseAttachment,
-    generateFlashCards,
-    exportFlashCards,
+import { 
+    getCourses, 
+    uploadCourseAttachment, 
+    generateFlashCards, 
+    exportFlashCards 
 } from '../services/api';
+import './FlashcardCourseSelector.css';
 
 const FlashcardCourseSelector = () => {
     const [courses, setCourses] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
-    const [numFlashcards, setNumFlashcards] = useState(1);
+    const [numFlashcards, setNumFlashcards] = useState(3);
     const [isUploading, setIsUploading] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
     const [isGenerated, setIsGenerated] = useState(false);
@@ -24,7 +25,7 @@ const FlashcardCourseSelector = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchCourses = async () => {
             try {
                 const data = await getCourses();
                 setCourses(data);
@@ -35,7 +36,7 @@ const FlashcardCourseSelector = () => {
                 });
             }
         };
-        fetchData();
+        fetchCourses();
     }, []);
 
     const handleFileChange = (e) => {
@@ -60,6 +61,7 @@ const FlashcardCourseSelector = () => {
             return;
         }
         setIsUploading(true);
+        setNotification(null);
         try {
             const formData = new FormData();
             formData.append("file", selectedFile);
@@ -79,7 +81,7 @@ const FlashcardCourseSelector = () => {
             setIsUploading(false);
             setIsGenerating(false);
             setNotification({
-                message: error.response?.data || "Failed to upload or generate flashcards. Please try again!",
+                message: error.response?.data || "Failed to generate flashcards. Please try again!",
                 type: "error"
             });
         }
@@ -112,25 +114,30 @@ const FlashcardCourseSelector = () => {
                 />
             )}
 
-            <div className="container mt-5">
-                <div className="course-details-section">
-                    <h1 className="course-details-title">Generate Flashcards</h1>
-                    <p className="course-details-description">
-                        Select a course, upload your PDF, and generate flashcards to study with.
-                    </p>
-                </div>
-
-                {!isGenerated ? (
-                    <div className="upload-container">
-                        <div className="form-group mb-4">
-                            <label className="form-label">Select Course:</label>
+            <div className="fc-main-wrapper">
+                <h1 className="fc-heading">
+                    Generate your flash cards here!
+                </h1>
+                <p className="fc-instructions">
+                    Please upload your notes or learning material as a PDF and select the number of flashcards you'd like to create.
+                </p>
+                <div className="fc-content-grid">
+                    <div className="fc-upload-container">
+                        <div className="fc-dropdown-box">
+                            <label htmlFor="course-select" className="fc-form-label">
+                                Choose course:
+                            </label>
                             <select
-                                className="form-select"
+                                id="course-select"
+                                className="fc-dropdown"
                                 value={selectedCourse}
-                                onChange={(e) => setSelectedCourse(e.target.value)}
+                                onChange={e => {
+                                    setSelectedCourse(e.target.value);
+                                    setIsGenerated(false);
+                                }}
                                 disabled={isUploading || isGenerating}
                             >
-                                <option value="">-- Choose a course --</option>
+                                <option value="">Select course...</option>
                                 {courses.map(course => (
                                     <option key={course.id} value={course.id}>
                                         {course.title}
@@ -138,10 +145,12 @@ const FlashcardCourseSelector = () => {
                                 ))}
                             </select>
                         </div>
-
-                        <div className="upload-box">
-                            <label htmlFor="file-upload" className="custom-upload-label">
-                                <FiUpload size={20} />
+                        <div className="fc-upload-box">
+                            <div className="fc-upload-title">
+                                <FiUpload size={24} />
+                                <span>Upload PDF</span>
+                            </div>
+                            <label htmlFor="file-upload" className="fc-upload-label">
                                 {selectedFile ? selectedFile.name : "Choose PDF File"}
                             </label>
                             <input
@@ -152,25 +161,35 @@ const FlashcardCourseSelector = () => {
                                 style={{ display: "none" }}
                             />
                         </div>
-
-                        <div className="form-group mb-4">
-                            <label htmlFor="num-flashcards" className="form-label">Number of Flashcards:</label>
-                            <input
-                                id="num-flashcards"
-                                type="number"
-                                min={1}
-                                max={20}
-                                value={numFlashcards}
-                                onChange={e => setNumFlashcards(Number(e.target.value))}
-                                disabled={isUploading || isGenerating}
-                                className="form-control"
-                                style={{ width: "100px" }}
-                            />
+                        <div className="fc-slider-box">
+                            <label htmlFor="num-flashcards" className="fc-form-label">
+                                Select number of flashcards: <b>{numFlashcards}</b>
+                            </label>
+                            <div className="fc-slider-container">
+                                <input
+                                    id="num-flashcards"
+                                    type="range"
+                                    min={1}
+                                    max={5}
+                                    value={numFlashcards}
+                                    onChange={e => setNumFlashcards(Number(e.target.value))}
+                                    className="fc-slider"
+                                    disabled={isUploading || isGenerating}
+                                />
+                                <div className="fc-slider-labels">
+                                    <span>1</span>
+                                    <span>2</span>
+                                    <span>3</span>
+                                    <span>4</span>
+                                    <span>5</span>
+                                </div>
+                            </div>
                         </div>
-
-                        <div className="flashcards-buttons">
+                    </div>
+                    <div className="fc-action-panel">
+                        {!isGenerated ? (
                             <button
-                                className="flashcards-button"
+                                className="fc-button"
                                 onClick={handleUploadAndGenerate}
                                 disabled={!selectedFile || !selectedCourse || isUploading || isGenerating}
                             >
@@ -179,28 +198,27 @@ const FlashcardCourseSelector = () => {
                                         Processing... <Spinner animation="border" size="sm" />
                                     </>
                                 ) : (
-                                    "Upload & Generate"
+                                    "Generate"
                                 )}
                             </button>
-                        </div>
+                        ) : (
+                            <>
+                                <button
+                                    onClick={handleDownload}
+                                    className="fc-button"
+                                >
+                                    Download
+                                </button>
+                                <button
+                                    onClick={handlePlayGame}
+                                    className="fc-button"
+                                >
+                                    Play game
+                                </button>
+                            </>
+                        )}
                     </div>
-                ) : (
-                    <div className="flashcards-buttons" style={{ marginTop: "2rem" }}>
-                        <button
-                            onClick={handleDownload}
-                            className="flashcards-button"
-                            style={{ marginRight: "1rem" }}
-                        >
-                            Download
-                        </button>
-                        <button
-                            onClick={handlePlayGame}
-                            className="flashcards-button"
-                        >
-                            Play Game
-                        </button>
-                    </div>
-                )}
+                </div>
             </div>
         </>
     );

@@ -30,7 +30,7 @@ public interface CourseService {
     List<CourseDTO> getRecommendations(List<String> takenCourses);
     Course markAsFavorite(Long courseId, String email);
     void removeCourseFromFavorites(Long courseId, String email);
-    List<Course> getStudentFavorites(String email);
+    List<CourseDTO> getStudentFavorites();
 
     List<Course> getCoursesByTitleIn(List<String> titles);
 }

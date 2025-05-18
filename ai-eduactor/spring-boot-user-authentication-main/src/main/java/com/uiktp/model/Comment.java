@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "comments")
@@ -24,6 +25,10 @@ public class Comment {
 
     private String commentBody;
 
+    private LocalDateTime date;
+
+    private boolean isReview;
+
     @ManyToOne
     @JoinColumn(name = "student_id")
     @JsonManagedReference
@@ -33,7 +38,5 @@ public class Comment {
     @JoinColumn(name = "course_id")
     @JsonBackReference
     private Course course;
-
-    private LocalDateTime date;
 }
 

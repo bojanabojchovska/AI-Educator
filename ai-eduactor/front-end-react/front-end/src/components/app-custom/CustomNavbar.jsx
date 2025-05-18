@@ -9,7 +9,7 @@ const navLinks = [
     { to: "/semester-planning", label: "Semesters" },
     { to: "/flashcards", label: "Flash Cards" },
     { to: "/subject-recommendation", label: "Subject Recommendation" },
-    { to: "/course-reviews", label: "Reviews" }
+    { to: "/course-reviews", label: "Course Hub" }
 ];
 
 const CustomNavbar = () => {

@@ -1,11 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
-import {FaArrowDown, FaArrowLeft, FaArrowUp, FaCommentAlt, FaStar, FaTrash} from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import {useLocation, useNavigate, useParams} from 'react-router-dom';
+import {FaFilePdf} from 'react-icons/fa';
+import { FaStar, FaArrowLeft, FaTrash, FaCommentAlt, FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import CustomNavbar from '../app-custom/CustomNavbar';
 import StarRatings from 'react-star-ratings';
 import {
-    deleteComment,
-    getCourses,
+    deleteComment, fetchCommentAttachments,
+    getCourses, getFlashCardsByCourse,
     getSubjectReviews,
     submitSubjectComment,
     submitSubjectReview
@@ -14,23 +15,39 @@ import './CourseReviewPage.css';
 
 const CourseReviewPage = () => {
     const studentEmail = localStorage.getItem("email");
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const {courseId} = useParams();
-    const navigate = useNavigate();
     const [courseName, setCourseName] = useState('');
     const [courseDescription, setCourseDescription] = useState('');
-    const [reviews, setReviews] = useState({comments: [], averageRating: 0});
+
+    const [reviews, setReviews] = useState([]);
+    const [averageRating, setAverageRating] = useState(0);
+    const [comments, setComments] = useState([]);
+
     const [newReview, setNewReview] = useState({rating: 0, feedback: ''});
     const [commentFeedback, setCommentFeedback] = useState('');
-    const [error, setError] = useState(null);
-    const [successMessage, setSuccessMessage] = useState('');
+
     const [isSubmittingReview, setIsSubmittingReview] = useState(false);
     const [isSubmittingComment, setIsSubmittingComment] = useState(false);
     const [sortOrder, setSortOrder] = useState('latest'); // 'latest' or 'oldest'
 
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [attachmentsMap, setAttachmentsMap] = useState({}); // commentId -> [attachments]
+    const [expandedComments, setExpandedComments] = useState(new Set());
+
+    const [defaultFlashCards, setDefaultFlashCards] = useState([]);
+
+    const [activeTab, setActiveTab] = useState('reviews');
+
+    const [error, setError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState('');
+
     useEffect(() => {
         fetchCourseData();
         fetchReviews();
+        fetchCourseFlashCards();
     }, [courseId]);
 
     const fetchCourseData = async () => {
@@ -52,18 +69,32 @@ const CourseReviewPage = () => {
     const fetchReviews = async () => {
         try {
             setError(null);
-            const data = await getSubjectReviews(courseId);
-            console.log("Fetched reviews:", data);
-            setReviews(data);
+            const {reviews, comments, averageRating} = await getSubjectReviews(courseId);
+
+            setReviews(reviews);
+            setComments(comments);
+            setAverageRating(averageRating);
         } catch (err) {
-            console.error('Error fetching reviews:', err);
-            setError('Failed to fetch reviews. Please try again later.');
+            console.error('Error fetching data:', err);
+            setError('Failed to fetch data. Please try again later.');
         }
     };
 
+    const fetchCourseFlashCards = async () => {
+        try{
+            const flashcards = await getFlashCardsByCourse(courseId);
+            setDefaultFlashCards(flashcards);
+        }catch (err) {
+            console.error('Error fetching falshCards:', err);
+            setError('Failed to fetch falshCards. Please try again later.');
+        }
+    }
+
     const handleSubmitReview = async (e) => {
+        console.log(">>> Submitting REVIEW with rating + feedback");
         e.preventDefault();
 
+        // Validation
         if (!newReview.rating || newReview.rating < 1) {
             setError('Please provide a rating (1-5 stars)');
             return;
@@ -74,14 +105,18 @@ const CourseReviewPage = () => {
         setSuccessMessage('');
 
         try {
+            // Make sure courseId is treated as a number
             await submitSubjectReview(courseId, {
                 rating: newReview.rating,
-                feedback: newReview.feedback
+                feedback: newReview.feedback,
+                isReview: "true"
             });
 
+            // Reset form and show success message
             setNewReview({rating: 0, feedback: ''});
             setSuccessMessage('Your review was submitted successfully!');
 
+            // Refresh reviews to show the new one
             await fetchReviews();
         } catch (err) {
             console.error('Error submitting review:', err);
@@ -92,6 +127,7 @@ const CourseReviewPage = () => {
     };
 
     const handleSubmitComment = async (e) => {
+        console.log(">>> Submitting COMMENT");
         e.preventDefault();
 
         if (!commentFeedback) {
@@ -104,11 +140,20 @@ const CourseReviewPage = () => {
         setSuccessMessage('');
 
         try {
-            await submitSubjectComment(courseId, commentFeedback);
+            const formData = new FormData();
+            formData.append('commentBody', commentFeedback.trim());
+            selectedFiles.forEach((file) => {
+                formData.append('attachments', file);
+            });
+
+            const comment = await submitSubjectComment(courseId, formData);
 
             setCommentFeedback('');
             setSuccessMessage('Your comment was submitted successfully!');
 
+            setSelectedFiles([]);
+            setAttachmentsMap({});
+            setSuccessMessage('Your comment was submitted successfully!');
             await fetchReviews();
         } catch (err) {
             console.error('Error submitting comment:', err);
@@ -136,15 +181,43 @@ const CourseReviewPage = () => {
         }
     };
 
-    const getSortedComments = () => {
-        if (!reviews.comments) return [];
-        return [...reviews.comments].sort((a, b) => {
+    // Sorting logic for reviews
+    const getSortedReviews = () => {
+        if (!reviews) return [];
+        const sorted = [...reviews].sort((a, b) => {
             const dateA = new Date(a.date);
             const dateB = new Date(b.date);
             return sortOrder === 'latest'
                 ? dateB - dateA
                 : dateA - dateB;
         });
+        return sorted;
+    };
+
+    const handleFileChange = (e) => {
+        setSelectedFiles(Array.from(e.target.files));
+    };
+
+    const toggleAttachments = async (commentId) => {
+        const newExpanded = new Set(expandedComments);
+
+        if (newExpanded.has(commentId)) {
+            newExpanded.delete(commentId);
+        } else {
+            newExpanded.add(commentId);
+
+            // Fetch only if not already loaded
+            if (!attachmentsMap[commentId]) {
+                try {
+                    const attachments = await fetchCommentAttachments(courseId, commentId); // Using the new function
+                    setAttachmentsMap(prev => ({...prev, [commentId]: attachments}));
+                } catch (err) {
+                    console.error(err.message); // Handle error (if any)
+                }
+            }
+        }
+
+        setExpandedComments(newExpanded);
     };
 
     return (
@@ -155,154 +228,279 @@ const CourseReviewPage = () => {
                     className="back-button"
                     onClick={() => navigate('/course-reviews')}
                 >
-                    <FaArrowLeft/> Back to Courses
+                    <FaArrowLeft /> Back to Courses
                 </button>
 
                 {error && <div className="error-message">{error}</div>}
                 {successMessage && <div className="success-message">{successMessage}</div>}
 
-                <div className="review-section">
+                <div className="course-info">
                     <h2>{courseName}</h2>
                     <p>{courseDescription}</p>
                     <div className="average-rating">
-                        <p>Average Rating:
-                            <span className="rating-value">
-                                {reviews.averageRating ? Number(reviews.averageRating).toFixed(1) : 'No ratings yet'}
-                            </span>
-                            {reviews.averageRating > 0 && (
+                        <span>Average Rating:</span>
+                        <span className="rating-value">
+        {averageRating ? Number(averageRating).toFixed(1) : 'No ratings yet'}
+    </span>
+                        {averageRating > 0 && (
+                            <StarRatings
+                                rating={Number(averageRating) || 0}
+                                starRatedColor="#ffc107"
+                                numberOfStars={5}
+                                name="average-rating"
+                                starDimension="25px"
+                                starSpacing="2px"
+                                starEmptyColor="#ddd"
+                                isSelectable={false}
+                                isHalf={true}
+                            />
+                        )}
+                    </div>
+
+                </div>
+
+                {/* Flashcards section */}
+                {defaultFlashCards && defaultFlashCards.length > 0 && (
+                    <div className="flashcards-info">
+                        <p>
+                            There is a default quiz available for this course! The flashcards every student has
+                            generated
+                            for this course are used to make a default quiz available for all students! Currently there
+                            are {defaultFlashCards.length} unique
+                            flashcards available. As more students upload attachments and generate flashcards for this course, there will be more!
+                        </p>
+                        <button
+                            className="view-flashcards-button"
+                            onClick={() => navigate(`/flashcard-game/${courseId}`, { state: { default: true, from: location.pathname } })}
+                        >
+                            Try Quiz
+                        </button>
+                    </div>
+                )}
+
+                <div className="tab-buttons">
+                    <button
+                        className={activeTab === 'reviews' ? 'active' : ''}
+                        onClick={() => setActiveTab('reviews')}
+                    >
+                        Reviews
+                    </button>
+                    <button
+                        className={activeTab === 'comments' ? 'active' : ''}
+                        onClick={() => setActiveTab('comments')}
+                    >
+                        Comments
+                    </button>
+                </div>
+
+                {/* REVIEWS TAB */}
+                {activeTab === 'reviews' && (
+                    <div className="reviews-section">
+                        <form onSubmit={handleSubmitReview} className="new-review-form">
+                            <h3><FaStar className="form-icon" /> Add Your Review</h3>
+                            <div className="rating-selection">
+                                <label>Your Rating:</label>
                                 <StarRatings
-                                    rating={Number(reviews.averageRating) || 0}
+                                    rating={newReview.rating}
                                     starRatedColor="#ffc107"
+                                    changeRating={handleRatingClick}
                                     numberOfStars={5}
-                                    name="average-rating"
+                                    name="new-rating"
                                     starDimension="25px"
                                     starSpacing="2px"
                                     starEmptyColor="#ddd"
-                                    isSelectable={false}
                                     isHalf={true}
+                                    isSelectable={true}
+                                    starHoverColor="#ffc107"
                                 />
-                            )}
-                        </p>
-                    </div>
-
-                    <div className="forms-container forms-symmetrical">
-                        <div className="form-flex-item">
-                            <form onSubmit={handleSubmitReview} className="new-review-form review-section">
-                                <h3><FaStar className="form-icon"/> Add Your Review</h3>
-                                <div className="rating-selection">
-                                    <label>Your Rating:</label>
-                                    <StarRatings
-                                        rating={newReview.rating}
-                                        starRatedColor="#ffc107"
-                                        changeRating={handleRatingClick}
-                                        numberOfStars={5}
-                                        name="new-rating"
-                                        starDimension="25px"
-                                        starSpacing="2px"
-                                        starEmptyColor="#ddd"
-                                        isHalf={true}
-                                        isSelectable={true}
-                                        starHoverColor="#ffc107"
-                                    />
-                                </div>
-                                <div className="feedback-container">
-                                    <label htmlFor="feedback">Your Review (optional):</label>
-                                    <textarea
-                                        id="feedback"
-                                        placeholder="Write your review here..."
-                                        value={newReview.feedback}
-                                        onChange={(e) => setNewReview({...newReview, feedback: e.target.value})}
-                                        rows="6"
-                                    />
-                                </div>
-                                <button
-                                    type="submit"
-                                    className="submit-btn-review"
-                                    disabled={isSubmittingReview}
-                                >
-                                    {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
-                                </button>
-                            </form>
-                        </div>
-                        <div className="form-flex-item">
-                            <form onSubmit={handleSubmitComment} className="new-review-form comment-section">
-                                <h3><FaCommentAlt className="form-icon"/> Add a Comment</h3>
-                                <div className="feedback-container">
-                                    <label htmlFor="commentFeedback">Your Comment:</label>
-                                    <textarea
-                                        id="commentFeedback"
-                                        placeholder="Ask a question or share your thoughts..."
-                                        value={commentFeedback}
-                                        onChange={(e) => setCommentFeedback(e.target.value)}
-                                        rows="6"
-                                    />
-                                </div>
-                                <button
-                                    type="submit"
-                                    className="submit-btn-comment"
-                                    disabled={isSubmittingComment}
-                                >
-                                    {isSubmittingComment ? 'Submitting...' : 'Submit Comment'}
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <div className="reviews-list">
-                        <div className="reviews-list-header-row">
-                            <h3>All Reviews</h3>
-                            <div className="review-sort-toggle">
-                                <button
-                                    className={`sort-btn ${sortOrder === 'latest' ? 'active' : ''}`}
-                                    onClick={() => setSortOrder('latest')}
-                                    aria-label="Sort by latest"
-                                >
-                                    <FaArrowDown/> Latest
-                                </button>
-                                <button
-                                    className={`sort-btn ${sortOrder === 'oldest' ? 'active' : ''}`}
-                                    onClick={() => setSortOrder('oldest')}
-                                    aria-label="Sort by oldest"
-                                >
-                                    <FaArrowUp/> Oldest
-                                </button>
                             </div>
+                            <div className="feedback-container">
+                                <label htmlFor="feedback">Your Comments (optional):</label>
+                                <textarea
+                                    id="feedback"
+                                    placeholder="Write your feedback here..."
+                                    value={newReview.feedback}
+                                    onChange={(e) => setNewReview({ ...newReview, feedback: e.target.value })}
+                                    rows="4"
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                className="submit-btn"
+                                disabled={isSubmittingReview}
+                            >
+                                {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
+                            </button>
+                        </form>
+
+                        <div className="reviews-list">
+                            <div className="reviews-list-header-row">
+                                <h3>All Reviews</h3>
+                                <div className="review-sort-toggle">
+                                    <button
+                                        className={`sort-btn ${sortOrder === 'latest' ? 'active' : ''}`}
+                                        onClick={() => setSortOrder('latest')}
+                                    >
+                                        <FaArrowDown /> Latest
+                                    </button>
+                                    <button
+                                        className={`sort-btn ${sortOrder === 'oldest' ? 'active' : ''}`}
+                                        onClick={() => setSortOrder('oldest')}
+                                    >
+                                        <FaArrowUp /> Oldest
+                                    </button>
+                                </div>
+                            </div>
+
+                            {getSortedReviews().length > 0 ? (
+                                getSortedReviews().map((review, index) => (
+                                    <div key={index} className="review-card-table rating">
+                                        <div className="review-table-header">
+                                            <div className="review-table-user">
+                                                <strong>{review.student.name}</strong>
+                                                <small>{review.student.email}</small>
+                                            </div>
+                                            <div className="review-table-date">
+                                                {new Date(review.date).toLocaleString()}
+                                            </div>
+                                        </div>
+
+                                        <div className="review-table-body">
+                                            <p>{review.commentBody}</p>
+                                        </div>
+
+                                        <div className="review-table-actions">
+                                            {studentEmail === review.student.email && (
+                                                <button className="review-table-delete-btn"
+                                                        onClick={() => handleDeleteButton(review.id)}>
+                                                    <FaTrash/> Delete
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+
+
+                                ))
+                            ) : (
+                                <p className="no-reviews">No reviews yet. Be the first to review!</p>
+                            )}
                         </div>
-                        <div className="review-table-header">
-                            <div className="review-table-user">User</div>
-                            <div className="review-table-date">Date</div>
-                            <div className="review-table-body">Review / Comment</div>
-                            <div className="review-table-actions"></div>
-                        </div>
-                        {getSortedComments().length > 0 ? (
-                            getSortedComments().map((comment, index) => (
-                                <div key={index}
-                                     className={`review-card-table ${comment.rating ? 'rating' : 'comment'}`}>
-                                    <div className="review-table-user">
-                                        <span className="student-name"><strong>{comment.student.name}</strong></span>
-                                        <span className="user-email"><small>{comment.student.email}</small></span>
-                                    </div>
-                                    <div className="review-table-date">
-                                        {new Date(comment.date).toLocaleDateString()}
-                                    </div>
-                                    <div className="review-table-body">
-                                        {comment.commentBody}
-                                    </div>
-                                    <div className="review-table-actions">
+                    </div>
+                )}
+
+                {/* COMMENTS TAB */}
+                {activeTab === 'comments' && (
+                    <div className="comments-section">
+                        <form onSubmit={handleSubmitComment} className="new-review-form">
+                            <h3><FaCommentAlt className="form-icon"/> Ask a question or express your opinion!</h3>
+                            <div className="feedback-container">
+            <textarea
+                id="commentFeedback"
+                placeholder="Write your comment here..."
+                value={commentFeedback}
+                onChange={(e) => setCommentFeedback(e.target.value)}
+                rows="6"
+            />
+                            </div>
+
+                            <div className="file-upload-container">
+                                <label htmlFor="fileUpload">Attach files:</label>
+                                <input
+                                    type="file"
+                                    id="fileUpload"
+                                    multiple
+                                    onChange={handleFileChange}
+                                    accept=".pdf,.doc,.docx,.jpg,.png,.jpeg,.gif"
+                                />
+                            </div>
+
+                            {selectedFiles.length > 0 && (
+                                <div className="selected-files-list">
+                                    <p>Selected files:</p>
+                                    <ul>
+                                        {selectedFiles.map((file, idx) => (
+                                            <li key={idx}>{file.name}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            <button
+                                type="submit"
+                                className="submit-btn"
+                                disabled={isSubmittingComment}
+                            >
+                                {isSubmittingComment ? 'Submitting...' : 'Submit Comment'}
+                            </button>
+                        </form>
+
+                        <div className="comments-list">
+                            <h3>All Comments</h3>
+                            {comments && comments.length > 0 ? (
+                                comments.map((comment, index) => (
+                                    <div key={index} className="review-card-table">
+                                        <div className="review-table-header">
+                                            <div className="review-table-user">
+                                                <strong>{comment.student.name}</strong>
+                                                <small>{comment.student.email}</small>
+                                            </div>
+                                            <div className="review-table-date">
+                                                {new Date(comment.date).toLocaleString()}
+                                            </div>
+                                        </div>
+
+                                        <button onClick={() => toggleAttachments(comment.id)}>
+                                            {expandedComments.has(comment.id) ? 'Hide Attachments' : 'Show Attachments'}
+                                        </button>
+
+                                        {expandedComments.has(comment.id) && (
+                                            attachmentsMap[comment.id]?.length > 0 ? (
+                                                <ul className="attachments-list">
+                                                    {attachmentsMap[comment.id].map((att) => (
+                                                        <li key={att.id} className="attachment-item">
+                                                            <div className="attachment-details">
+                                                                <FaFilePdf size={24} color="#ff6f61"/>
+                                                                <a
+                                                                    href={att.fileUrl}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="attachment-link"
+                                                                >
+                                                                    {att.originalFileName}
+                                                                </a>
+                                                            </div>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            ) : (
+                                                <p className="no-attachments">No attachments available for this
+                                                    comment.</p>
+                                            )
+                                        )}
+
+                                        <div className="review-table-body">
+                                            <p>{comment.commentBody}</p>
+                                        </div>
+
                                         {studentEmail === comment.student.email && (
-                                            <button className="review-table-delete-btn"
-                                                    onClick={() => handleDeleteButton(comment.id)}>
-                                                <FaTrash/> Delete
-                                            </button>
+                                            <div className="review-table-actions">
+                                                <button
+                                                    className="review-table-delete-btn"
+                                                    onClick={() => handleDeleteButton(comment.id)}
+                                                >
+                                                    <FaTrash/> Delete
+                                                </button>
+                                            </div>
                                         )}
                                     </div>
-                                </div>
-                            ))
-                        ) : (
-                            <p className="no-reviews">No reviews yet. Be the first to review!</p>
-                        )}
+                                ))
+                            ) : (
+                                <p className="no-reviews">No comments yet. Start a conversation!</p>
+                            )}
+                        </div>
                     </div>
-                </div>
+
+                )}
             </div>
         </>
     );

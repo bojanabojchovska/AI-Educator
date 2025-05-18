@@ -5,29 +5,21 @@ import com.lowagie.text.Font;
 import com.lowagie.text.pdf.PdfWriter;
 import com.uiktp.model.Course;
 import com.uiktp.model.FlashCard;
-import com.uiktp.model.User;
 import com.uiktp.model.UserCourseAttachment;
 import com.uiktp.model.dtos.FlashCardDTO;
 import com.uiktp.model.dtos.FlashCardResponseDTO;
+import com.uiktp.model.dtos.RemoveDuplicateFlashCardsRequestDTO;
 import com.uiktp.model.exceptions.custom.FlashCardGenerationException;
 import com.uiktp.model.exceptions.general.InvalidArgumentsException;
-import com.uiktp.model.exceptions.general.ResourceNotFoundException;
 import com.uiktp.repository.CourseRepository;
 import com.uiktp.repository.FlashCardRepository;
 import com.uiktp.repository.UserRepository;
 import com.uiktp.service.Interface.FlashCardService;
 import com.uiktp.service.Interface.UserCourseAttachmentService;
 import jakarta.persistence.PersistenceException;
-import jakarta.servlet.http.HttpServletResponse;
-import org.hibernate.Hibernate;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.dao.DataAccessException;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -70,7 +62,29 @@ public class FlashCardServiceImpl implements FlashCardService {
 
     @Override
     public List<FlashCardDTO> getAllFlashCardsByCourseId(Long courseId) {
-        return getFlashCardsByCourse(courseId, false);
+        List<FlashCardDTO> flashCards = getFlashCardsByCourse(courseId, false);
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("flashCards", flashCards);
+
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestMap, headers);
+
+        ResponseEntity<RemoveDuplicateFlashCardsRequestDTO> response = restTemplate.postForEntity(
+                "http://localhost:8000/remove-duplicates", requestEntity, RemoveDuplicateFlashCardsRequestDTO.class
+        );
+
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+            List<FlashCardDTO> cleanedFlashcards = response.getBody().getFlashCardDTOList();
+            if (cleanedFlashcards != null) {
+                return cleanedFlashcards;
+            }
+        }
+
+        return flashCards;
     }
 
     @Override

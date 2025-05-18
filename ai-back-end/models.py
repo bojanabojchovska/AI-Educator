@@ -8,7 +8,7 @@ def get_llm_model(repo_id="microsoft/Phi-3-mini-4k-instruct", task="text-generat
     llm = HuggingFaceEndpoint(
         timeout=600,
         repo_id=repo_id,
-        task=task,
+        # task=task,
         max_new_tokens=max_new_tokens,
         repetition_penalty=repetition_penalty,
         temperature=temperature

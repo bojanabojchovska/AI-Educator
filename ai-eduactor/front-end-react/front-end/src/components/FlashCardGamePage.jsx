@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { getFlashCardsByCourseAndUser, deleteFlashCard, getCourses } from "../services/api";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import { getFlashCardsByCourseAndUser, deleteFlashCard, getFlashCardsByCourse, getCourses } from "../services/api";
 import CustomNavbar from "./app-custom/CustomNavbar";
 import { FaRedo, FaArrowLeft } from "react-icons/fa";
 import "./FlashCardGamePage.css";
@@ -20,7 +20,12 @@ const FlashCardGamePage = () => {
     const fetchFlashcards = async () => {
       try {
         setLoading(true);
-        const fetchedCards = await getFlashCardsByCourseAndUser(courseId);
+        let fetchedCards = [];
+        if(location.state.default){
+          fetchedCards = await getFlashCardsByCourse(courseId);
+        }else{
+          fetchedCards = await getFlashCardsByCourseAndUser(courseId);
+        }
         setCards(fetchedCards);
         if (fetchedCards.length > 0 && !courseTitle) {
           setCourseTitle(fetchedCards[0].courseTitle);

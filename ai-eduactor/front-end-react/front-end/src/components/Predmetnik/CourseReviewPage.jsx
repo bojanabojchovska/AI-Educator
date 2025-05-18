@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaStar, FaArrowLeft, FaTrash, FaCommentAlt } from 'react-icons/fa';
+import { FaStar, FaArrowLeft, FaTrash, FaCommentAlt, FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import CustomNavbar from '../app-custom/CustomNavbar';
 import StarRatings from 'react-star-ratings';
 import {
@@ -26,6 +26,7 @@ const CourseReviewPage = () => {
     const [successMessage, setSuccessMessage] = useState('');
     const [isSubmittingReview, setIsSubmittingReview] = useState(false);
     const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+    const [sortOrder, setSortOrder] = useState('latest'); // 'latest' or 'oldest'
 
     useEffect(() => {
         fetchCourseData();
@@ -137,7 +138,20 @@ const CourseReviewPage = () => {
             console.error('Error deleting comment:', err);
             setError('Failed to delete comment. Please try again later.');
         }
-    }
+    };
+
+    // Sorting logic for reviews
+    const getSortedComments = () => {
+        if (!reviews.comments) return [];
+        const sorted = [...reviews.comments].sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            return sortOrder === 'latest'
+                ? dateB - dateA
+                : dateA - dateB;
+        });
+        return sorted;
+    };
 
     return (
         <>
@@ -159,131 +173,141 @@ const CourseReviewPage = () => {
                     <div className="average-rating">
                         <p>Average Rating:
                             <span className="rating-value">
-    {reviews.averageRating ? Number(reviews.averageRating).toFixed(1) : 'No ratings yet'}
-</span>
+                                {reviews.averageRating ? Number(reviews.averageRating).toFixed(1) : 'No ratings yet'}
+                            </span>
                             {reviews.averageRating > 0 && (
                                 <StarRatings
-                                    rating={Number(reviews.averageRating) || 0}  // Ensure it's a number
+                                    rating={Number(reviews.averageRating) || 0}
                                     starRatedColor="#ffc107"
                                     numberOfStars={5}
                                     name="average-rating"
                                     starDimension="25px"
                                     starSpacing="2px"
                                     starEmptyColor="#ddd"
-                                    isSelectable={false}  // Add this since it's display only
+                                    isSelectable={false}
                                     isHalf={true}
                                 />
                             )}
                         </p>
                     </div>
 
-                    <div className="forms-container">
-                        <form onSubmit={handleSubmitReview} className="new-review-form review-section">
-                            <h3><FaStar className="form-icon" /> Add Your Review</h3>
-
-                            <div className="rating-selection">
-                                <label>Your Rating:</label>
-                                <StarRatings
-                                    rating={newReview.rating}
-                                    starRatedColor="#ffc107"
-                                    changeRating={handleRatingClick}
-                                    numberOfStars={5}
-                                    name="new-rating"
-                                    starDimension="25px"
-                                    starSpacing="2px"
-                                    starEmptyColor="#ddd"
-                                    isHalf={true}
-                                    isSelectable={true}  // Add this
-                                    starHoverColor="#ffc107"
-                                />
-                            </div>
-
-                            <div className="feedback-container">
-                                <label htmlFor="feedback">Your Review (optional):</label>
-                                <textarea
-                                    id="feedback"
-                                    placeholder="Write your review here..."
-                                    value={newReview.feedback}
-                                    onChange={(e) => setNewReview({...newReview, feedback: e.target.value})}
-                                    rows="4"
-                                />
-                            </div>
-
-                            <button
-                                type="submit"
-                                className="submit-btn"
-                                disabled={isSubmittingReview}
-                            >
-                                {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
-                            </button>
-                        </form>
-
-                        <form onSubmit={handleSubmitComment} className="new-review-form comment-section">
-                            <h3><FaCommentAlt className="form-icon" /> Add a Comment</h3>
-
-                            <div className="feedback-container">
-                                <textarea
-                                    id="commentFeedback"
-                                    placeholder="Ask a question or share your thoughts..."
-                                    value={commentFeedback}
-                                    onChange={(e) => setCommentFeedback(e.target.value)}
-                                    rows="9"
-                                />
-                            </div>
-
-                            <button
-                                type="submit"
-                                className="submit-btn"
-                                disabled={isSubmittingComment}
-                            >
-                                {isSubmittingComment ? 'Submitting...' : 'Submit Comment'}
-                            </button>
-                        </form>
+                    {/* Symmetrical forms wrapper */}
+                    <div className="forms-container forms-symmetrical">
+                        <div className="form-flex-item">
+                            <form onSubmit={handleSubmitReview} className="new-review-form review-section">
+                                <h3><FaStar className="form-icon" /> Add Your Review</h3>
+                                <div className="rating-selection">
+                                    <label>Your Rating:</label>
+                                    <StarRatings
+                                        rating={newReview.rating}
+                                        starRatedColor="#ffc107"
+                                        changeRating={handleRatingClick}
+                                        numberOfStars={5}
+                                        name="new-rating"
+                                        starDimension="25px"
+                                        starSpacing="2px"
+                                        starEmptyColor="#ddd"
+                                        isHalf={true}
+                                        isSelectable={true}
+                                        starHoverColor="#ffc107"
+                                    />
+                                </div>
+                                <div className="feedback-container">
+                                    <label htmlFor="feedback">Your Review (optional):</label>
+                                    <textarea
+                                        id="feedback"
+                                        placeholder="Write your review here..."
+                                        value={newReview.feedback}
+                                        onChange={(e) => setNewReview({...newReview, feedback: e.target.value})}
+                                        rows="6"
+                                    />
+                                </div>
+                                <button
+                                    type="submit"
+                                    className="submit-btn-review"
+                                    disabled={isSubmittingReview}
+                                >
+                                    {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
+                                </button>
+                            </form>
+                        </div>
+                        <div className="form-flex-item">
+                            <form onSubmit={handleSubmitComment} className="new-review-form comment-section">
+                                <h3><FaCommentAlt className="form-icon" /> Add a Comment</h3>
+                                <div className="feedback-container">
+                                    <label htmlFor="commentFeedback">Your Comment:</label>
+                                    <textarea
+                                        id="commentFeedback"
+                                        placeholder="Ask a question or share your thoughts..."
+                                        value={commentFeedback}
+                                        onChange={(e) => setCommentFeedback(e.target.value)}
+                                        rows="6"
+                                    />
+                                </div>
+                                <button
+                                    type="submit"
+                                    className="submit-btn-comment"
+                                    disabled={isSubmittingComment}
+                                >
+                                    {isSubmittingComment ? 'Submitting...' : 'Submit Comment'}
+                                </button>
+                            </form>
+                        </div>
                     </div>
 
-
                     <div className="reviews-list">
-                        <h3>All Reviews</h3>
-                        {reviews.comments && reviews.comments.length > 0 ? (
-                            reviews.comments.map((comment, index) => (
-                                <div key={index} className={`review-card ${comment.rating ? 'rating' : 'comment'}`}>
-                                    {/* Content type label */}
-                                    <div className={`content-type-label ${comment.rating ? 'rating' : 'comment'}`}>
-                                        {comment.rating ? 'Review' : 'Comment'}
+                        <div className="reviews-list-header-row">
+                            <h3>All Reviews</h3>
+                            <div className="review-sort-toggle">
+                                <button
+                                    className={`sort-btn ${sortOrder === 'latest' ? 'active' : ''}`}
+                                    onClick={() => setSortOrder('latest')}
+                                    aria-label="Sort by latest"
+                                >
+                                    <FaArrowDown /> Latest
+                                </button>
+                                <button
+                                    className={`sort-btn ${sortOrder === 'oldest' ? 'active' : ''}`}
+                                    onClick={() => setSortOrder('oldest')}
+                                    aria-label="Sort by oldest"
+                                >
+                                    <FaArrowUp /> Oldest
+                                </button>
+                            </div>
+                        </div>
+                        {/* Table-like header */}
+                        <div className="review-table-header">
+                            <div className="review-table-user">User</div>
+                            <div className="review-table-date">Date</div>
+                            <div className="review-table-body">Review / Comment</div>
+                            <div className="review-table-actions"></div>
+                        </div>
+                        {getSortedComments().length > 0 ? (
+                            getSortedComments().map((comment, index) => (
+                                <div key={index} className={`review-card-table ${comment.rating ? 'rating' : 'comment'}`}>
+                                    <div className="review-table-user">
+                                        <span className="student-name"><strong>{comment.student.name}</strong></span>
+                                        <span className="user-email"><small>{comment.student.email}</small></span>
                                     </div>
-
-                                    {/* Review Header: User info */}
-                                    <div className="review-header">
-                                        <div className="review-user">
-                                            <div className="user-info">
-                                                <p className="student-name"><strong>{comment.student.name}</strong></p>
-                                                <p className="user-email"><small>{comment.student.email}</small></p>
-                                            </div>
-                                        </div>
-                                        <div className="review-date">
-                                            <p>{new Date(comment.date).toLocaleDateString()}</p>
-                                        </div>
+                                    <div className="review-table-date">
+                                        {new Date(comment.date).toLocaleDateString()}
                                     </div>
-
-                                    {/* Review Content */}
-                                    <div className="review-body">
-                                        <p>{comment.commentBody}</p>
+                                    <div className="review-table-body">
+                                        {comment.commentBody}
                                     </div>
-
-                                    {studentEmail === comment.student.email && (
-                                        <div className="comment-buttons">
-                                            <button onClick={() => handleDeleteButton(comment.id)}>
+                                    <div className="review-table-actions">
+                                        {studentEmail === comment.student.email && (
+                                            <button className="review-table-delete-btn" onClick={() => handleDeleteButton(comment.id)}>
                                                 <FaTrash /> Delete
                                             </button>
-                                        </div>
-                                    )}
+                                        )}
+                                    </div>
                                 </div>
                             ))
                         ) : (
                             <p className="no-reviews">No reviews yet. Be the first to review!</p>
                         )}
                     </div>
-
                 </div>
             </div>
         </>

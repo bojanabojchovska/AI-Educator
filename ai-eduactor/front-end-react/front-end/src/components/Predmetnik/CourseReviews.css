@@ -62,12 +62,67 @@
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
+    position: relative;
+    transition: box-shadow 0.22s, transform 0.18s;
+    /* for overlay stacking */
+    overflow: visible;
 }
 
-.subject-box h3 {
-    margin-top: 0;
-    margin-bottom: 1rem;
-    color: #333;
+.subject-box-clickable {
+    cursor: pointer;
+    outline: none;
+    position: relative;
+    transition: box-shadow 0.22s, transform 0.18s, background 0.18s;
+}
+
+.subject-box-clickable:hover,
+.subject-box-clickable:focus {
+    box-shadow: 0 8px 32px rgba(128,0,0,0.16), 0 2px 8px rgba(0,0,0,0.10);
+    background: #f8f5f5;
+    transform: translateY(-2px) scale(1.015);
+}
+
+.subject-box-hover-overlay {
+    display: none;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(128,0,0,0.08);
+    color: #800000;
+    font-weight: 700;
+    font-size: 1.08rem;
+    border-radius: 8px;
+    z-index: 10;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    text-align: center;
+    transition: opacity 0.18s;
+    opacity: 0;
+}
+
+.subject-box-clickable:hover .subject-box-hover-overlay,
+.subject-box-clickable:focus .subject-box-hover-overlay {
+    display: flex;
+    opacity: 1;
+}
+
+.subject-title-clickable {
+    cursor: pointer;
+    display: inline-block;
+    transition: color 0.18s;
+    border-radius: 6px;
+}
+
+.subject-title-clickable:hover,
+.subject-title-clickable:focus {
+    color: #800000;
+    background: #f8f5f5;
+    outline: none;
+}
+
+.subject-title-clickable h3 {
+    margin: 0;
+    color: inherit;
 }
 
 .success-message {
@@ -123,33 +178,47 @@
     flex: 1;
     padding: 0.75rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
-    font-weight: 500;
+    font-weight: 600;
     text-align: center;
+    font-size: 1rem;
+    transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+    box-shadow: 0 1px 4px rgba(128,0,0,0.06);
+    outline: none;
 }
 
+/* Maroon/red shade for submit review */
 .submit-btn {
-    background-color: #4caf50;
-    color: white;
+    background: linear-gradient(90deg, #800000 60%, #a83232 100%);
+    color: #fff;
+    border: 1.5px solid #800000;
 }
 
-.submit-btn:hover {
-    background-color: #388e3c;
+.submit-btn:hover:not(:disabled) {
+    background: linear-gradient(90deg, #600000 60%, #a83232 100%);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(128,0,0,0.10);
 }
 
 .submit-btn:disabled {
-    background-color: #9e9e9e;
+    background: #bdbdbd !important;
+    color: #eee;
     cursor: not-allowed;
+    border: 1.5px solid #bdbdbd;
 }
 
+/* Blue shade for view all reviews */
 .view-all-btn {
-    background-color: #2196f3;
-    color: white;
+    background: linear-gradient(90deg, #1565c0 60%, #2196f3 100%);
+    color: #fff;
+    border: 1.5px solid #1565c0;
 }
 
 .view-all-btn:hover {
-    background-color: #1976d2;
+    background: linear-gradient(90deg, #0d47a1 60%, #1976d2 100%);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(21,101,192,0.10);
 }
 
 .no-results {
@@ -164,6 +233,8 @@
     display: flex;
     justify-content: space-between;
     align-items: start;
+    z-index: 2;
+    position: relative;
 }
 
 .heart-button {
@@ -175,15 +246,48 @@
     align-items: center;
     z-index: 2;
     padding: 5px;
+    transition: box-shadow 0.18s;
 }
 
-.heart-button:hover{
-    background: none !important;
+.heart-button:hover .subject-heart-icon {
+    transform: scale(1.25);
+    filter: drop-shadow(0 2px 8px rgba(128,0,0,0.18));
+    transition: transform 0.18s, filter 0.18s;
 }
 
 .subject-heart-icon {
     all: unset;
     font-size: 24px;
     cursor: pointer;
+    transition: transform 0.18s, filter 0.18s;
 }
 
+.favorites-toggle-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 1.2rem;
+    margin-top: 0.5rem;
+}
+
+.favorites-toggle-btn {
+    background: #f5f7fa;
+    color: #800000;
+    border: 1.5px solid #a83232;
+    border-radius: 16px;
+    padding: 0.45rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.16s, color 0.16s, border 0.16s, box-shadow 0.16s;
+    box-shadow: 0 1px 4px rgba(128,0,0,0.04);
+    outline: none;
+}
+
+.favorites-toggle-btn.active,
+.favorites-toggle-btn:hover {
+    background: linear-gradient(90deg, #800000 60%, #a83232 100%);
+    color: #fff;
+    border-color: #800000;
+    box-shadow: 0 2px 8px rgba(128,0,0,0.10);
+}

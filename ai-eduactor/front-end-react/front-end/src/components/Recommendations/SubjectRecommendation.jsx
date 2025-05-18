@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import './SubjectRecommendation.css';
-import { getCourses, getCourseRecommendations } from '../../services/api';
+import {getCourses, getCourseRecommendations} from '../../services/api';
 import CustomNavbar from '../app-custom/CustomNavbar';
 
 const SubjectRecommendation = () => {
@@ -38,7 +38,7 @@ const SubjectRecommendation = () => {
         try {
             const response = await getCourseRecommendations(selectedSubjects);
             console.log('Recommended Courses:', response);
-            
+
             setRecommendedSubjects(response.recommended_courses || []);
         } catch (err) {
             console.error('Error fetching recommendations:', err);
@@ -50,12 +50,12 @@ const SubjectRecommendation = () => {
 
     return (
         <div className="recommendation-page">
-            <CustomNavbar />
+            <CustomNavbar/>
             <main className="recommendation-main">
                 <h1>Subject Recommendation</h1>
                 <p>
                     Select subjects you know best and get
-                    <br />
+                    <br/>
                     <span className="highlighted">AI-generated suggestions</span> based on your profile.
                 </p>
 
@@ -94,7 +94,7 @@ const SubjectRecommendation = () => {
                         <h4>Currently selected subjects:</h4>
                         <div className="selected-chips">
                             {selectedSubjects.length === 0 ? (
-                                <span className="placeholder empty-placeholder" style={{ color: '#000' }}>
+                                <span className="placeholder empty-placeholder" style={{color: '#000'}}>
                                     No subjects selected.
                                 </span>
                             ) : (

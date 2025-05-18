@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getFlashCardsByCourseAndUser, deleteFlashCard, getCourses } from "../services/api";
 import CustomNavbar from "./app-custom/CustomNavbar";
-import { Spinner } from "react-bootstrap";
 import { FaRedo, FaArrowLeft } from "react-icons/fa";
 import "./FlashCardGamePage.css";
 
@@ -23,7 +22,6 @@ const FlashCardGamePage = () => {
         setLoading(true);
         const fetchedCards = await getFlashCardsByCourseAndUser(courseId);
         setCards(fetchedCards);
-        // Try to get courseTitle from the first card if not already set
         if (fetchedCards.length > 0 && !courseTitle) {
           setCourseTitle(fetchedCards[0].courseTitle);
         }
@@ -35,10 +33,8 @@ const FlashCardGamePage = () => {
     };
 
     fetchFlashcards();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId]);
 
-  // Fetch course title if not available
   useEffect(() => {
     const fetchCourseTitle = async () => {
       if (!courseTitle && courseId) {
@@ -47,7 +43,7 @@ const FlashCardGamePage = () => {
           const found = allCourses.find(c => String(c.id) === String(courseId));
           if (found) setCourseTitle(found.title);
         } catch (e) {
-          // fallback: do nothing
+
         }
       }
     };
@@ -83,7 +79,6 @@ const FlashCardGamePage = () => {
   };
 
   const handleBack = () => {
-    // Use courseTitle from state, fallback to cards, then location, then courseId
     const title =
       courseTitle ||
       cards[0]?.courseTitle ||
@@ -103,17 +98,13 @@ const FlashCardGamePage = () => {
     }
 
     try {
-      // Store the current card's title before deletion
       const lastCourseTitle = courseTitle || cards[0]?.courseTitle || location.state?.courseTitle || courseId || "";
       
-      // First, update the UI to remove the card
       const newCards = cards.filter((card) => card.id !== id);
       setCards(newCards);
       
-      // Then delete from backend
       await deleteFlashCard(id);
 
-      // Update state based on whether it was the last card
       if (newCards.length === 0) {
         setCurrentIndex(0);
         setShowEndScreen(true);
@@ -124,7 +115,6 @@ const FlashCardGamePage = () => {
         setShowEndScreen(false);
       }
     } catch (error) {
-      // If deletion fails, restore the cards
       console.error("Error deleting flashcard:", error);
       const fetchedCards = await getFlashCardsByCourseAndUser(courseId);
       setCards(fetchedCards);
@@ -145,7 +135,6 @@ const FlashCardGamePage = () => {
     );
   }
 
-  // Show message if there are no flashcards
   if (!loading && cards.length === 0) {
     return (
       <>
@@ -208,7 +197,6 @@ const FlashCardGamePage = () => {
                 </div>
               </header>
 
-              {/* Progress Bar & Card Counter */}
               {!loading && cards.length > 0 && !showEndScreen && (
                 <div className="quiz-progress-bar-container">
                   <div className="quiz-progress-bar">

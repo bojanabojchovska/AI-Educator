@@ -3,36 +3,6 @@ body, h2, h4, p, ul {
     padding: 0;
 }
 
-
-/* .navbar {
-    display: flex;
-    justify-content: space-between;
-    padding: 20px 40px;
-    align-items: center;
-    font-size: 14px;
-}
-
-.navbar ul {
-    display: flex;
-    list-style: none;
-    gap: 20px;
-}
-
-.navbar a {
-    text-decoration: none;
-    color: black;
-}
-
-.logout-button {
-    background-color: #691E27;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-} */
-
-
 .recommendation-main {
     text-align: center;
     padding: 30px;
@@ -40,7 +10,7 @@ body, h2, h4, p, ul {
     background: #f8f6f8;
     min-height: 100vh;
     border-radius: 16px;
-    box-shadow: 0 2px 16px rgba(105,30,39,0.08);
+    box-shadow: 0 2px 16px rgba(105, 30, 39, 0.08);
 }
 
 .recommendation-main h1 {
@@ -76,10 +46,10 @@ body, h2, h4, p, ul {
     border-radius: 8px;
     max-height: 50vh;
     overflow-y: auto;
-    width: 500px; /* Make it wider */
+    width: 500px;
     text-align: left;
-    margin-bottom: 20px; /* Add space between boxes */
-    box-shadow: 0 4px 18px rgba(105,30,39,0.10);
+    margin-bottom: 20px;
+    box-shadow: 0 4px 18px rgba(105, 30, 39, 0.10);
     border: 1px solid #e2bcbc;
     transition: box-shadow 0.2s;
 }
@@ -138,7 +108,7 @@ body, h2, h4, p, ul {
     min-height: 120px;
     background: #fff;
     border: 1.5px solid #e2bcbc;
-    box-shadow: 0 2px 8px rgba(105,30,39,0.07);
+    box-shadow: 0 2px 8px rgba(105, 30, 39, 0.07);
     padding: 18px 20px;
     border-radius: 8px;
     margin-bottom: 20px;
@@ -171,7 +141,7 @@ body, h2, h4, p, ul {
     padding: 6px 14px;
     font-size: 0.95rem;
     font-weight: 500;
-    box-shadow: 0 1px 4px rgba(105,30,39,0.06);
+    box-shadow: 0 1px 4px rgba(105, 30, 39, 0.06);
     margin-bottom: 4px;
 }
 
@@ -204,7 +174,7 @@ body, h2, h4, p, ul {
     font-weight: bold;
     margin-right: 10px;
     font-size: 1.1rem;
-    box-shadow: 0 1px 4px rgba(105,30,39,0.10);
+    box-shadow: 0 1px 4px rgba(105, 30, 39, 0.10);
 }
 
 .item-text {
@@ -222,7 +192,7 @@ body, h2, h4, p, ul {
     font-size: 1.1rem;
     cursor: pointer;
     margin-top: 30px;
-    box-shadow: 0 2px 8px rgba(105,30,39,0.10);
+    box-shadow: 0 2px 8px rgba(105, 30, 39, 0.10);
     transition: background 0.15s;
 }
 
@@ -242,6 +212,7 @@ body, h2, h4, p, ul {
         align-items: center;
         gap: 30px;
     }
+
     .list-box, .selected-box {
         width: 90%;
         min-width: 220px;
@@ -256,15 +227,15 @@ body, h2, h4, p, ul {
     }
 
     .list-box {
-        width: 90%; /* Make the list boxes take up more space on small screens */
+        width: 90%;
     }
 
     .selected-box {
-        width: 90%; /* Make selected box take more space */
+        width: 90%;
     }
 
     .submit-button {
-        width: 100%; /* Make the button stretch to full width on small screens */
+        width: 100%;
         padding: 12px;
         font-size: 14px;
     }
@@ -272,7 +243,7 @@ body, h2, h4, p, ul {
 
 @media (max-width: 480px) {
     .list-box {
-        width: 100%; /* Take up full width on very small screens */
+        width: 100%;
     }
 
     .selected-box {

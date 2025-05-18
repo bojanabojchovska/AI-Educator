@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 import './CourseReviews.css';
 import CustomNavbar from '../app-custom/CustomNavbar';
 import {
@@ -9,7 +9,7 @@ import {
     removeCourseFromFavorites,
     submitSubjectReview
 } from '../../services/api';
-import { FaHeart, FaRegHeart } from "react-icons/fa6";
+import {FaHeart, FaRegHeart} from "react-icons/fa6";
 import StarRatings from 'react-star-ratings';
 
 const CourseReviews = () => {
@@ -84,7 +84,7 @@ const CourseReviews = () => {
                 error: null
             }
         }));
-        setIsSubmitting(prev => ({ ...prev, [courseId]: true }));
+        setIsSubmitting(prev => ({...prev, [courseId]: true}));
 
         try {
             await submitSubjectReview(courseId, {
@@ -94,7 +94,7 @@ const CourseReviews = () => {
 
             setReviews(prev => ({
                 ...prev,
-                [courseId]: { rating: 0, feedback: '', error: null }
+                [courseId]: {rating: 0, feedback: '', error: null}
             }));
 
             setSuccessMessages(prev => ({
@@ -119,21 +119,21 @@ const CourseReviews = () => {
                 }
             }));
         } finally {
-            setIsSubmitting(prev => ({ ...prev, [courseId]: false }));
+            setIsSubmitting(prev => ({...prev, [courseId]: false}));
         }
     };
 
     const handleRatingClick = (courseId, rating) => {
         setReviews(prev => ({
             ...prev,
-            [courseId]: { ...prev[courseId], rating: parseFloat(rating), error: null }
+            [courseId]: {...prev[courseId], rating: parseFloat(rating), error: null}
         }));
     };
 
     const handleFeedbackChange = (courseId, feedback) => {
         setReviews(prev => ({
             ...prev,
-            [courseId]: { ...prev[courseId], feedback, error: null }
+            [courseId]: {...prev[courseId], feedback, error: null}
         }));
     };
 
@@ -166,7 +166,7 @@ const CourseReviews = () => {
             }
 
             setFavorites(prev => {
-                const updated = { ...prev, [courseId]: !isCurrentlyFavorite };
+                const updated = {...prev, [courseId]: !isCurrentlyFavorite};
                 localStorage.setItem('favoriteCourses', JSON.stringify(updated));
                 return updated;
             });
@@ -177,7 +177,7 @@ const CourseReviews = () => {
 
     return (
         <>
-            <CustomNavbar />
+            <CustomNavbar/>
             <div className="header-section">
                 <h1>Course Reviews</h1>
                 <div className="search-container">
@@ -248,9 +248,9 @@ const CourseReviews = () => {
                                         aria-label="Toggle Favorite"
                                     >
                                         {favorites[subject.id] ? (
-                                            <FaHeart className={"subject-heart-icon"} />
+                                            <FaHeart className={"subject-heart-icon"}/>
                                         ) : (
-                                            <FaRegHeart className={"subject-heart-icon"} />
+                                            <FaRegHeart className={"subject-heart-icon"}/>
                                         )}
                                     </button>
                                 </div>

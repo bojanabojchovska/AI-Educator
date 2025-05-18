@@ -14,7 +14,7 @@
     min-height: 48px !important;
     font-size: 1.08rem !important;
     border: none !important;
-    box-shadow: 0 2px 8px rgba(128,0,0,0.10) !important;
+    box-shadow: 0 2px 8px rgba(128, 0, 0, 0.10) !important;
     letter-spacing: 0.5px !important;
     transition: background 0.2s, box-shadow 0.2s, transform 0.15s !important;
     outline: none !important;
@@ -25,7 +25,7 @@
 
 .semester-page-create-btn:hover {
     background: linear-gradient(90deg, #a83232 70%, #800000 100%) !important;
-    box-shadow: 0 4px 16px rgba(128,0,0,0.18) !important;
+    box-shadow: 0 4px 16px rgba(128, 0, 0, 0.18) !important;
     transform: translateY(-2px) scale(1.03) !important;
 }
 
@@ -42,7 +42,7 @@
     background: #fff !important;
     padding: 1.75rem !important;
     border-radius: 18px !important;
-    box-shadow: 0 4px 24px rgba(128,0,0,0.08) !important;
+    box-shadow: 0 4px 24px rgba(128, 0, 0, 0.08) !important;
     width: 340px !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     border: 1.5px solid #e3e8ee !important;
@@ -54,7 +54,7 @@
 
 .semester-page-card:hover {
     transform: translateY(-5px) !important;
-    box-shadow: 0 8px 32px rgba(128,0,0,0.13) !important;
+    box-shadow: 0 8px 32px rgba(128, 0, 0, 0.13) !important;
 }
 
 .semester-page-card h3 {
@@ -96,7 +96,7 @@
     font-size: 1.08rem !important;
     font-weight: 700 !important;
     border: none !important;
-    box-shadow: 0 2px 8px rgba(128,0,0,0.10) !important;
+    box-shadow: 0 2px 8px rgba(128, 0, 0, 0.10) !important;
     letter-spacing: 0.5px !important;
     transition: background 0.2s, box-shadow 0.2s, transform 0.15s !important;
     outline: none !important;
@@ -116,7 +116,7 @@
 
 .semester-page-edit-btn:hover {
     background: linear-gradient(90deg, #800000 0%, #a83232 100%) !important;
-    box-shadow: 0 4px 16px rgba(128,0,0,0.18) !important;
+    box-shadow: 0 4px 16px rgba(128, 0, 0, 0.18) !important;
     transform: translateY(-2px) scale(1.03) !important;
 }
 
@@ -127,7 +127,7 @@
 
 .semester-page-delete-btn:hover {
     background: linear-gradient(90deg, #4d0000 0%, #800000 100%) !important;
-    box-shadow: 0 4px 16px rgba(128,0,0,0.18) !important;
+    box-shadow: 0 4px 16px rgba(128, 0, 0, 0.18) !important;
     transform: translateY(-2px) scale(1.03) !important;
 }
 
@@ -173,7 +173,7 @@
     min-height: 100vh !important;
     margin: 0 !important;
     padding: 0 !important;
-    background: rgba(128,0,0,0.10) !important;
+    background: rgba(128, 0, 0, 0.10) !important;
 }
 
 .semester-page-modal-content {
@@ -184,13 +184,13 @@
     background: #fff !important;
     border-radius: 18px !important;
     border: 1.5px solid #e3e8ee !important;
-    box-shadow: 0 8px 32px rgba(128,0,0,0.18) !important;
+    box-shadow: 0 8px 32px rgba(128, 0, 0, 0.18) !important;
     display: flex !important;
     flex-direction: column !important;
     max-height: 90vh !important;
     min-height: 600px !important;
     overflow: hidden !important;
-    animation: modal-fade-in 0.25s cubic-bezier(0.4,0,0.2,1);
+    animation: modal-fade-in 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (max-width: 600px) {
@@ -203,8 +203,14 @@
 }
 
 @keyframes modal-fade-in {
-    from { opacity: 0; transform: translateY(40px);}
-    to { opacity: 1; transform: translateY(0);}
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .semester-page-modal-header {
@@ -281,7 +287,7 @@
 
 .semester-page-modal-input:focus {
     border-color: #800000 !important;
-    box-shadow: 0 0 0 2px rgba(128,0,0,0.10) !important;
+    box-shadow: 0 0 0 2px rgba(128, 0, 0, 0.10) !important;
     background-color: #fff !important;
 }
 
@@ -395,7 +401,7 @@
     color: #fff !important;
     font-size: 1.3rem !important;
     margin: 0.2rem 0 !important;
-    box-shadow: 0 2px 8px rgba(128,0,0,0.10) !important;
+    box-shadow: 0 2px 8px rgba(128, 0, 0, 0.10) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -403,7 +409,7 @@
 
 .semester-page-arrow-btn:hover:not(:disabled) {
     background: linear-gradient(135deg, #a83232 60%, #800000 100%) !important;
-    box-shadow: 0 4px 16px rgba(128,0,0,0.18) !important;
+    box-shadow: 0 4px 16px rgba(128, 0, 0, 0.18) !important;
     transform: scale(1.08) !important;
 }
 
@@ -436,7 +442,7 @@
     font-size: 1.08rem !important;
     font-weight: 700 !important;
     border: none !important;
-    box-shadow: 0 2px 8px rgba(128,0,0,0.10) !important;
+    box-shadow: 0 2px 8px rgba(128, 0, 0, 0.10) !important;
     letter-spacing: 0.5px !important;
     transition: all 0.3s ease !important;
     outline: none !important;
@@ -454,7 +460,7 @@
 
 .semester-page-modal-save-btn:hover:not(:disabled) {
     background: linear-gradient(90deg, #a83232 60%, #800000 100%) !important;
-    box-shadow: 0 4px 16px rgba(128,0,0,0.18) !important;
+    box-shadow: 0 4px 16px rgba(128, 0, 0, 0.18) !important;
     transform: translateY(-2px) scale(1.03) !important;
 }
 
@@ -469,7 +475,6 @@
     box-shadow: none !important;
 }
 
-/* Add styles for the dual list headers container */
 .semester-page-dual-list-headers {
     display: flex !important;
     justify-content: space-between !important;
@@ -477,7 +482,6 @@
     padding: 0 0.5rem !important;
 }
 
-/* Add course counter */
 .semester-page-course-counter {
     position: absolute !important;
     top: -30px !important;
@@ -495,7 +499,6 @@
     color: #d32f2f !important;
 }
 
-/* Add selection limit warning */
 .selection-limit-warning {
     color: #d32f2f !important;
     font-size: 1rem !important;

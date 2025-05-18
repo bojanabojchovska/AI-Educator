@@ -180,10 +180,12 @@ const SemesterPage = () => {
                                     )}
                                 </ul>
                                 <div className="semester-page-card-buttons">
-                                    <button className="semester-page-action-btn semester-page-edit-btn" onClick={() => handleEdit(semester.id)}>
+                                    <button className="semester-page-action-btn semester-page-edit-btn"
+                                            onClick={() => handleEdit(semester.id)}>
                                         <i className="fas fa-pen me-1"></i> Edit
                                     </button>
-                                    <button className="semester-page-action-btn semester-page-delete-btn" onClick={() => handleDelete(semester.id)}>
+                                    <button className="semester-page-action-btn semester-page-delete-btn"
+                                            onClick={() => handleDelete(semester.id)}>
                                         <i className="fas fa-trash-alt me-1"></i> Delete
                                     </button>
                                 </div>
@@ -197,10 +199,10 @@ const SemesterPage = () => {
                     )}
                 </div>
 
-                <Modal 
-                    show={showModal} 
-                    onHide={closeModal} 
-                    centered 
+                <Modal
+                    show={showModal}
+                    onHide={closeModal}
+                    centered
                     className="semester-page-modal"
                     dialogClassName="semester-page-modal-content"
                     backdrop="static"
@@ -209,7 +211,7 @@ const SemesterPage = () => {
                         <Modal.Title className="semester-page-modal-title">
                             {editingSemesterId ? 'Edit Semester' : 'Create New Semester'}
                         </Modal.Title>
-                        <button 
+                        <button
                             className="semester-page-modal-close-btn"
                             onClick={closeModal}
                         >
@@ -236,7 +238,8 @@ const SemesterPage = () => {
                         )}
 
                         <div className="semester-page-dual-list-container">
-                            <div className="semester-page-course-counter" className={chosenSubjects.length >= MAX_CHOSEN_COURSES ? 'limit-reached' : ''}>
+                            <div className="semester-page-course-counter"
+                                 className={chosenSubjects.length >= MAX_CHOSEN_COURSES ? 'limit-reached' : ''}>
                                 Selected: {chosenSubjects.length}/{MAX_CHOSEN_COURSES}
                             </div>
                             <div className="d-flex justify-content-between">
@@ -263,15 +266,15 @@ const SemesterPage = () => {
                                 </select>
 
                                 <div className="semester-page-dual-list-arrows">
-                                    <button 
-                                        className="semester-page-arrow-btn" 
+                                    <button
+                                        className="semester-page-arrow-btn"
                                         onClick={moveToChosen}
                                         disabled={chosenSubjects.length >= 5}
                                     >
                                         &larr;
                                     </button>
-                                    <button 
-                                        className="semester-page-arrow-btn" 
+                                    <button
+                                        className="semester-page-arrow-btn"
                                         onClick={moveToAvailable}
                                     >
                                         &rarr;

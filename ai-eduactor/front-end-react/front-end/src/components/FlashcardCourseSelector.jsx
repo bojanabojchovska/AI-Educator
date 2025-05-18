@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
-import { FiUpload, FiZap, FiDownload } from 'react-icons/fi';
-import { FaPlay } from 'react-icons/fa';
-import { Spinner } from "react-bootstrap";
+import React, {useState, useEffect} from 'react';
+import {useNavigate} from "react-router-dom";
+import {FiUpload, FiZap, FiDownload} from 'react-icons/fi';
+import {FaPlay} from 'react-icons/fa';
+import {Spinner} from "react-bootstrap";
 import CustomNavbar from './app-custom/CustomNavbar';
 import Notification from './app-custom/Notification';
-import { 
-    getCourses, 
-    uploadCourseAttachment, 
-    generateFlashCards, 
-    exportFlashCards 
+import {
+    getCourses,
+    uploadCourseAttachment,
+    generateFlashCards,
+    exportFlashCards
 } from '../services/api';
 import './FlashcardCourseSelector.css';
 
@@ -106,7 +106,7 @@ const FlashcardCourseSelector = () => {
 
     return (
         <>
-            <CustomNavbar />
+            <CustomNavbar/>
             {notification && (
                 <Notification
                     message={notification.message}
@@ -120,7 +120,8 @@ const FlashcardCourseSelector = () => {
                     Generate your flash cards here!
                 </h1>
                 <p className="fc-instructions">
-                    Please upload your notes or learning material as a PDF and select the number of flashcards you'd like to create.
+                    Please upload your notes or learning material as a PDF and select the number of flashcards you'd
+                    like to create.
                 </p>
                 <div className="fc-content-grid">
                     <div className="fc-upload-container">
@@ -148,7 +149,7 @@ const FlashcardCourseSelector = () => {
                         </div>
                         <div className="fc-upload-box">
                             <div className="fc-upload-title">
-                                <FiUpload size={24} />
+                                <FiUpload size={24}/>
                                 <span>Upload PDF</span>
                             </div>
                             <label htmlFor="file-upload" className="fc-upload-label">
@@ -159,7 +160,7 @@ const FlashcardCourseSelector = () => {
                                 type="file"
                                 accept="application/pdf"
                                 onChange={handleFileChange}
-                                style={{ display: "none" }}
+                                style={{display: "none"}}
                             />
                         </div>
                         <div className="fc-slider-box">
@@ -196,11 +197,11 @@ const FlashcardCourseSelector = () => {
                             >
                                 {isUploading || isGenerating ? (
                                     <>
-                                        Processing... <Spinner animation="border" size="sm" />
+                                        Processing... <Spinner animation="border" size="sm"/>
                                     </>
                                 ) : (
                                     <>
-                                        <FiZap style={{marginRight: 4}} />
+                                        <FiZap style={{marginRight: 4}}/>
                                         Generate
                                     </>
                                 )}
@@ -211,14 +212,14 @@ const FlashcardCourseSelector = () => {
                                     onClick={handleDownload}
                                     className="fc-generate-btn"
                                 >
-                                    <FiDownload style={{marginRight: 4}} />
+                                    <FiDownload style={{marginRight: 4}}/>
                                     Download
                                 </button>
                                 <button
                                     onClick={handlePlayGame}
                                     className="fc-generate-btn"
                                 >
-                                    <FaPlay style={{marginRight: 4}} />
+                                    <FaPlay style={{marginRight: 4}}/>
                                     Play game
                                 </button>
                             </>

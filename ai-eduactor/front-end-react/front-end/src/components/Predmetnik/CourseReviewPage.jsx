@@ -1,26 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { FaStar, FaArrowLeft, FaTrash, FaCommentAlt, FaArrowDown, FaArrowUp } from 'react-icons/fa';
+import React, {useEffect, useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
+import {FaArrowDown, FaArrowLeft, FaArrowUp, FaCommentAlt, FaStar, FaTrash} from 'react-icons/fa';
 import CustomNavbar from '../app-custom/CustomNavbar';
 import StarRatings from 'react-star-ratings';
 import {
-    getSubjectReviews,
-    submitSubjectReview,
+    deleteComment,
     getCourses,
+    getSubjectReviews,
     submitSubjectComment,
-    deleteComment
+    submitSubjectReview
 } from '../../services/api';
 import './CourseReviewPage.css';
 
 const CourseReviewPage = () => {
     const studentEmail = localStorage.getItem("email");
 
-    const { courseId } = useParams();
+    const {courseId} = useParams();
     const navigate = useNavigate();
     const [courseName, setCourseName] = useState('');
     const [courseDescription, setCourseDescription] = useState('');
-    const [reviews, setReviews] = useState({ comments: [], averageRating: 0 });
-    const [newReview, setNewReview] = useState({ rating: 0, feedback: '' });
+    const [reviews, setReviews] = useState({comments: [], averageRating: 0});
+    const [newReview, setNewReview] = useState({rating: 0, feedback: ''});
     const [commentFeedback, setCommentFeedback] = useState('');
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
@@ -64,7 +64,6 @@ const CourseReviewPage = () => {
     const handleSubmitReview = async (e) => {
         e.preventDefault();
 
-        // Validation
         if (!newReview.rating || newReview.rating < 1) {
             setError('Please provide a rating (1-5 stars)');
             return;
@@ -75,17 +74,14 @@ const CourseReviewPage = () => {
         setSuccessMessage('');
 
         try {
-            // Make sure courseId is treated as a number
             await submitSubjectReview(courseId, {
                 rating: newReview.rating,
                 feedback: newReview.feedback
             });
 
-            // Reset form and show success message
-            setNewReview({ rating: 0, feedback: '' });
+            setNewReview({rating: 0, feedback: ''});
             setSuccessMessage('Your review was submitted successfully!');
 
-            // Refresh reviews to show the new one
             await fetchReviews();
         } catch (err) {
             console.error('Error submitting review:', err);
@@ -123,7 +119,7 @@ const CourseReviewPage = () => {
     };
 
     const handleRatingClick = (rating) => {
-        setNewReview(prev => ({ ...prev, rating: Number(rating) }));
+        setNewReview(prev => ({...prev, rating: Number(rating)}));
     };
 
     const handleDeleteButton = async (commentId) => {
@@ -140,28 +136,26 @@ const CourseReviewPage = () => {
         }
     };
 
-    // Sorting logic for reviews
     const getSortedComments = () => {
         if (!reviews.comments) return [];
-        const sorted = [...reviews.comments].sort((a, b) => {
+        return [...reviews.comments].sort((a, b) => {
             const dateA = new Date(a.date);
             const dateB = new Date(b.date);
             return sortOrder === 'latest'
                 ? dateB - dateA
                 : dateA - dateB;
         });
-        return sorted;
     };
 
     return (
         <>
-            <CustomNavbar />
+            <CustomNavbar/>
             <div className="course-review-container">
                 <button
                     className="back-button"
                     onClick={() => navigate('/course-reviews')}
                 >
-                    <FaArrowLeft /> Back to Courses
+                    <FaArrowLeft/> Back to Courses
                 </button>
 
                 {error && <div className="error-message">{error}</div>}
@@ -191,11 +185,10 @@ const CourseReviewPage = () => {
                         </p>
                     </div>
 
-                    {/* Symmetrical forms wrapper */}
                     <div className="forms-container forms-symmetrical">
                         <div className="form-flex-item">
                             <form onSubmit={handleSubmitReview} className="new-review-form review-section">
-                                <h3><FaStar className="form-icon" /> Add Your Review</h3>
+                                <h3><FaStar className="form-icon"/> Add Your Review</h3>
                                 <div className="rating-selection">
                                     <label>Your Rating:</label>
                                     <StarRatings
@@ -233,7 +226,7 @@ const CourseReviewPage = () => {
                         </div>
                         <div className="form-flex-item">
                             <form onSubmit={handleSubmitComment} className="new-review-form comment-section">
-                                <h3><FaCommentAlt className="form-icon" /> Add a Comment</h3>
+                                <h3><FaCommentAlt className="form-icon"/> Add a Comment</h3>
                                 <div className="feedback-container">
                                     <label htmlFor="commentFeedback">Your Comment:</label>
                                     <textarea
@@ -264,18 +257,17 @@ const CourseReviewPage = () => {
                                     onClick={() => setSortOrder('latest')}
                                     aria-label="Sort by latest"
                                 >
-                                    <FaArrowDown /> Latest
+                                    <FaArrowDown/> Latest
                                 </button>
                                 <button
                                     className={`sort-btn ${sortOrder === 'oldest' ? 'active' : ''}`}
                                     onClick={() => setSortOrder('oldest')}
                                     aria-label="Sort by oldest"
                                 >
-                                    <FaArrowUp /> Oldest
+                                    <FaArrowUp/> Oldest
                                 </button>
                             </div>
                         </div>
-                        {/* Table-like header */}
                         <div className="review-table-header">
                             <div className="review-table-user">User</div>
                             <div className="review-table-date">Date</div>
@@ -284,7 +276,8 @@ const CourseReviewPage = () => {
                         </div>
                         {getSortedComments().length > 0 ? (
                             getSortedComments().map((comment, index) => (
-                                <div key={index} className={`review-card-table ${comment.rating ? 'rating' : 'comment'}`}>
+                                <div key={index}
+                                     className={`review-card-table ${comment.rating ? 'rating' : 'comment'}`}>
                                     <div className="review-table-user">
                                         <span className="student-name"><strong>{comment.student.name}</strong></span>
                                         <span className="user-email"><small>{comment.student.email}</small></span>
@@ -297,8 +290,9 @@ const CourseReviewPage = () => {
                                     </div>
                                     <div className="review-table-actions">
                                         {studentEmail === comment.student.email && (
-                                            <button className="review-table-delete-btn" onClick={() => handleDeleteButton(comment.id)}>
-                                                <FaTrash /> Delete
+                                            <button className="review-table-delete-btn"
+                                                    onClick={() => handleDeleteButton(comment.id)}>
+                                                <FaTrash/> Delete
                                             </button>
                                         )}
                                     </div>

@@ -11,7 +11,7 @@ export const login = async (email, password) => {
             localStorage.setItem("token", token);
             localStorage.setItem("email", email);
             localStorage.setItem("name", name);
-            localStorage.setItem("role", role );
+            localStorage.setItem("role", role);
             document.cookie = `jwt=${token}; path=/`;
         }
     } catch (err) {
@@ -43,12 +43,8 @@ export const logout = async () => {
         localStorage.clear();
     } catch (error) {
         console.error('Error during logout:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 };
 
@@ -65,12 +61,8 @@ export const deleteSemester = async (id) => {
         }
     } catch (error) {
         console.error('Error deleting semester:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 };
 
@@ -82,12 +74,8 @@ export const getCourses = async () => {
         return response.data;
     } catch (error) {
         console.error('Error fetching courses:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 };
 
@@ -99,12 +87,8 @@ export const createCourse = async (courseData) => {
         return response.data;
     } catch (error) {
         console.error('Error creating course:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 };
 
@@ -117,12 +101,8 @@ export const updateCourse = async (id, courseData) => {
         return response.data;
     } catch (error) {
         console.error('Error updating course:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 };
 
@@ -135,31 +115,10 @@ export const deleteCourse = async (id) => {
         return response.data;
     } catch (error) {
         console.error('Error deleting course:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 };
-
-// export const exportPDF = async () => {
-//   try {
-//     const response = await axios.get(`${API_URL}/export/pdf`, {
-//       responseType: 'arraybuffer',
-//     });
-//
-//     const blob = new Blob([response.data], { type: 'application/pdf' });
-//     const link = document.createElement('a');
-//     link.href = URL.createObjectURL(blob);
-//     link.download = 'data.pdf';
-//     link.click();
-//   } catch (error) {
-//     console.error('Error exporting PDF:', error);
-//     throw error;
-//   }
-// };
 
 export const uploadFile = async (file) => {
     try {
@@ -176,12 +135,8 @@ export const uploadFile = async (file) => {
         return response.data;
     } catch (error) {
         console.error('Error uploading file:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 };
 
@@ -196,12 +151,8 @@ export const importCourses = async (formData) => {
         return response.data;
     } catch (error) {
         console.error('Error uploading file:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 };
 
@@ -218,22 +169,18 @@ export const generateFlashCards = async (attachmentId, numFlashcards) => {
         return response.data;
     } catch (error) {
         console.error('Error fetching flashcards:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 };
 
 export const exportFlashCards = async (courseId) => {
-    try{
+    try {
         const response = await axios.get(`${API_URL}/flashcards/export/${courseId}`, {
             withCredentials: true
         });
         return response.data;
-    }catch (err){
+    } catch (err) {
         console.error(err);
         if (err.response?.status === 403) {
             console.error("You are not authorized. Maybe session expired?");
@@ -252,12 +199,8 @@ export const getFlashCardsByCourseAndUser = async (courseId) => {
         return response.data;
     } catch (error) {
         console.error('Error fetching flashcards:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 };
 
@@ -273,12 +216,8 @@ export const getSemesters = async (email, token) => {
         return response.data;  // Make sure this is an array
     } catch (error) {
         console.error('Error fetching semesters:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 };
 
@@ -291,29 +230,21 @@ export const createSemester = async (semesterData, email) => {
         return response.data;
     } catch (error) {
         console.error('Error creating semester:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 };
 
 export const getCourseRecommendations = async (takenSubjects) => {
-    try{
+    try {
         const response = await axios.post(`${API_URL}/courses/recommend`, takenSubjects, {
             withCredentials: true
         });
         return response.data;
-    }catch(error){
+    } catch (error) {
         console.error("Error fetching recommendations: " + error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 };
 
@@ -323,7 +254,6 @@ export const submitSubjectReview = async (courseId, reviewData) => {
         const email = localStorage.getItem('email');
         const requests = [];
 
-        // Submit rating
         if (reviewData.rating) {
             requests.push(
                 axios.post(`${API_URL}/courses/${courseId}/ratings`, {
@@ -335,7 +265,6 @@ export const submitSubjectReview = async (courseId, reviewData) => {
             );
         }
 
-        // Submit comment
         if (reviewData.feedback && reviewData.feedback.trim()) {
             requests.push(
                 axios.post(`${API_URL}/courses/${courseId}/comments`, {
@@ -394,7 +323,6 @@ export const getSubjectReviews = async (courseId) => {
             })
         ]);
 
-        // Logging both responses to make sure the structure is correct
         console.log('Comments:', commentsResponse.data);
         console.log('Average Rating:', ratingResponse.data);
 
@@ -404,12 +332,8 @@ export const getSubjectReviews = async (courseId) => {
         };
     } catch (error) {
         console.error('Error fetching reviews:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 };
 
@@ -426,12 +350,8 @@ export const addCourseToFavorites = async (courseId) => {
         return response.data;
     } catch (error) {
         console.error('Error fetching reviews:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 };
 
@@ -447,12 +367,8 @@ export const removeCourseFromFavorites = async (courseId) => {
         });
     } catch (error) {
         console.error('Error fetching reviews:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 };
 
@@ -469,12 +385,8 @@ export const getFavoriteCourses = async () => {
         return response.data;
     } catch (error) {
         console.error('Error fetching reviews:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 };
 
@@ -491,12 +403,8 @@ export const deleteComment = async (courseId, commentId) => {
         return response.data;
     } catch (error) {
         console.error('Error deleting comment:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 }
 
@@ -508,12 +416,8 @@ export const deleteFlashCard = async (id) => {
         return response.data;
     } catch (error) {
         console.error('Error deleting flashcard:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 };
 
@@ -530,12 +434,8 @@ export const getCourseAttachments = async (courseId) => {
         return res.data;
     } catch (error) {
         console.error("Error fetching course attachments:", error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 }
 
@@ -549,12 +449,8 @@ export const exportPdfFlashcards = async (attachmentId) => {
         return res.data;
     } catch (error) {
         console.error("Error exporting pdf flashcards:", error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
+
     }
 }
 
@@ -569,27 +465,26 @@ export const uploadCourseAttachment = async (formData) => {
         return response.data;
     } catch (error) {
         console.error('Error during file upload:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
     }
 }
 
 export const deleteAttachment = async (attachmentId) => {
-    try{
+    try {
         await axios.delete(`${API_URL}/attachments/${attachmentId}`, {
             withCredentials: true
         });
-    }catch (error){
+    } catch (error) {
         console.error('Error during deleting attachment:', error);
-        if (error.response?.status === 403) {
-            console.error("You are not authorized. Maybe session expired?");
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-        throw error;
+        handleAuthError(error);
     }
 }
+
+const handleAuthError = (error) => {
+    if (error.response?.status === 403) {
+        console.error("You are not authorized. Maybe session expired?");
+        localStorage.clear();
+        window.location.href = "/login";
+    }
+    throw error;
+};

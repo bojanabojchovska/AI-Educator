@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useLocation } from "react-router-dom";
+import React, {useState, useEffect, useRef} from 'react';
+import {useLocation} from "react-router-dom";
 import './ChatBot.css';
 import CustomNavbar from '../app-custom/CustomNavbar';
 
@@ -14,7 +14,7 @@ function formatAttachmentName(filename) {
 
 function TypingIndicator() {
     return (
-    <span>
+        <span>
         Thinking
       <span className="dot">.</span>
       <span className="dot">.</span>
@@ -22,9 +22,10 @@ function TypingIndicator() {
     </span>
     );
 }
+
 const ChatBot = () => {
     const location = useLocation();
-    const { attachments = [], courseId, courseName } = location.state || {};
+    const {attachments = [], courseId, courseName} = location.state || {};
 
     const initialChatHistory = attachments.map(att => ({
         id: att.id,
@@ -48,7 +49,7 @@ const ChatBot = () => {
 
     const scrollToBottom = () => {
         if (messagesEndRef.current) {
-            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+            messagesEndRef.current.scrollIntoView({behavior: "smooth"});
         }
     };
 
@@ -59,29 +60,29 @@ const ChatBot = () => {
     const handleSendMessage = async () => {
         if (inputValue.trim() === '' || !selectedAttachmentId) return;
 
-        const userMessage = { text: inputValue, isUser: true, timestamp: new Date() };
+        const userMessage = {text: inputValue, isUser: true, timestamp: new Date()};
         setChatHistory(prevHistory =>
             prevHistory.map(chat =>
                 chat.id === selectedAttachmentId
-                    ? { ...chat, messages: [...chat.messages, userMessage] }
+                    ? {...chat, messages: [...chat.messages, userMessage]}
                     : chat
             )
         );
         setInputValue('');
 
         try {
-            const loadingMessage = { text: "Thinking...", isUser: false, timestamp: new Date(), isLoading: true };
+            const loadingMessage = {text: "Thinking...", isUser: false, timestamp: new Date(), isLoading: true};
             setChatHistory(prevHistory =>
                 prevHistory.map(chat =>
                     chat.id === selectedAttachmentId
-                        ? { ...chat, messages: [...chat.messages, loadingMessage] }
+                        ? {...chat, messages: [...chat.messages, loadingMessage]}
                         : chat
                 )
             );
 
             const response = await fetch('http://localhost:8000/ask', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     question: userMessage.text,
                     pdf_id: selectedAttachmentId
@@ -101,7 +102,7 @@ const ChatBot = () => {
                             ...chat,
                             messages: [
                                 ...chat.messages.filter(msg => !msg.isLoading),
-                                { text: data.Answer, isUser: false, timestamp: new Date() }
+                                {text: data.Answer, isUser: false, timestamp: new Date()}
                             ]
                         }
                         : chat
@@ -115,7 +116,11 @@ const ChatBot = () => {
                             ...chat,
                             messages: [
                                 ...chat.messages.filter(msg => !msg.isLoading),
-                                { text: "Sorry, there was an error getting a response.", isUser: false, timestamp: new Date() }
+                                {
+                                    text: "Sorry, there was an error getting a response.",
+                                    isUser: false,
+                                    timestamp: new Date()
+                                }
                             ]
                         }
                         : chat
@@ -137,7 +142,7 @@ const ChatBot = () => {
 
     return (
         <div className="chat-page">
-            <CustomNavbar />
+            <CustomNavbar/>
 
             <div className="chat-interface">
                 <div className="chat-sidebar">
@@ -179,17 +184,20 @@ const ChatBot = () => {
                                 >
 
                                     <div className="message-bubble">
-                                        {message.isLoading ? <TypingIndicator /> : message.text}
+                                        {message.isLoading ? <TypingIndicator/> : message.text}
                                     </div>
                                     <div className="message-time">
                                         {message.timestamp instanceof Date
-                                            ? message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                            ? message.timestamp.toLocaleTimeString([], {
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            })
                                             : message.timestamp}
                                     </div>
                                 </div>
                             ))
                         )}
-                        <div ref={messagesEndRef} />
+                        <div ref={messagesEndRef}/>
                     </div>
 
                     <div className="chatbot-input-container">

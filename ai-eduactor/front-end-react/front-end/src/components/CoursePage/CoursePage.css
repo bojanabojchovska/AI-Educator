@@ -3,7 +3,6 @@
     background: linear-gradient(120deg, #fff, #fff9f9 100%);
     padding-bottom: 2rem;
     font-family: 'Segoe UI', 'Arial', sans-serif;
-    /* Remove any top margin or padding that could cause a white bar */
     margin-top: 0;
     padding-top: 0;
 }
@@ -15,8 +14,8 @@
     margin: 2.5rem auto;
     background: linear-gradient(145deg, #fff5f5, #fff);
     border-radius: 2rem;
-    box-shadow: 0 10px 40px rgba(159,43,43,0.08);
-    border: 1px solid rgba(159,43,43,0.08);
+    box-shadow: 0 10px 40px rgba(159, 43, 43, 0.08);
+    border: 1px solid rgba(159, 43, 43, 0.08);
     padding: 2.5rem 2.5rem 2rem 2.5rem;
 }
 
@@ -30,7 +29,7 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    text-align: center; /* Center the titles */
+    text-align: center;
 }
 
 .upload-title {
@@ -49,7 +48,7 @@
     color: #800000;
     font-weight: 700;
     letter-spacing: 0.2px;
-    text-align: center; /* Center uploaded docs heading */
+    text-align: center;
 }
 
 .course-details-description,
@@ -61,7 +60,7 @@
     margin-left: auto;
     margin-right: auto;
     font-weight: 500;
-    text-align: center; /* Center descriptions */
+    text-align: center;
 }
 
 .upload-box {
@@ -84,7 +83,7 @@
     color: #800000;
     gap: 0.7rem;
     transition: all 0.2s;
-    box-shadow: 0 2px 8px rgba(159,43,43,0.04);
+    box-shadow: 0 2px 8px rgba(159, 43, 43, 0.04);
 }
 
 .custom-upload-label:hover {
@@ -116,7 +115,7 @@ input[type="file"] {
     color: #fff;
     cursor: pointer;
     font-weight: 700;
-    box-shadow: 0 2px 8px rgba(159,43,43,0.07);
+    box-shadow: 0 2px 8px rgba(159, 43, 43, 0.07);
     transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
     display: inline-flex;
     align-items: center;
@@ -127,7 +126,7 @@ input[type="file"] {
 .icon-button:hover {
     background: #a10000;
     transform: translateY(-2px) scale(1.03);
-    box-shadow: 0 6px 20px rgba(159,43,43,0.13);
+    box-shadow: 0 6px 20px rgba(159, 43, 43, 0.13);
 }
 
 .flashcards-button:disabled {
@@ -139,7 +138,7 @@ input[type="file"] {
 }
 
 .flashcards-button[title="Delete button"] {
-    display: none; /* Hide this style, use .icon-button for all */
+    display: none;
 }
 
 .chatbot-button {
@@ -148,7 +147,7 @@ input[type="file"] {
     border: 2px solid #800000 !important;
     border-radius: 2rem;
     font-weight: bold;
-    box-shadow: 0 4px 12px rgba(159,43,43,0.10);
+    box-shadow: 0 4px 12px rgba(159, 43, 43, 0.10);
     transition: all 0.2s;
     gap: 0.7rem;
     display: inline-flex;
@@ -184,8 +183,8 @@ input[type="file"] {
     position: relative;
     margin-left: 0.3rem;
     border: 2px solid #fff5f5;
-    box-shadow: 0 2px 8px rgba(159,43,43,0.04);
-    display: inline-flex; /* Ensure all icon buttons are flex and same size */
+    box-shadow: 0 2px 8px rgba(159, 43, 43, 0.04);
+    display: inline-flex;
     font-size: 1.1rem;
 }
 
@@ -238,12 +237,12 @@ input[type="file"] {
     border: 1.5px solid #ffe5e5;
     border-radius: 1.2rem;
     transition: background 0.2s, box-shadow 0.2s;
-    box-shadow: 0 2px 8px rgba(159,43,43,0.04);
+    box-shadow: 0 2px 8px rgba(159, 43, 43, 0.04);
 }
 
 .attachment-item:hover {
     background: #fff9f9;
-    box-shadow: 0 6px 20px rgba(159,43,43,0.10);
+    box-shadow: 0 6px 20px rgba(159, 43, 43, 0.10);
 }
 
 .attachment-item span {
@@ -273,7 +272,7 @@ input[type="file"] {
     padding: 8px 16px;
     border-radius: 8px;
     background: #fff5f5;
-    box-shadow: 0 2px 8px rgba(159,43,43,0.04);
+    box-shadow: 0 2px 8px rgba(159, 43, 43, 0.04);
     color: #800000;
     font-weight: 700;
     transition: background 0.2s, color 0.2s;

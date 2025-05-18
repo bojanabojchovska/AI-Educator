@@ -68,7 +68,7 @@ const Admin = () => {
 
     const handleEditSubject = (subject) => {
         setEditSubject({title: subject.title, description: subject.description});
-        setEditing(subject.id);
+        setEditing(subject.id ?? subject.courseId); // Ensure correct ID is set
         if (formRef.current) {
             formRef.current.scrollIntoView({behavior: 'smooth', block: 'center'});
         }
@@ -84,9 +84,37 @@ const Admin = () => {
             setEditSubject({title: '', description: ''});
             setEditing(null);
             toast.success('✏️ Changes saved.');
-            await reloadSubjects();
+            setSubjects((prev) =>
+                prev.map((s) =>
+                    (s.id ?? s.courseId) === editing
+                        ? {...s, ...editSubject}
+                        : s
+                )
+            );
         } catch (error) {
-            toast.error('⚠️ Failed to save changes.');
+            // Always reload and check the latest data, not stale state
+            let latestSubjects = [];
+            try {
+                const coursesData = await getCourses();
+                setSubjects(coursesData);
+                latestSubjects = coursesData;
+            } catch (e) {
+                toast.error('⚠️ Failed to reload subjects.');
+            }
+            const updated = latestSubjects.find(
+                (s) => (s.id ?? s.courseId) === editing
+            );
+            if (
+                updated &&
+                updated.title === editSubject.title &&
+                updated.description === editSubject.description
+            ) {
+                setEditSubject({title: '', description: ''});
+                setEditing(null);
+                toast.success('✏️ Changes saved.');
+            } else {
+                toast.error('⚠️ Failed to save changes.');
+            }
         }
     };
 
@@ -213,15 +241,31 @@ const Admin = () => {
                             }
                         />
                     </div>
-                    <button className="form-btn" onClick={(e) => {
-                        e.preventDefault();
-                        editing ? handleSaveEdit() : handleAddSubject();
-                    }}>
-                        {editing ? <FaEdit/> : <FaPlus/>}
-                        <span style={{marginLeft: '8px'}}>
-              {editing ? 'Save Changes' : 'Add Subject'}
-            </span>
-                    </button>
+                    <div style={{ display: 'flex', gap: '12px', width: '100%', justifyContent: 'center' }}>
+                        <button className="form-btn" onClick={(e) => {
+                            e.preventDefault();
+                            editing ? handleSaveEdit() : handleAddSubject();
+                        }}>
+                            {editing ? <FaEdit/> : <FaPlus/>}
+                            <span style={{marginLeft: '8px'}}>
+                                {editing ? 'Save Changes' : 'Add Subject'}
+                            </span>
+                        </button>
+                        {editing && (
+                            <button
+                                className="form-btn"
+                                style={{ background: '#eee', color: '#fff', border: '1.5px solid #800000' }}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    setEditing(null);
+                                    setEditSubject({title: '', description: ''});
+                                }}
+                                type="button"
+                            >
+                                Cancel
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 <div className="subjects-list">
@@ -264,7 +308,7 @@ const Admin = () => {
                                         <FaEdit/>
                                     </button>
                                     <button className="action-btn delete-action"
-                                            onClick={() => handleDeleteSubject(subject.id)} title="Delete">
+                                            onClick={() => handleDeleteSubject(subject.id ?? subject.courseId)} title="Delete">
                                         <FaTrash/>
                                     </button>
                                 </div>
@@ -278,4 +322,3 @@ const Admin = () => {
 };
 
 export default Admin;
-

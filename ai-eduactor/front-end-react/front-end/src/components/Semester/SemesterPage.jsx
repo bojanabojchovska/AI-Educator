@@ -51,12 +51,14 @@ const SemesterPage = () => {
 
 
     const moveToChosen = () => {
-        if (chosenSubjects.length >= MAX_CHOSEN_COURSES || selectedAvailable.length > MAX_CHOSEN_COURSES || chosenSubjects.length + selectedAvailable.length > MAX_CHOSEN_COURSES) {
-            setSubjectLimitReached(true);
-        } else {
+        const totalSelected = chosenSubjects.length + selectedAvailable.length;
+        if (totalSelected <= MAX_CHOSEN_COURSES) {
             setAvailableSubjects(prev => prev.filter(sub => !selectedAvailable.includes(sub)));
             setChosenSubjects(prev => [...prev, ...selectedAvailable]);
             setSelectedAvailable([]);
+            setSubjectLimitReached(false);
+        } else {
+            setSubjectLimitReached(true);
         }
     };
 
@@ -234,6 +236,9 @@ const SemesterPage = () => {
                         )}
 
                         <div className="semester-page-dual-list-container">
+                            <div className="semester-page-course-counter" className={chosenSubjects.length >= MAX_CHOSEN_COURSES ? 'limit-reached' : ''}>
+                                Selected: {chosenSubjects.length}/{MAX_CHOSEN_COURSES}
+                            </div>
                             <div className="d-flex justify-content-between">
                                 <div className="w-50 text-center">
                                     <h5 className="semester-page-dual-list-header">Selected Courses</h5>
@@ -286,12 +291,19 @@ const SemesterPage = () => {
                                     ))}
                                 </select>
                             </div>
+
+                            {chosenSubjects.length >= MAX_CHOSEN_COURSES && (
+                                <div className="selection-limit-warning">
+                                    <i className="fas fa-exclamation-circle"></i>
+                                    Maximum number of subjects reached
+                                </div>
+                            )}
                         </div>
                     </Modal.Body>
                     <Modal.Footer className="semester-page-modal-footer">
                         <button
                             className="semester-page-modal-save-btn"
-                            disabled={chosenSubjects.length === 0 || !semesterName.trim()}
+                            disabled={chosenSubjects.length > MAX_CHOSEN_COURSES || !semesterName.trim()}
                             onClick={async () => {
                                 const email = localStorage.getItem("email");
                                 const semesterData = {
@@ -324,5 +336,3 @@ const SemesterPage = () => {
 };
 
 export default SemesterPage;
-
-

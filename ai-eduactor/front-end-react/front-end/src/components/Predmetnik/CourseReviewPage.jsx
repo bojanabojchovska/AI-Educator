@@ -247,14 +247,14 @@ const CourseReviewPage = () => {
                 {/* Flashcards section */}
                 {defaultFlashCards && defaultFlashCards.length > 0 && (
                     <div className="flashcards-info">
-                        <p>There is default quiz available for this course!The flashcards every student has generated
-                            for this course are used to make a default quiz available for all students! Currently there are {defaultFlashCards.length}
-                            unique flashcards available. As more students upload attachments and generate flashcards for this course, there will be more!</p>
+                        <p>There is default quiz available for this course! The flashcards every student has generated
+                            for this course are used to make a default quiz available for all students! Currently there are {defaultFlashCards.length} unique
+                            flashcards available. As more students upload attachments and generate flashcards for this course, there will be more!</p>
                         <button
                             className="view-flashcards-button"
                             onClick={() =>  navigate(`/flashcard-game/${courseId}`, { state: { default: true, from: location.pathname } })}
                         >
-                            View Flashcards
+                            Try Quiz
                         </button>
                     </div>
                 )}
@@ -330,7 +330,7 @@ const CourseReviewPage = () => {
                                                 </div>
                                             </div>
                                             <div className="review-date">
-                                                <p>{new Date(review.date).toLocaleDateString()}</p>
+                                                <p>{new Date(review.date).toLocaleString()}</p>
                                             </div>
                                         </div>
                                         <div className="review-body">
@@ -395,7 +395,7 @@ const CourseReviewPage = () => {
                                                 </div>
                                             </div>
                                             <div className="review-date">
-                                                <p>{new Date(comment.date).toLocaleDateString()}</p>
+                                                <p>{new Date(comment.date).toLocaleString()}</p>
                                             </div>
                                         </div>
 

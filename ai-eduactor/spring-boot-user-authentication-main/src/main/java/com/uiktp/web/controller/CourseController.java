@@ -86,7 +86,7 @@ public class CourseController {
     }
 
     @GetMapping("/favorites")
-    public ResponseEntity<List<Course>> getStudentFavorites(@RequestParam String email){
-        return ResponseEntity.ok(courseService.getStudentFavorites(email));
+    public ResponseEntity<List<CourseDTO>> getStudentFavorites(){
+        return ResponseEntity.ok(courseService.getStudentFavorites());
     }
 }

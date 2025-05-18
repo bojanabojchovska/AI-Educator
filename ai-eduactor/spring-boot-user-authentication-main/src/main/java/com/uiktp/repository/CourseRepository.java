@@ -21,4 +21,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             where lower(c.title) in :titles
             """)
     List<Course> findByTitleInIgnoreCase(@Param("titles") List<String> titles);
+
+    @Query("SELECT c FROM Course c JOIN c.likedBy u WHERE u.id = :userId")
+    List<Course> findFavoritesByUserId(@Param("userId") Long userId);
 }

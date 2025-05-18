@@ -15,16 +15,16 @@ import StarRatings from 'react-star-ratings';
 const CourseReviews = () => {
     const [subjects, setSubjects] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
+
     const [error, setError] = useState(null);
-    const [reviews, setReviews] = useState({});
-    const [successMessages, setSuccessMessages] = useState({});
-    const [isSubmitting, setIsSubmitting] = useState({});
     const navigate = useNavigate();
+
     const [favorites, setFavorites] = useState({});
+    const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
     useEffect(() => {
         fetchCourses();
-        fetchFavorites();
+        fetchFavorites()
     }, []);
 
     const fetchCourses = async () => {
@@ -35,6 +35,7 @@ const CourseReviews = () => {
             const formattedCourses = data.map(course => ({
                 id: course.id,
                 name: course.title,
+                avgRating: course.avgRating
             }));
             setSubjects(formattedCourses);
         } catch (err) {
@@ -46,6 +47,7 @@ const CourseReviews = () => {
     const fetchFavorites = async () => {
         try {
             const data = await getFavoriteCourses();
+            console.log(data);
             const favoriteMap = {};
 
             data.forEach(course => {
@@ -53,98 +55,18 @@ const CourseReviews = () => {
             });
 
             setFavorites(favoriteMap);
+
         } catch (err) {
             console.error('Error fetching favorites:', err);
         }
     };
 
-    const handleSubmitReview = async (courseId) => {
-        const review = reviews[courseId];
-        if (!review || !review.rating) {
-            // Show error for this specific course
-            setReviews(prev => ({
-                ...prev,
-                [courseId]: {
-                    ...prev[courseId],
-                    error: 'Please provide a rating'
-                }
-            }));
-            return;
-        }
-
-        // Clear any previous errors and set submitting state
-        setReviews(prev => ({
-            ...prev,
-            [courseId]: {
-                ...prev[courseId],
-                error: null
-            }
-        }));
-        setIsSubmitting(prev => ({ ...prev, [courseId]: true }));
-
-        try {
-            // Ensure courseId is a number
-            await submitSubjectReview(courseId, {
-                rating: review.rating,
-                feedback: review.feedback || ''
-            });
-
-            // Clear the form after successful submission
-            setReviews(prev => ({
-                ...prev,
-                [courseId]: { rating: 0, feedback: '', error: null }
-            }));
-
-            // Show success message
-            setSuccessMessages(prev => ({
-                ...prev,
-                [courseId]: true
-            }));
-
-            // Clear success message after 3 seconds
-            setTimeout(() => {
-                setSuccessMessages(prev => ({
-                    ...prev,
-                    [courseId]: false
-                }));
-            }, 3000);
-
-        } catch (err) {
-            console.error('Error submitting review:', err);
-            setReviews(prev => ({
-                ...prev,
-                [courseId]: {
-                    ...prev[courseId],
-                    error: typeof err === 'string' ? err : 'Failed to submit review. Please try again.'
-                }
-            }));
-        } finally {
-            setIsSubmitting(prev => ({ ...prev, [courseId]: false }));
-        }
-    };
-
-    const handleRatingClick = (courseId, rating) => {
-        setReviews(prev => ({
-            ...prev,
-            [courseId]: { ...prev[courseId], rating: parseFloat(rating), error: null }
-        }));
-    };
-
-    const handleFeedbackChange = (courseId, feedback) => {
-        setReviews(prev => ({
-            ...prev,
-            [courseId]: { ...prev[courseId], feedback, error: null }
-        }));
-    };
-
     const filteredSubjects = subjects.filter(subject => {
-        if (!searchQuery) return true;
-        return subject?.name?.toLowerCase().includes(searchQuery.toLowerCase());
-    });
+        const matchesSearch = !searchQuery || subject?.name?.toLowerCase().includes(searchQuery.toLowerCase());
+        const isFavorite = favorites[subject.id];
 
-    const handleViewAllReviews = (courseId) => {
-        navigate(`/course/${courseId}/reviews`);
-    };
+        return matchesSearch && (!showOnlyFavorites || isFavorite);
+    });
 
     const handleToggleFavorite = async (courseId) => {
         try {
@@ -167,19 +89,36 @@ const CourseReviews = () => {
 
     return (
         <>
-            <CustomNavbar />
+            <CustomNavbar/>
             <div className="header-section">
-                <h1>Course Reviews</h1>
-                <div className="search-container">
-                    <input
-                        type="text"
-                        placeholder="Search courses..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="search-input"
-                    />
+                <h1>Course Hub</h1>
+                <p>Welcome to the Course Hub – your all-in-one space for academic collaboration and engagement.
+                    Here, you can mark your favorite courses for easy access, rate and review them based on your experience,
+                    and share valuable feedback with your peers. The hub also allows you to upload and access study materials,
+                    enabling file-sharing between students. Plus, you can take default quizzes created from the flashcards contributed
+                    by other students in your course – making learning more dynamic and collective.
+                    Whether you're looking to contribute, explore, or stay organized, the Course Hub keeps you connected and informed.</p>
+                <div className="header-controls">
+                    <div className="filter-toggle-container">
+                        <button
+                            className={`filter-toggle-button ${showOnlyFavorites ? 'active' : ''}`}
+                            onClick={() => setShowOnlyFavorites(prev => !prev)}
+                        >
+                            {showOnlyFavorites ? 'Show All Courses' : 'Show Favorites Only'}
+                        </button>
+                    </div>
+                    <div className="search-container">
+                        <input
+                            type="text"
+                            placeholder="Search courses..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="search-input"
+                        />
+                    </div>
                 </div>
             </div>
+
 
             {error && <div className="global-error-message">{error}</div>}
 
@@ -188,72 +127,47 @@ const CourseReviews = () => {
                 <div className="subjects-grid">
                     {filteredSubjects.length > 0 ? (
                         filteredSubjects.map(subject => (
-                            <div key={subject.id} className="subject-box">
+                            <div
+                                key={subject.id}
+                                className="subject-box clickable"
+                                onClick={() => navigate(`/course/${subject.id}/reviews`)}
+                            >
                                 <div className="subject-title-row">
                                     <h3>{subject.name}</h3>
                                     <button
                                         className="heart-button"
-                                        onClick={() => handleToggleFavorite(subject.id)}
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // prevent card click
+                                            handleToggleFavorite(subject.id);
+                                        }}
                                         aria-label="Toggle Favorite"
                                     >
                                         {favorites[subject.id] ? (
-                                            <FaHeart className={"subject-heart-icon"} />
+                                            <FaHeart className="subject-heart-icon"/>
                                         ) : (
-                                            <FaRegHeart className={"subject-heart-icon"} />
+                                            <FaRegHeart className="subject-heart-icon"/>
                                         )}
                                     </button>
                                 </div>
 
-                                {/* Show success message if applicable */}
-                                {successMessages[subject.id] && (
-                                    <div className="success-message">Review submitted successfully!</div>
-                                )}
-
-                                {/* Show error if applicable */}
-                                {reviews[subject.id]?.error && (
-                                    <div className="error-message">{reviews[subject.id].error}</div>
-                                )}
-
                                 <div className="rating-container">
-                                    <label>Your Rating:</label>
+                                    <label>Average Rating:</label>
                                     <StarRatings
-                                        rating={reviews[subject.id]?.rating || 0}
+                                        rating={subject.avgRating || 0}
                                         starRatedColor="#ffc107"
-                                        changeRating={(rating) => handleRatingClick(subject.id, rating)}
                                         numberOfStars={5}
-                                        name={`rating-${subject.id}`}
+                                        name={`avg-rating-${subject.id}`}
                                         starDimension="25px"
                                         starSpacing="2px"
-                                        starHoverColor="#ffc107"
                                         starEmptyColor="#ddd"
-                                        isHalf={true} // Enable half-star ratings
+                                        isSelectable={false}
                                     />
-                                </div>
-
-                                <textarea
-                                    placeholder="Write your feedback here (optional)..."
-                                    value={reviews[subject.id]?.feedback || ''}
-                                    onChange={(e) => handleFeedbackChange(subject.id, e.target.value)}
-                                    className="review-textarea"
-                                />
-
-                                <div className="button-container">
-                                    <button
-                                        className="submit-btn"
-                                        onClick={() => handleSubmitReview(subject.id)}
-                                        disabled={isSubmitting[subject.id]}
-                                    >
-                                        {isSubmitting[subject.id] ? 'Submitting...' : 'Submit Review'}
-                                    </button>
-
-                                    <button
-                                        className="view-all-btn"
-                                        onClick={() => handleViewAllReviews(subject.id, subject.name)}
-                                    >
-                                        View All Reviews
-                                    </button>
+                                    <span className="avg-rating-value">
+            {subject.avgRating ? subject.avgRating.toFixed(1) : 'No rating yet'}
+        </span>
                                 </div>
                             </div>
+
                         ))
                     ) : (
                         <div className="no-results">No courses found matching "{searchQuery}"</div>

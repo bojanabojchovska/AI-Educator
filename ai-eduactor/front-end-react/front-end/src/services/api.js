@@ -475,13 +475,8 @@ export const removeCourseFromFavorites = async (courseId) => {
 
 export const getFavoriteCourses = async () => {
     try {
-        const email = localStorage.getItem('email');
-
         const response = await axios.get(`${API_URL}/courses/favorites`, {
-            withCredentials: true,
-            params: {
-                email: email
-            }
+            withCredentials: true
         });
         return response.data;
     } catch (error) {

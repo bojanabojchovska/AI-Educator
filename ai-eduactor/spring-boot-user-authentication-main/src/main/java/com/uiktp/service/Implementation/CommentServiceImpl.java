@@ -57,6 +57,7 @@ public class CommentServiceImpl implements CommentService {
         return commentRepository.findAllByCourse(course)
                 .stream()
                 .filter(com -> com.isReview() == forReviews)
+                .sorted(Comparator.comparing(Comment::getDate).reversed())
                 .collect(Collectors.toList());
     }
 

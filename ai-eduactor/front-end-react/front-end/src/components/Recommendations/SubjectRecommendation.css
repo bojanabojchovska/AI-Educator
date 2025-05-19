@@ -5,7 +5,7 @@ body, h2, h4, p, ul {
 
 .recommendation-hero {
     width: 100% !important;
-    padding: 5rem 2rem 4rem !important;
+    padding: 2rem 2rem 1.5rem !important; /* Further reduced padding */
     background: linear-gradient(
         rgba(255, 255, 255, 0.85), 
         rgba(255, 255, 255, 0.85)
@@ -31,30 +31,30 @@ body, h2, h4, p, ul {
 
 .recommendation-main {
     text-align: center;
-    padding: 30px;
+    padding: 10px !important; /* Reduced padding */
     padding-top: 0 !important;
     background: transparent !important;
     box-shadow: none !important;
-    min-height: 100vh;
+    min-height: auto !important; /* Remove fixed height */
     border-radius: 16px;
 }
 
 .recommendation-content {
     max-width: 1200px !important;
-    margin: -3rem auto 2rem !important;
+    margin: -0.5rem auto 2rem !important; /* Moved up more */
     background: linear-gradient(to bottom right, #fff, #fff9f9) !important;
     border-radius: 1.5rem !important;
     box-shadow: 0 10px 40px rgba(105, 30, 39, 0.1) !important;
-    padding: 2rem !important;
+    padding: 1rem !important;
     position: relative !important;
     z-index: 10 !important;
 }
 
 .recommendation-main h1 {
-    margin-bottom: 1.8rem !important;
-    font-size: 3.8rem !important;
+    margin-bottom: 1rem !important; /* Reduced margin */
+    font-size: 2.5rem !important; /* Slightly smaller */
     font-weight: 900 !important;
-    background: linear-gradient(135deg, #4D2C30, #691E27) !important;
+    background: linear-gradient(135deg, #800000, #a83232) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     letter-spacing: 0.5px !important;
@@ -69,18 +69,18 @@ body, h2, h4, p, ul {
     transform: translateX(-50%) !important;
     width: 100px !important;
     height: 4px !important;
-    background: linear-gradient(90deg, #4D2C30, #691E27) !important;
+    background: linear-gradient(90deg, #800000, #a83232) !important;
     border-radius: 2px !important;
 }
 
 .recommendation-main p {
-    font-size: 1.3rem !important;
+    font-size: 1rem !important;
     max-width: 800px !important;
-    margin: 0 auto 3rem !important;
+    margin: 0 auto 1rem !important; /* Reduced margin */
     line-height: 1.8 !important;
     color: #2d3748 !important;
     background: rgba(255, 255, 255, 0.9) !important;
-    padding: 1.8rem 2.5rem !important;
+    padding: 1rem 1.5rem !important; /* Reduced padding */
     border-radius: 20px !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
 }
@@ -91,39 +91,38 @@ body, h2, h4, p, ul {
 }
 
 .lists-container {
-    display: flex;
-    justify-content: center;
-    gap: 50px;
-    margin: 60px 0;
+    display: grid !important;
+    grid-template-columns: 2fr 1fr 2fr !important; /* Changed to grid with 3 columns */
+    gap: 1rem !important;
+    margin: 0.5rem auto !important; /* Reduced margin */
     flex-wrap: wrap;
-    align-items: flex-start;
+    align-items: start !important;
     background: #fff !important;
-    padding: 2rem !important;
+    padding: 1rem !important; /* Reduced padding */
     border-radius: 1.5rem !important;
     box-shadow: 0 8px 32px rgba(105, 30, 39, 0.08) !important;
-    margin: 2rem auto !important;
     max-width: 1600px !important;
 }
 
 .list-box {
     background: linear-gradient(145deg, #f8f6f8, #fff) !important;
-    border: 1px solid rgba(105, 30, 39, 0.1) !important;
-    padding: 1.8rem !important;
+    border: 1px solid rgba(128, 0, 0, 0.1) !important;
+    padding: 1.2rem !important;
     border-radius: 1rem !important;
-    max-height: 50vh;
+    max-height: 40vh !important; /* Slightly reduced height */
     overflow-y: auto;
-    width: 500px;
+    width: 100% !important; /* Full width within grid cell */
     text-align: left;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 18px rgba(105, 30, 39, 0.10);
+    margin-bottom: 0 !important; /* Remove margin bottom */
+    box-shadow: 0 4px 15px rgba(128, 0, 0, 0.08) !important;
     transition: box-shadow 0.2s;
 }
 
 .list-box h4 {
     text-align: center;
-    margin-bottom: 20px;
-    color: #4D2C30;
-    font-size: 1.1rem;
+    margin-bottom: 1.2rem !important;
+    color: #800000 !important;
+    font-size: 1.1rem !important;
     letter-spacing: 0.5px;
 }
 
@@ -146,14 +145,14 @@ body, h2, h4, p, ul {
 }
 
 .list-box li.selected {
-    background-color: #f5e6e6;
-    border: 1.5px solid #691E27;
+    background-color: #fff5f5 !important;
+    border: 1.5px solid #800000 !important;
     font-weight: 500;
 }
 
 .list-box li:hover {
-    background-color: #f3eaea;
-    border: 1.5px solid #b97c7c;
+    background-color: #fff9f9 !important;
+    border: 1.5px solid #800000 !important;
 }
 
 .list-box li .checkmark {
@@ -169,18 +168,19 @@ body, h2, h4, p, ul {
 }
 
 .selected-box {
-    width: 300px;
-    min-height: 120px;
+    width: 100% !important; /* Full width within grid cell */
+    min-height: auto !important;
     background: #fff;
-    border: 1.5px solid #e2bcbc;
+    border: 1.5px solid rgba(128, 0, 0, 0.15) !important;
     box-shadow: 0 2px 8px rgba(105, 30, 39, 0.07);
-    padding: 18px 20px;
+    padding: 1rem !important;
     border-radius: 8px;
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
+    margin-bottom: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
     align-items: flex-start;
     justify-content: flex-start;
+    align-self: stretch !important;
 }
 
 .selected-box:has(.placeholder) {
@@ -189,7 +189,7 @@ body, h2, h4, p, ul {
 
 .selected-box h4 {
     margin-bottom: 10px;
-    color: #691E27;
+    color: #800000 !important;
     font-size: 1rem;
 }
 
@@ -200,14 +200,15 @@ body, h2, h4, p, ul {
 }
 
 .chip {
-    background: #EBDCDC;
-    color: #4D2C30;
+    background: #fff5f5 !important;
+    color: #800000 !important;
     border-radius: 16px;
     padding: 6px 14px;
     font-size: 0.95rem;
     font-weight: 500;
     box-shadow: 0 1px 4px rgba(105, 30, 39, 0.06);
     margin-bottom: 4px;
+    border: 1px solid rgba(128, 0, 0, 0.1) !important;
 }
 
 .placeholder {
@@ -229,7 +230,7 @@ body, h2, h4, p, ul {
 }
 
 .avatar {
-    background-color: #691E27;
+    background-color: #800000 !important;
     color: white;
     border-radius: 50%;
     width: 24px;
@@ -245,29 +246,38 @@ body, h2, h4, p, ul {
 .item-text {
     flex-grow: 1;
     font-size: 1rem;
-    color: #4D2C30;
+    color: #333 !important;
 }
 
 .submit-button {
-    background: linear-gradient(90deg, #4D2C30 60%, #691E27 100%) !important;
-    padding: 1rem 2.5rem !important;
+    background: linear-gradient(90deg, #800000 60%, #a83232 100%) !important;
+    color: white !important;
+    padding: 0.8rem 2rem !important;
     font-size: 1.1rem !important;
     font-weight: 600 !important;
+    border: none !important;
     border-radius: 50px !important;
-    box-shadow: 0 4px 15px rgba(105, 30, 39, 0.2) !important;
+    box-shadow: 0 4px 15px rgba(128, 0, 0, 0.15) !important;
     transition: all 0.3s ease !important;
-    margin-top: 30px;
+    margin-top: 1rem !important; /* Reduced margin */
 }
 
 .submit-button:hover {
+    background: linear-gradient(90deg, #a83232 60%, #800000 100%) !important;
     transform: translateY(-2px) !important;
-    box-shadow: 0 8px 25px rgba(105, 30, 39, 0.25) !important;
+    box-shadow: 0 8px 20px rgba(128, 0, 0, 0.2) !important;
 }
 
 .error {
     color: #c0392b;
     font-weight: 500;
     margin-top: 10px;
+}
+
+@media (max-width: 1200px) {
+    .lists-container {
+        grid-template-columns: 1fr 1fr 1fr !important;
+    }
 }
 
 @media (max-width: 1100px) {
@@ -281,6 +291,17 @@ body, h2, h4, p, ul {
         width: 90%;
         min-width: 220px;
         max-width: 600px;
+    }
+}
+
+@media (max-width: 900px) {
+    .lists-container {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    .list-box, .selected-box {
+        max-height: 300px !important;
     }
 }
 

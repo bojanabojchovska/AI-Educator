@@ -248,7 +248,7 @@ const FlashCardGamePage = () => {
                                   <span className="ai-flashcard-hint">Click to reveal answer</span>
                                 </div>
                               </div>
-                              <div className="flashcard-content ai-flashcard-content">
+                              <div className="flashcard-content">
                                 <p>{cards[currentIndex].question}</p>
                                 <button
                                   className="ai-flashcard-delete-btn"
@@ -257,7 +257,7 @@ const FlashCardGamePage = () => {
                                     deleteCard(cards[currentIndex].id);
                                   }}
                                 >
-                                  Delete Flashcard
+                                  Delete Card
                                 </button>
                               </div>
                             </div>
@@ -271,9 +271,8 @@ const FlashCardGamePage = () => {
                                   <span className="ai-flashcard-hint">Click to go back</span>
                                 </div>
                               </div>
-                              <div className="flashcard-content ai-flashcard-content">
+                              <div className="flashcard-content">
                                 <p>{cards[currentIndex].answer}</p>
-                                <span className="ai-flashcard-hint">Click to go back</span>
                                 <button
                                   className="ai-flashcard-delete-btn"
                                   onClick={(e) => {
@@ -281,7 +280,7 @@ const FlashCardGamePage = () => {
                                     deleteCard(cards[currentIndex].id);
                                   }}
                                 >
-                                  Delete Flashcard
+                                  Delete Card
                                 </button>
                               </div>
                             </div>

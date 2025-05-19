@@ -84,9 +84,7 @@
 
 .flashcard {
     width: 100% !important;
-    height: 320px !important;
-    min-height: 180px !important;
-    max-height: 260px !important;
+    height: 400px !important;
     position: relative !important;
     transform-style: preserve-3d !important;
     transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
@@ -108,12 +106,12 @@
 .flashcard-back {
     position: absolute !important;
     width: 100% !important;
+    height: 100% !important;
     backface-visibility: hidden !important;
-    border-radius: 28px !important;
-    padding: 16px !important;
+    border-radius: 20px !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: space-between !important;
+    overflow: hidden !important;
 }
 
 .flashcard-front {
@@ -143,14 +141,9 @@
 }
 
 .flashcard-header {
-    padding: 20px 20px 10px 20px !important;
-    border: none !important;
-    margin-bottom: 0 !important;
+    padding: 1.5rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
     background: none !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    position: relative !important;
 }
 
 .flashcard-back .flashcard-header {
@@ -168,204 +161,84 @@
 }
 
 .flashcard-content {
-    flex-grow: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    align-items: center !important;
-    text-align: center !important;
-    padding: 15px 20px !important;
-    height: calc(100% - 70px) !important;
-}
-
-.flashcard-content.ai-flashcard-content {
-    flex: 1 1 auto !important;
+    flex: 1 !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
-    padding: 8px 12px !important;
-    margin: 0 !important;
-    overflow: hidden !important;
+    padding: 1.5rem !important;
+    overflow-y: auto !important;
 }
 
 .flashcard-content p {
-    font-size: 1rem !important;
-    line-height: 1.4 !important;
-    margin: 10px 0 !important;
-    flex-grow: 1 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100% !important;
-    overflow-wrap: break-word !important;
-    word-wrap: break-word !important;
-    hyphens: auto !important;
-    max-height: 180px !important;
-}
-
-.flashcard-front .flashcard-content p {
-    color: rgba(255, 255, 255, 0.95) !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
-}
-
-.flashcard-back .flashcard-content p {
-    color: #2c3e50 !important;
-}
-
-.ai-flashcard-content p {
-    font-size: 0.95rem !important;
-    line-height: 1.4 !important;
+    font-size: 1.1rem !important;
+    line-height: 1.6 !important;
     margin: 0 !important;
-    padding: 8px !important;
+    text-align: center !important;
+    word-break: break-word !important;
     flex: 1 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    overflow-wrap: break-word !important;
-    word-break: break-word !important;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
-    white-space: pre-line !important;
+    padding: 1rem !important;
 }
 
+.flashcard-content::-webkit-scrollbar {
+    width: 6px !important;
+}
+
+.flashcard-content::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+
+.flashcard-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 3px !important;
+}
+
+.flashcard-back .flashcard-content::-webkit-scrollbar-thumb {
+    background: rgba(128, 0, 0, 0.2) !important;
+}
+
+.ai-flashcard-content {
+    display: none !important;
+}
+
+.flashcard-label,
+.flashcard-label.question-label,
+.flashcard-label.answer-label,
 .hint {
-    font-size: 0.75rem !important;
-    padding: 4px 12px !important;
-    border-radius: 50px !important;
-    margin-top: 10px !important;
-    opacity: 0.8 !important;
-    transition: all 0.3s ease !important;
+    display: none !important;
 }
 
-.flashcard-front .hint {
-    background: rgba(255, 255, 255, 0.1) !important;
-    color: rgba(255, 255, 255, 0.8) !important;
+.ai-flashcard-header-align {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
 }
 
-.flashcard-back .hint {
-    background: rgba(128, 0, 0, 0.08) !important;
-    color: #800000 !important;
-}
-
-.flashcard:hover .hint {
-    transform: translateY(-2px) !important;
-    opacity: 1 !important;
+.ai-flashcard-label {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+    padding: 0.5rem 1.5rem !important;
+    border-radius: 12px !important;
+    text-transform: uppercase !important;
 }
 
 .ai-flashcard-hint {
-    font-size: 0.75rem !important;
-    padding: 3px 10px !important;
-    border-radius: 50px !important;
-    margin: 2px 0 0 0 !important;
-    opacity: 0.85 !important;
-    background: rgba(255, 255, 255, 0.13) !important;
-    color: #fff !important;
-    transition: all 0.3s ease !important;
-    border: none !important;
-    display: inline-block !important;
-}
-
-.flashcard-back .ai-flashcard-hint {
-    background: rgba(128, 0, 0, 0.08) !important;
-    color: #800000 !important;
-}
-
-.flashcard-label {
     font-size: 0.85rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 1.5px !important;
-    padding: 4px 16px !important;
-    border-radius: 50px !important;
-    margin-bottom: 10px !important;
-    text-transform: uppercase !important;
-}
-
-.flashcard-label.question-label {
-    background: rgba(255, 255, 255, 0.15) !important;
-    color: #fff !important;
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1) !important;
-}
-
-.flashcard-label.answer-label {
-    background: #800000 !important;
-    color: #fff !important;
-    border: none !important;
-    box-shadow: 0 2px 12px rgba(128, 0, 0, 0.15) !important;
-}
-
-.delete-btn.question-label-style {
-    background: linear-gradient(90deg, #b22222 60%, #800000 100%) !important;
-    color: #fff !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.5px !important;
-    padding: 7px 22px !important;
-    border-radius: 24px !important;
-    box-shadow: 0 2px 10px rgba(178, 34, 34, 0.13) !important;
-    font-size: 0.82rem !important;
-    transition: background 0.18s,
-    color 0.18s,
-    box-shadow 0.18s,
-    transform 0.18s !important;
-    margin-left: 10px !important;
-    z-index: 2 !important;
-    text-transform: none !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 0.5em !important;
-    outline: none !important;
-    border: 2px solid transparent !important;
-}
-
-.delete-btn.question-label-style:hover,
-.delete-btn.question-label-style:focus {
-    background: linear-gradient(90deg, #800000 60%, #b22222 100%) !important;
-    color: #fff !important;
-    box-shadow: 0 4px 18px rgba(128, 0, 0, 0.18) !important;
-    transform: translateY(-2px) scale(1.04) !important;
-    border: 2px solid #fff !important;
-}
-
-.delete-btn.question-label-style:active {
-    background: #800000 !important;
-    color: #fff !important;
-    transform: scale(0.97) !important;
-    box-shadow: 0 1px 4px rgba(128, 0, 0, 0.13) !important;
+    opacity: 0.8 !important;
 }
 
 .ai-flashcard-delete-btn {
-    background: #fff !important;
-    color: #b22222 !important;
-    border: 1px solid #b22222 !important;
-    font-size: 0.75rem !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.5px !important;
-    padding: 3px 10px !important;
+    align-self: center !important;
+    margin-top: 1rem !important;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.9rem !important;
     border-radius: 8px !important;
-    margin: 8px auto 0 auto !important;
-    display: block !important;
-    box-shadow: 0 2px 8px rgba(178, 34, 34, 0.08) !important;
-    text-transform: uppercase !important;
-    transition: all 0.18s ease !important;
-    outline: none !important;
-    width: fit-content !important;
-}
-
-.ai-flashcard-delete-btn:hover {
-    background: #b22222 !important;
-    color: #fff !important;
-    transform: translateY(-1px) !important;
-}
-
-.flashcard-back .ai-flashcard-delete-btn {
-    background: #b22222 !important;
-    color: #fff !important;
-    border: 1px solid #fff !important;
-}
-
-.flashcard-back .ai-flashcard-delete-btn:hover {
-    background: #fff !important;
-    color: #b22222 !important;
-    border: 1px solid #b22222 !important;
+    background: transparent !important;
+    transition: all 0.2s ease !important;
 }
 
 .flashcard-controls {
@@ -910,6 +783,16 @@
     background: linear-gradient(135deg, #900000, #c22222) !important;
 }
 
+@media (max-width: 768px) {
+    .flashcard {
+        height: 350px !important;
+    }
+
+    .flashcard-content p {
+        font-size: 1rem !important;
+    }
+}
+
 @media (max-width: 600px) {
     .flashcard-welcome-content.improved-welcome {
         padding: 2rem 1.2rem;
@@ -938,6 +821,18 @@
         font-size: 1.2rem !important;
     }
 
+    .flashcard {
+        height: 300px !important;
+    }
+
+    .flashcard-header {
+        padding: 1rem !important;
+    }
+
+    .flashcard-content {
+        padding: 1rem !important;
+    }
+
     .flashcard-content p {
         font-size: 0.9rem !important;
     }
@@ -962,11 +857,6 @@
         justify-content: center !important;
     }
 
-    .flashcard {
-        height: 240px !important;
-        min-height: 160px !important;
-    }
-
     .ai-flashcard-content p {
         font-size: 0.9rem !important;
     }
@@ -981,166 +871,3 @@
         padding: 2px 8px !important;
     }
 }
-
-.ai-flashcard-content {
-    flex-grow: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: flex-start !important;
-    align-items: center !important;
-    text-align: center !important;
-    padding: 6px 6px 0 6px !important;
-}
-
-.ai-flashcard-content p {
-    font-size: 1.05rem !important;
-    line-height: 1.35 !important;
-    margin: 8px 0 8px 0 !important;
-    font-weight: 500 !important;
-    width: 100% !important;
-    word-break: break-word !important;
-    overflow-wrap: break-word !important;
-    hyphens: auto !important;
-    white-space: pre-line !important;
-}
-
-.ai-flashcard-header-align {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    width: 100% !important;
-}
-
-.ai-flashcard-label {
-    font-size: 0.95rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 1px !important;
-    padding: 6px 20px !important;
-    border-radius: 16px !important;
-    margin: 0 !important;
-    display: inline-block !important;
-    box-shadow: 0 2px 10px rgba(128, 0, 0, 0.10) !important;
-    border: 2px solid transparent !important;
-    text-align: center !important;
-    transition: background 0.2s, color 0.2s, border 0.2s !important;
-}
-
-.ai-flashcard-label-question {
-    background: #fff !important;
-    color: #b22222 !important;
-    border: 2px solid #b22222 !important;
-    box-shadow: 0 2px 12px rgba(178, 34, 34, 0.10) !important;
-    text-transform: uppercase !important;
-    letter-spacing: 1.5px !important;
-}
-
-.ai-flashcard-label-answer {
-    background: #b22222 !important;
-    color: #fff !important;
-    border: 2px solid #b22222 !important;
-    box-shadow: 0 2px 12px rgba(178, 34, 34, 0.13) !important;
-    text-transform: uppercase !important;
-    letter-spacing: 1.5px !important;
-}
-
-.ai-flashcard-delete-btn {
-    background: #fff !important;
-    color: #b22222 !important;
-    border: 1px solid #b22222 !important;
-    font-size: 0.8rem !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.5px !important;
-    padding: 4px 12px !important;
-    border-radius: 12px !important;
-    margin: 15px auto 0 auto !important;
-    display: block !important;
-    box-shadow: 0 2px 8px rgba(178, 34, 34, 0.08) !important;
-    text-transform: uppercase !important;
-    transition: all 0.18s ease !important;
-    outline: none !important;
-    width: fit-content !important;
-}
-
-.ai-flashcard-delete-btn:hover {
-    background: #b22222 !important;
-    color: #fff !important;
-    transform: translateY(-1px) !important;
-}
-
-.flashcard-back .ai-flashcard-delete-btn {
-    background: #b22222 !important;
-    color: #fff !important;
-    border: 1px solid #fff !important;
-}
-
-.flashcard-back .ai-flashcard-delete-btn:hover {
-    background: #fff !important;
-    color: #b22222 !important;
-    border: 1px solid #b22222 !important;
-}
-
-.flashcard-back .ai-flashcard-delete-btn {
-    background: #b22222 !important;
-    color: #fff !important;
-    border: 1px solid #b22222 !important;
-}
-
-.flashcard-back .ai-flashcard-delete-btn:hover,
-.flashcard-back .ai-flashcard-delete-btn:focus {
-    background: #fff !important;
-    color: #b22222 !important;
-    border: 1px solid #b22222 !important;
-}
-
-.ai-flashcard-header {
-    padding-bottom: 15px !important; /* Reduced padding */
-    border-bottom: 2px solid rgba(255, 255, 255, 0.15) !important;
-    margin-bottom: 15px !important; /* Reduced margin */
-    position: relative !important;
-    width: 100% !important;
-}
-
-.ai-flashcard-header-align {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100% !important;
-    gap: 16px !important;
-    margin-bottom: 0 !important;
-}
-
-.ai-flashcard-label {
-    font-size: 1.05rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 1px !important;
-    padding: 6px 22px !important;
-    border-radius: 16px !important;
-    margin-bottom: 0 !important;
-    margin-right: 0 !important;
-    margin-left: 0 !important;
-    display: inline-block !important;
-    box-shadow: 0 2px 10px rgba(128, 0, 0, 0.10) !important;
-    border: 2px solid transparent !important;
-    text-align: center !important;
-    transition: background 0.2s, color 0.2s, border 0.2s !important;
-}
-
-.ai-flashcard-label-question {
-    background: #fff !important;
-    color: #b22222 !important;
-    border: 2px solid #b22222 !important;
-    box-shadow: 0 2px 12px rgba(178, 34, 34, 0.10) !important;
-    text-transform: uppercase !important;
-    letter-spacing: 1.5px !important;
-}
-
-.ai-flashcard-label-answer {
-    background: #b22222 !important;
-    color: #fff !important;
-    border: 2px solid #b22222 !important;
-    box-shadow: 0 2px 12px rgba(178, 34, 34, 0.13) !important;
-    text-transform: uppercase !important;
-    letter-spacing: 1.5px !important;
-}
-

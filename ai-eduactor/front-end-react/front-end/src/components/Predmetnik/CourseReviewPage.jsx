@@ -204,6 +204,12 @@ const CourseReviewPage = () => {
         setSelectedFiles(Array.from(e.target.files));
     };
 
+    const handleRemoveFile = (indexToRemove) => {
+        setSelectedFiles(prevFiles => 
+            prevFiles.filter((_, index) => index !== indexToRemove)
+        );
+    };
+
     const toggleAttachments = async (commentId) => {
         const newExpanded = new Set(expandedComments);
 
@@ -433,10 +439,25 @@ const CourseReviewPage = () => {
 
                             {selectedFiles.length > 0 && (
                                 <div className="selected-files-list">
-                                    <p>Selected files:</p>
+                                    <div className="selected-files-header">
+                                        <span>Selected files</span>
+                                        <span className="file-count">{selectedFiles.length} file(s)</span>
+                                    </div>
                                     <ul>
                                         {selectedFiles.map((file, idx) => (
-                                            <li key={idx}>{file.name}</li>
+                                            <li key={idx} className="selected-file-item">
+                                                <div className="file-info">
+                                                    <FaFilePdf className="file-icon" />
+                                                    <span className="file-name">{file.name}</span>
+                                                </div>
+                                                <button 
+                                                    className="remove-file-btn"
+                                                    onClick={() => handleRemoveFile(idx)}
+                                                    title="Remove file"
+                                                >
+                                                    ×
+                                                </button>
+                                            </li>
                                         ))}
                                     </ul>
                                 </div>

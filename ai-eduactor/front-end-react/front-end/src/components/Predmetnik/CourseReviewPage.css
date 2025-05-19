@@ -220,6 +220,99 @@ textarea:focus {
 }
 
 .selected-files-list {
+    margin: 1rem 0;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 1rem;
+    font-size: 0.95rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+}
+
+.selected-files-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    color: #2d3748;
+    font-weight: 600;
+}
+
+.file-count {
+    font-size: 0.85rem;
+    color: #718096;
+    background: #edf2f7;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+}
+
+.selected-files-list ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.selected-file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    margin: 0.25rem 0;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.selected-file-item:hover {
+    border-color: #cbd5e0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transform: translateY(-1px);
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #4a5568;
+}
+
+.file-icon {
+    color: #1976d2;
+    font-size: 1.1rem;
+}
+
+.file-name {
+    font-size: 0.9rem;
+    color: #2d3748;
+}
+
+.remove-file-btn {
+    background: none;
+    border: none;
+    color: #e53e3e;
+    font-size: 1.5rem;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: all 0.2s ease;
+}
+
+.remove-file-btn:hover {
+    background: #fff5f5;
+    color: #c53030;
+    transform: scale(1.1);
+}
+
+.selected-files-list ul {
     margin: 0.5rem 0;
     background: linear-gradient(135deg, #f8fafc 0%, #fff 100%);
     border-radius: 8px;

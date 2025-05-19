@@ -5,7 +5,7 @@ import LoginPage from "./components/Authentication/LoginPage";
 import RegisterPage from "./components/Authentication/RegisterPage";
 import PrivateRoute from "./PrivateRoute";
 // Pages
-import HomePage from './components/home/HomePage';
+import HomePage from './components/HomePage/HomePage';
 import Admin from './components/Admin/Admin';
 import SemesterPage from "./components/Semester/SemesterPage";
 import CoursePage from './components/CoursePage/CoursePage';

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Modal} from 'react-bootstrap';
 import CustomNavbar from '../app-custom/CustomNavbar';
-import '../home/HomePage.css';
+import '../HomePage/HomePage.css';
 import './SemesterPage.css';
 import {createSemester, deleteSemester, getCourses, getSemesters} from '../../services/api';
 import {useNavigate} from 'react-router-dom';

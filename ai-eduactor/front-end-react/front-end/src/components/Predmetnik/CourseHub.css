@@ -29,14 +29,21 @@
 
 .header-section {
     width: 100%;
-    padding: 2.5rem 1.5rem 2rem;
-    background: linear-gradient(135deg, #fff 0%, #fafbfc 100%) !important;
-    border-bottom: 1px solid #eee;
-    text-align: center;
-    border-radius: 18px 18px 0 0;
-    box-shadow: 0 2px 12px rgba(128,0,0,0.04);
+    padding: 4rem 1.5rem 3.5rem;
     position: relative;
     overflow: hidden;
+    background: linear-gradient(
+        rgba(255, 255, 255, 0.85), 
+        rgba(255, 255, 255, 0.85)
+    ),
+    url('https://images.unsplash.com/photo-1530099486328-e021101a494a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fHN0dWRlbnRzJTIwc3R1ZHlpbmd8ZW58MHx8MHx8fDA%3D') center/cover;
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 2px 12px rgba(128,0,0,0.04);
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 .header-section::before {
@@ -47,30 +54,54 @@
     right: 0;
     height: 4px;
     background: linear-gradient(90deg, #800000, #a83232);
+    z-index: 2;
+}
+
+.header-section::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(
+        transparent,
+        rgba(255, 255, 255, 0.85) 70%
+    );
 }
 
 .header-section h1 {
-    font-size: 3rem !important;
+    position: relative;
+    z-index: 1;
+    font-size: 3.8rem !important;
     font-weight: 900 !important;
-    margin-bottom: 1.2rem !important;
-    text-shadow: 2px 2px 12px rgba(0,0,0,0.10) !important;
+    margin-bottom: 1.8rem !important;
     letter-spacing: 0.5px;
     background: linear-gradient(135deg, #800000, #a83232);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    text-shadow: none !important;
+    text-align: center;
 }
 
 .header-section p {
-    color: #4a5568;
-    font-size: 1.05rem;
-    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+    color: #2d3748;
+    font-size: 1.1rem;
+    margin: 0 auto 2rem;
     max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.6;
+    line-height: 1.7;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 1.8rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    text-align: center;
 }
 
 .header-controls {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './CourseReviews.css';
+import './CourseHub.css';
 import CustomNavbar from '../app-custom/CustomNavbar';
 import {
     addCourseToFavorites,
@@ -11,7 +11,7 @@ import {
 import { FaHeart, FaRegHeart } from "react-icons/fa6";
 import StarRatings from 'react-star-ratings';
 
-const CourseReviews = () => {
+const CourseHub = () => {
     const [subjects, setSubjects] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [error, setError] = useState(null);
@@ -99,7 +99,9 @@ const CourseReviews = () => {
                 <h1>Course Hub</h1>
                 <p>Welcome to the Course Hub – your all-in-one space for academic collaboration and engagement.
                     Here, you can mark your favorite courses for easy access, rate and review them based on your experience,
-                    and share valuable feedback with your peers.</p>
+                    and share valuable feedback with your peers. The hub also allows you to upload and access study materials,
+                    enabling file-sharing between students. Plus, you can take default quizzes created from the flashcards contributed
+                    by other students in your course – making learning more dynamic and collective.</p>
                 <div className="header-controls">
                     <div className="search-container">
                         <input
@@ -176,4 +178,4 @@ const CourseReviews = () => {
     );
 };
 
-export default CourseReviews;
+export default CourseHub;

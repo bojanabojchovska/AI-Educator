@@ -9,7 +9,7 @@ import HomePage from './components/home/HomePage';
 import Admin from './components/Admin/Admin';
 import SemesterPage from "./components/Semester/SemesterPage";
 import CoursePage from './components/CoursePage/CoursePage';
-import CourseReviews from "./components/Predmetnik/CourseReviews";
+import CourseHub from "./components/Predmetnik/CourseHub";
 import CourseReviewPage from './components/Predmetnik/CourseReviewPage';
 // Flashcards
 import FlashCardGamePage from "./components/FlashCardGamePage";
@@ -53,7 +53,7 @@ function App() {
                     <Route path="/admin" element={<PrivateRoute element={<Admin />} />} />
                     <Route path="/semester-planning" element={<PrivateRoute element={<SemesterPage />} />} />
                     <Route path="/subject-recommendation" element={<PrivateRoute element={<SubjectRecommendation />} />} />
-                    <Route path="/course-reviews" element={<PrivateRoute element={<CourseReviews />} />} />
+                    <Route path="/course-reviews" element={<PrivateRoute element={<CourseHub />} />} />
                     <Route path="/course/:courseId/reviews" element={<PrivateRoute element={<CourseReviewPage />} />} />
                     <Route path="/flashcards" element={<PrivateRoute element={<FlashcardCourseSelector />} />} />
                     <Route path="/course/:courseName" element={<PrivateRoute element={<CoursePage />} />} />

@@ -3,6 +3,7 @@ import {Link, useNavigate} from "react-router-dom";
 import "./LoginPage.css";
 import {Button, Card, Col, Container, Form, Row} from "react-bootstrap";
 import {login} from "../../services/api";
+import Notification from "../app-custom/Notification";
 
 const aiLoginImage = "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80";
 
@@ -10,32 +11,35 @@ const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [notification, setNotification] = useState(null);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError("");
+        setNotification(null);
 
         if (!email || !password) {
-            setError("Please enter both email and password");
+            setNotification({
+                message: "Please enter both email and password",
+                type: "error"
+            });
             return;
         }
 
+        setIsLoading(true);
         try {
-            setIsLoading(true);
-            try {
-                await login(email, password);
-                const role = localStorage.getItem("role");
-                console.log(role);
-                if (role === "ADMIN" || role === "admin") {
-                    navigate("/admin");
-                } else {
-                    navigate("/");
-                }
-            } catch (err) {
-                setError(err);
+            await login(email, password);
+            const role = localStorage.getItem("role");
+            if (role === "ADMIN" || role === "admin") {
+                navigate("/admin");
+            } else {
+                navigate("/");
             }
+        } catch (err) {
+            setNotification({
+                message: "Wrong username or password",
+                type: "error"
+            });
         } finally {
             setIsLoading(false);
         }
@@ -113,10 +117,16 @@ const LoginPage = () => {
                                         Create an account
                                     </Link>
                                 </div>
-                                {error && <div className="text-danger text-center mt-3">{error}</div>}
                             </Form>
                         </Card.Body>
                     </Card>
+                    {notification && (
+                        <Notification
+                            message={notification.message}
+                            type={notification.type}
+                            onClose={() => setNotification(null)}
+                        />
+                    )}
                 </Col>
             </Row>
         </Container>
@@ -124,4 +134,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-

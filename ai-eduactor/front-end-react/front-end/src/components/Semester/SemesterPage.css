@@ -34,7 +34,7 @@
 
 .hero-header {
     width: 100% !important;
-    padding: 4rem 2rem !important;
+    padding: 5.5rem 2rem 4.5rem !important;
     margin-bottom: 2rem !important;
     background: linear-gradient(
         rgba(255, 255, 255, 0.85), 
@@ -46,6 +46,10 @@
     overflow: hidden !important;
     border-radius: 0 0 30px 30px !important;
     box-shadow: 0 4px 20px rgba(128, 0, 0, 0.1) !important;
+    min-height: 400px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
 }
 
 .hero-header::before {
@@ -61,28 +65,48 @@
 .hero-title {
     max-width: 1200px !important;
     margin: 0 auto !important;
+    padding: 0 1rem !important;
+    position: relative !important;
+    z-index: 2 !important;
 }
 
 .hero-title h1 {
-    font-size: 3.8rem !important;
+    font-size: 4.2rem !important;
     font-weight: 900 !important;
-    margin-bottom: 1.8rem !important;
+    margin-bottom: 2rem !important;
     background: linear-gradient(135deg, #800000, #a83232) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     letter-spacing: 0.5px !important;
+    line-height: 1.2 !important;
+    text-transform: uppercase !important;
+    position: relative !important;
+}
+
+.hero-title h1::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: -0.8rem !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 100px !important;
+    height: 4px !important;
+    background: linear-gradient(90deg, #800000, #a83232) !important;
+    border-radius: 2px !important;
 }
 
 .hero-title p {
-    font-size: 1.2rem !important;
+    font-size: 1.3rem !important;
     max-width: 900px !important;
     margin: 0 auto !important;
-    line-height: 1.7 !important;
-    background: rgba(255, 255, 255, 0.8) !important;
-    padding: 1.8rem 2rem !important;
-    border-radius: 15px !important;
+    line-height: 1.8 !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    padding: 2rem 2.5rem !important;
+    border-radius: 20px !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
     color: #2d3748 !important;
+    position: relative !important;
+    z-index: 2 !important;
 }
 
 .no-semesters-message {

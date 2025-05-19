@@ -163,9 +163,10 @@ const SemesterPage = () => {
                     <div className="hero-title">
                         <h1>Semester Planning</h1>
                         <p>
-                            Organize your academic journey efficiently by planning
-                            <br/>
-                            each semester with your selected subjects.
+                            Welcome to your Semester Planning hub! Here you can create and manage your academic semesters 
+                            with ease. Organize up to five courses per semester, track your progress, and plan your 
+                            educational journey effectively. Whether you're starting a new semester or modifying an existing one, 
+                            our intuitive interface helps you make informed decisions about your course selection.
                         </p>
                     </div>
                 </header>

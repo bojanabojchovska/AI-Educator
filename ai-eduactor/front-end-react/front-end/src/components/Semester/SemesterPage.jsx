@@ -44,6 +44,7 @@ const SemesterPage = () => {
 
     const handleCreate = () => {
         setShowModal(true);
+        setNotification({ message: '', type: '' }); // Clear any existing notifications
     };
 
     const closeModal = () => {
@@ -132,18 +133,16 @@ const SemesterPage = () => {
 
     const handleDelete = async (id) => {
         try {
-
             await deleteSemester(id);
             await fetchSemesters();
             setNotification({
-                message: 'Semester deleted successfully.',
-                type: 'success',
+                message: 'Semester deleted successfully!',
+                type: 'success'
             });
         } catch (error) {
-
             setNotification({
                 message: 'Failed to delete semester. Please try again.',
-                type: 'error',
+                type: 'error'
             });
         }
     };
@@ -351,8 +350,18 @@ const SemesterPage = () => {
                                     await createSemester(semesterData, email);
                                     await fetchSemesters();
                                     closeModal();
+                                    setNotification({
+                                        message: editingSemesterId
+                                            ? 'Semester updated successfully!'
+                                            : 'New semester created successfully!',
+                                        type: 'success'
+                                    });
                                 } catch (error) {
                                     console.error('Failed to save semester:', error);
+                                    setNotification({
+                                        message: 'Failed to save semester. Please try again.',
+                                        type: 'error'
+                                    });
                                 }
                             }}
                         >

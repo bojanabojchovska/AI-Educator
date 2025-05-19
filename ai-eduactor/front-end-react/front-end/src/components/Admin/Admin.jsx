@@ -30,15 +30,18 @@ const Admin = () => {
     }, []);
 
     const handleAddSubject = async () => {
-        if (newSubject.title && newSubject.description) {
-            try {
-                await createCourse({...newSubject});
-                setNewSubject({title: '', description: ''});
-                toast.success('✅ Subject added successfully!');
-                await reloadSubjects();
-            } catch (error) {
-                toast.error('⚠️ Failed to add subject.');
-            }
+        if (!newSubject.title.trim() || !newSubject.description.trim()) {
+            toast.error('⚠️ Please fill in both title and description fields');
+            return;
+        }
+
+        try {
+            await createCourse({...newSubject});
+            setNewSubject({title: '', description: ''});
+            toast.success('✅ Subject added successfully!');
+            await reloadSubjects();
+        } catch (error) {
+            toast.error('⚠️ Failed to add subject.');
         }
     };
 
@@ -211,7 +214,7 @@ const Admin = () => {
                 </div>
 
                 <div className="subject-form" ref={formRef}>
-                    <label className="form-title">{editing ? 'Edit Subject' : 'Add Subject'}</label>
+                    <h2 className="form-title">{editing ? 'Edit Subject' : 'Add Subject'}</h2>
                     {editing && (
                         <p className="editing-indicator">✏️ Currently editing...</p>
                     )}
@@ -241,11 +244,14 @@ const Admin = () => {
                             }
                         />
                     </div>
-                    <div style={{ display: 'flex', gap: '12px', width: '100%', justifyContent: 'center' }}>
-                        <button className="form-btn" onClick={(e) => {
-                            e.preventDefault();
-                            editing ? handleSaveEdit() : handleAddSubject();
-                        }}>
+                    <div className="form-buttons-container">
+                        <button
+                            className="form-btn"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                editing ? handleSaveEdit() : handleAddSubject();
+                            }}
+                        >
                             {editing ? <FaEdit/> : <FaPlus/>}
                             <span style={{marginLeft: '8px'}}>
                                 {editing ? 'Save Changes' : 'Add Subject'}
@@ -253,8 +259,7 @@ const Admin = () => {
                         </button>
                         {editing && (
                             <button
-                                className="form-btn"
-                                style={{ background: '#eee', color: '#fff', border: '1.5px solid #800000' }}
+                                className="cancel-btn"
                                 onClick={(e) => {
                                     e.preventDefault();
                                     setEditing(null);

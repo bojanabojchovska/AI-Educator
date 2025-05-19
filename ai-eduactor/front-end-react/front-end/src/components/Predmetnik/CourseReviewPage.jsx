@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import {FaFilePdf} from 'react-icons/fa';
 import { FaStar, FaArrowLeft, FaTrash, FaCommentAlt, FaArrowDown, FaArrowUp } from 'react-icons/fa';
@@ -52,6 +52,19 @@ const CourseReviewPage = () => {
         fetchReviews();
         fetchCourseFlashCards();
     }, [courseId]);
+
+    useEffect(() => {
+        if (successMessage || error || commentError || ratingError) {
+            const timer = setTimeout(() => {
+                setSuccessMessage('');
+                setError('');
+                setCommentError('');
+                setRatingError('');
+            }, 5000); // Messages will disappear after 5 seconds
+
+            return () => clearTimeout(timer);
+        }
+    }, [successMessage, error, commentError, ratingError]);
 
     const fetchCourseData = async () => {
         try {
@@ -243,9 +256,6 @@ const CourseReviewPage = () => {
                     <FaArrowLeft /> Back to Course Hub
                 </button>
 
-                {error && <div className="error-message">{error}</div>}
-                {successMessage && <div className="success-message">{successMessage}</div>}
-
                 <div className="course-info">
                     <h2>{courseName}</h2>
                     <p>{courseDescription}</p>
@@ -327,7 +337,6 @@ const CourseReviewPage = () => {
                                     isSelectable={true}
                                     starHoverColor="#ffc107"
                                 />
-                                {ratingError && <div className="error-tooltip">{ratingError}</div>}
                             </div>
                             <div className="feedback-container">
                                 <label htmlFor="feedback">Your Comments (optional):</label>
@@ -346,6 +355,13 @@ const CourseReviewPage = () => {
                             >
                                 {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
                             </button>
+                            {(successMessage || error || ratingError) && activeTab === 'reviews' && (
+                                <div className="notifications">
+                                    {successMessage && <div className="success-message">{successMessage}</div>}
+                                    {error && <div className="error-message">{error}</div>}
+                                    {ratingError && <div className="error-tooltip">{ratingError}</div>}
+                                </div>
+                            )}
                         </form>
 
                         <div className="reviews-list">
@@ -470,6 +486,12 @@ const CourseReviewPage = () => {
                             >
                                 {isSubmittingComment ? 'Submitting...' : 'Submit Comment'}
                             </button>
+                            {(successMessage || error) && activeTab === 'comments' && (
+                                <div className="notifications">
+                                    {successMessage && <div className="success-message">{successMessage}</div>}
+                                    {error && <div className="error-message">{error}</div>}
+                                </div>
+                            )}
                         </form>
 
                         <div className="comments-list">

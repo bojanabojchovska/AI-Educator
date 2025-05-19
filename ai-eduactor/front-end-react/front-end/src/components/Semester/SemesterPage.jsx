@@ -158,28 +158,31 @@ const SemesterPage = () => {
                     onClose={() => setNotification({message: '', type: ''})}
                 />
             )}
-            <div className="homepage-container">
+            <div className="semester-page-container">
                 <header className="hero-header">
                     <div className="hero-title">
                         <h1>Semester Planning</h1>
-                        <p>
+                        <h6>
                             Welcome to your Semester Planning hub! Here you can create and manage your academic semesters 
                             with ease. Organize up to five courses per semester, track your progress, and plan your 
                             educational journey effectively. Whether you're starting a new semester or modifying an existing one, 
                             our intuitive interface helps you make informed decisions about your course selection.
-                        </p>
+                        </h6>
                     </div>
                 </header>
 
                 <div className="semester-page-create-btn-wrapper">
-                    <button className="btn semester-page-create-btn" onClick={handleCreate}>
+                    <button className="semester-page-create-btn" onClick={handleCreate}>
+                        <i className="fas fa-plus-circle me-2"></i>
                         Create Semester
                     </button>
                 </div>
 
                 <div className="semester-page-cards-container">
                     {loading ? (
-                        <p>Loading semesters...</p>
+                        <div className="no-semesters-message">
+                            <p>Loading semesters...</p>
+                        </div>
                     ) : semesters.length > 0 ? (
                         semesters.map((semester) => (
                             <div key={semester.id} className="semester-page-card">
@@ -197,20 +200,25 @@ const SemesterPage = () => {
                                             </li>
                                         ))
                                     ) : (
-                                        <li>No courses added.</li>
+                                        <li>No courses added yet</li>
                                     )}
                                 </ul>
                                 <div className="semester-page-card-buttons">
-                                    <button className="semester-page-action-btn semester-page-edit-btn"
-                                            onClick={() => handleEdit(semester.id)}>
-                                        <i className="fas fa-pen me-1"></i> Edit
+                                    <button
+                                        className="semester-page-action-btn semester-page-edit-btn"
+                                        onClick={() => handleEdit(semester.id)}
+                                    >
+                                        <i className="fas fa-edit"></i>
+                                        Edit
                                     </button>
-                                    <button className="semester-page-action-btn semester-page-delete-btn"
-                                            onClick={() => handleDelete(semester.id)}>
-                                        <i className="fas fa-trash-alt me-1"></i> Delete
+                                    <button
+                                        className="semester-page-action-btn semester-page-delete-btn"
+                                        onClick={() => handleDelete(semester.id)}
+                                    >
+                                        <i className="fas fa-trash-alt"></i>
+                                        Delete
                                     </button>
                                 </div>
-
                             </div>
                         ))
                     ) : (

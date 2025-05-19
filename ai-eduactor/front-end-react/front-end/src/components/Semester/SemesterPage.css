@@ -1,10 +1,17 @@
+.semester-page-container {
+    min-height: 100vh !important;
+    background-color: #f8fafc !important;
+    padding-bottom: 2rem !important;
+}
+
 .semester-page-create-btn-wrapper {
-    display: flex !important;
-    justify-content: flex-end !important;
-    margin: 1rem 2rem !important;
-    max-width: 1200px !important;
-    margin: 1.5rem auto !important;
+    max-width: 1400px !important;
+    margin: 0 auto !important;
     padding: 0 2rem !important;
+    display: flex !important;
+    justify-content: center !important;
+    position: relative !important;
+    z-index: 10 !important;
 }
 
 .semester-page-create-btn {
@@ -17,25 +24,26 @@
     min-height: 48px !important;
     font-size: 1.08rem !important;
     border: none !important;
-    box-shadow: 0 2px 8px rgba(128, 0, 0, 0.10) !important;
+    box-shadow: 0 4px 15px rgba(128, 0, 0, 0.15) !important;
     letter-spacing: 0.5px !important;
-    transition: background 0.2s, box-shadow 0.2s, transform 0.15s !important;
+    transition: all 0.3s ease !important;
     outline: none !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
+    margin-bottom: 2rem !important;
 }
 
 .semester-page-create-btn:hover {
     background: linear-gradient(90deg, #a83232 70%, #800000 100%) !important;
-    box-shadow: 0 4px 16px rgba(128, 0, 0, 0.18) !important;
-    transform: translateY(-2px) scale(1.03) !important;
+    box-shadow: 0 6px 20px rgba(128, 0, 0, 0.2) !important;
+    transform: translateY(-2px) !important;
 }
 
 .hero-header {
     width: 100% !important;
-    padding: 5.5rem 2rem 4.5rem !important;
-    margin-bottom: 2rem !important;
+    padding: 4rem 2rem 6rem !important;
+    margin-bottom: -4rem !important;
     background: linear-gradient(
         rgba(255, 255, 255, 0.85), 
         rgba(255, 255, 255, 0.85)
@@ -46,10 +54,11 @@
     overflow: hidden !important;
     border-radius: 0 0 30px 30px !important;
     box-shadow: 0 4px 20px rgba(128, 0, 0, 0.1) !important;
-    min-height: 400px !important;
+    min-height: 380px !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
+    font-family: 'Segoe UI', 'Arial', sans-serif !important;
 }
 
 .hero-header::before {
@@ -60,20 +69,27 @@
     right: 0 !important;
     height: 4px !important;
     background: linear-gradient(90deg, #800000, #a83232) !important;
-}
-
-.hero-title {
-    max-width: 1200px !important;
-    margin: 0 auto !important;
-    padding: 0 1rem !important;
-    position: relative !important;
     z-index: 2 !important;
 }
 
+.hero-title {
+    position: relative !important;
+    z-index: 2 !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 24px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+    backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    padding: 2.5rem !important;
+
+}
+
 .hero-title h1 {
-    font-size: 4.2rem !important;
+    font-size: 3.8rem !important;
     font-weight: 900 !important;
-    margin-bottom: 2rem !important;
+    margin-bottom: 10rem !important;
     background: linear-gradient(135deg, #800000, #a83232) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
@@ -81,32 +97,49 @@
     line-height: 1.2 !important;
     text-transform: uppercase !important;
     position: relative !important;
+    display: inline-block !important;
+    text-align: center !important;
+    padding-bottom: 20px;
+
 }
 
 .hero-title h1::after {
     content: '' !important;
     position: absolute !important;
-    bottom: -0.8rem !important;
+    bottom: -1rem !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
-    width: 100px !important;
+    width: 120px !important;
     height: 4px !important;
     background: linear-gradient(90deg, #800000, #a83232) !important;
     border-radius: 2px !important;
+    margin-bottom: 1.5rem !important;
 }
 
 .hero-title p {
-    font-size: 1.3rem !important;
-    max-width: 900px !important;
+    font-size: 40px !important;
+    font-weight: 400 !important;
+    max-width: 1000px !important;
     margin: 0 auto !important;
-    line-height: 1.8 !important;
-    background: rgba(255, 255, 255, 0.9) !important;
-    padding: 2rem 2.5rem !important;
-    border-radius: 20px !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+    line-height: 1.7 !important;
     color: #2d3748 !important;
     position: relative !important;
     z-index: 2 !important;
+}
+
+@media (max-width: 768px) {
+    .hero-title h1 {
+        font-size: 2.8rem !important;
+    }
+
+    .hero-title p {
+        font-size: 1.1rem !important;
+    }
+
+    .hero-title {
+        padding: 1.5rem !important;
+        margin: 0 1rem !important;
+    }
 }
 
 .no-semesters-message {
@@ -125,30 +158,31 @@
 
 .semester-page-cards-container {
     display: grid !important;
-    grid-template-columns: repeat(4, minmax(300px, 1fr)) !important;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
     gap: 2rem !important;
-    padding: 2rem !important;
+    padding: 0 2rem 2rem !important;
     max-width: 1400px !important;
     margin: 0 auto !important;
-    justify-content: center !important;
+    position: relative !important;
+    z-index: 1 !important;
 }
 
 .semester-page-card {
     background: linear-gradient(145deg, #ffffff, #f8fafc) !important;
-    padding: 1.8rem !important;
+    padding: 2rem !important;
     border-radius: 20px !important;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
     border: 1px solid rgba(128, 0, 0, 0.1) !important;
     display: flex !important;
     flex-direction: column !important;
     min-height: 280px !important;
-    transition: all 0.2s ease !important;
-    width: 100% !important;
+    transition: all 0.3s ease !important;
 }
 
 .semester-page-card:hover {
     transform: translateY(-5px) !important;
     box-shadow: 0 12px 30px rgba(128, 0, 0, 0.12) !important;
+    background: linear-gradient(145deg, #ffffff, #fff5f5) !important;
 }
 
 .semester-page-card h3 {
@@ -158,6 +192,7 @@
     margin-bottom: 1.8rem !important;
     padding-bottom: 0.75rem !important;
     border-bottom: 2px solid rgba(128, 0, 0, 0.1) !important;
+    font-weight: 700 !important;
 }
 
 .semester-page-card ul {
@@ -655,9 +690,6 @@
         gap: 1rem !important;
     }
 
-    .hero-title h1 {
-        font-size: 2.6rem !important;
-    }
 
     .semester-page-modal-content {
         max-width: 95vw !important;
@@ -713,3 +745,14 @@
     background: rgba(128, 0, 0, 0.2) !important;
     border-radius: 3px !important;
 }
+
+footer {
+    margin-top: 40px !important;
+    padding: 20px 0 !important;
+    font-size: 14px !important;
+    color: #546e7a !important;
+    border-top: 1px solid #eee !important;
+    width: 100% !important;
+    text-align: center !important;
+}
+

@@ -6,28 +6,28 @@
     text-align: center;
     background-color: #ffffff;
     padding: 10px !important;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', 'Arial', sans-serif !important;
 }
 
 .hero-section {
     width: 100% !important;
-    padding: 3.5rem 2rem 3rem !important; /* Reduced padding */
-    margin-bottom: 1rem !important; /* Reduced margin */
+    padding: 4rem 2rem 3rem !important;
+    margin-bottom: 2rem !important;
     background: linear-gradient(
         rgba(255, 255, 255, 0.85), 
         rgba(255, 255, 255, 0.85)
     ),
     url('https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2832&auto=format&fit=crop') center/cover !important;
-    /* This image shows AI/tech education environment */
     text-align: center !important;
     position: relative !important;
     overflow: hidden !important;
     border-radius: 0 0 30px 30px !important;
     box-shadow: 0 4px 20px rgba(128, 0, 0, 0.1) !important;
-    min-height: 380px !important; /* Reduced height */
+    min-height: 380px !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
+    font-family: 'Segoe UI', 'Arial', sans-serif !important;
 }
 
 .hero-section::before {
@@ -43,7 +43,7 @@
 
 .hero-content {
     position: relative !important;
-    z-index: 3 !important;
+    z-index: 2 !important;
     max-width: 1200px !important;
     margin: 0 auto !important;
     padding: 0 1rem !important;
@@ -52,13 +52,13 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
     backdrop-filter: blur(8px) !important;
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    padding: 2rem !important; /* Reduced padding */
+    padding: 2rem !important;
 }
 
 .hero-content h1 {
-    font-size: 3.2rem !important; /* Smaller font size */
+    font-size: 3.2rem !important;
     font-weight: 900 !important;
-    margin-bottom: 1.5rem !important; /* Reduced margin */
+    margin-bottom: 1.5rem !important;
     background: linear-gradient(135deg, #800000, #a83232) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
@@ -84,13 +84,15 @@
 }
 
 .hero-content p {
-    font-size: 1.15rem !important; /* Smaller font size */
+    font-size: 1.15rem !important;
+    font-weight: 400 !important;
     max-width: 900px !important;
-    margin: 0 auto 1.5rem !important; /* Reduced margin */
-    line-height: 1.6 !important; /* Reduced line height */
+    margin: 0 auto 1.5rem !important;
+    line-height: 1.6 !important;
     color: #2d3748 !important;
     position: relative !important;
     z-index: 2 !important;
+    font-family: 'Segoe UI', 'Arial', sans-serif !important;
 }
 
 .hero-content .btn-primary {
@@ -138,12 +140,13 @@
 }
 
 .feature-section h2 {
-    font-size: 1.8rem !important; /* Smaller font size */
-    margin-bottom: 20px !important; /* Reduced margin */
+    font-size: 2rem !important;
+    font-weight: 800 !important;
+    margin-bottom: 20px !important;
     color: #800000 !important;
-    font-weight: 700 !important;
+    font-family: 'Segoe UI', 'Arial', sans-serif !important;
     border-bottom: 2px solid rgba(128, 0, 0, 0.1) !important;
-    padding-bottom: 8px !important; /* Reduced padding */
+    padding-bottom: 8px !important;
 }
 
 .feature-content {
@@ -183,7 +186,9 @@
     font-size: 1.1rem !important;
     color: #546e7a;
     line-height: 1.6 !important;
-    margin-bottom: 15px !important; /* Reduced margin */
+    margin-bottom: 15px !important;
+    font-family: 'Segoe UI', 'Arial', sans-serif !important;
+    font-weight: 400 !important;
 }
 
 .feature-text .btn-secondary {

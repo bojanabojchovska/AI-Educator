@@ -102,16 +102,18 @@ const CourseHub = () => {
                     and share valuable feedback with your peers. The hub also allows you to upload and access study materials,
                     enabling file-sharing between students. Plus, you can take default quizzes created from the flashcards contributed
                     by other students in your course – making learning more dynamic and collective.</p>
-                <div className="header-controls">
-                    <div className="search-container">
-                        <input
-                            type="text"
-                            placeholder="Search courses..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="search-input"
-                        />
-                    </div>
+            </div>
+
+            {/* Search bar moved below hero/header */}
+            <div className="coursehub-searchbar-wrapper">
+                <div className="search-container">
+                    <input
+                        type="text"
+                        placeholder="Search courses..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="search-input"
+                    />
                 </div>
             </div>
 

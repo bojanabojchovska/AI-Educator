@@ -10,6 +10,13 @@
     text-align: center !important;
     position: relative !important;
     overflow: hidden !important;
+    border-radius: 0 0 30px 30px !important;
+    box-shadow: 0 4px 20px rgba(128, 0, 0, 0.1) !important;
+    min-height: 380px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    font-family: 'Segoe UI', 'Arial', sans-serif !important;
 }
 
 .fc-hero-section::before {
@@ -45,30 +52,32 @@
     text-align: center !important;
     position: relative !important;
     display: inline-block !important;
+    font-family: 'Segoe UI', 'Arial', sans-serif !important;
 }
 
 .fc-heading::after {
     content: '' !important;
     position: absolute !important;
-    bottom: -0.5rem !important;
+    bottom: -0.8rem !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
-    width: 80px !important;
+    width: 100px !important;
     height: 4px !important;
     background: linear-gradient(90deg, #800000, #a83232) !important;
     border-radius: 2px !important;
 }
 
 .fc-instructions {
-    font-size: 1.2rem !important;
-    max-width: 700px !important;
-    margin: 0 auto 3rem !important;
-    line-height: 1.8 !important;
+    font-size: 1.15rem !important;
+    max-width: 900px !important;
+    margin: 0 auto 1.5rem !important;
+    line-height: 1.6 !important;
     color: #2d3748 !important;
     background: rgba(255, 255, 255, 0.9) !important;
-    padding: 1.5rem 2rem !important;
-    border-radius: 15px !important;
+    padding: 2rem 2.5rem !important;
+    border-radius: 20px !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+    font-family: 'Segoe UI', 'Arial', sans-serif !important;
 }
 
 .fc-content-grid {

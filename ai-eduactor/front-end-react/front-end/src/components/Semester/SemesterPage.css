@@ -248,7 +248,7 @@
     display: flex !important;
     flex-direction: column !important;
     max-height: 90vh !important;
-    min-height: 600px !important;
+    min-height: 520px !important;
     overflow: hidden !important;
     animation: modal-fade-in 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -315,13 +315,18 @@
 }
 
 .semester-page-modal-body {
-    padding: 1.5rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    padding: 1rem 1.5rem !important;
     overflow-y: auto !important;
     width: 100% !important;
     box-sizing: border-box !important;
     flex: 1 1 auto !important;
     text-align: center !important;
     min-height: 400px !important;
+    position: relative !important;
+    padding-bottom: 4rem !important;
 }
 
 .semester-page-modal-label {
@@ -336,13 +341,13 @@
     width: 100% !important;
     max-width: 400px !important;
     padding: 0.8rem !important;
-    margin: 0 auto 1rem !important;
+    margin: 0 auto 0.75rem !important;
     border: 1.5px solid #e0e0e0 !important;
     border-radius: 10px !important;
     transition: border-color 0.2s !important;
     font-size: 1rem !important;
     background-color: #f8f9fa !important;
-    height: 40px !important;
+    height: 38px !important;
     text-align: center !important;
 }
 
@@ -353,7 +358,10 @@
 }
 
 .semester-page-dual-list-container {
-    margin: 1rem 0 1.5rem 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+    margin: 0.5rem 0 1rem 0 !important;
     position: relative !important;
     width: 100% !important;
 }
@@ -375,7 +383,7 @@
 .semester-page-dual-list-header {
     font-weight: 700 !important;
     color: #800000 !important;
-    margin-bottom: 0.3rem !important;
+    margin-bottom: 0.25rem !important;
     font-size: 1rem !important;
     text-align: center !important;
 }
@@ -384,11 +392,11 @@
     width: 100% !important;
     min-width: 90px !important;
     max-width: 100% !important;
-    height: 250px !important;
+    height: 180px !important;
     border: 1px solid #e2e8f0 !important;
     border-radius: 15px !important;
     padding: 0.5rem !important;
-    background: linear-gradient(135deg, #f8fafc 0%, #fff 100%) !important;
+    background: #fff !important;
     font-size: 0.95rem !important;
     box-sizing: border-box !important;
     flex: 1 !important;
@@ -397,27 +405,31 @@
     text-align: center !important;
     scrollbar-width: thin !important;
     scrollbar-color: #800000 #f0f0f0 !important;
-    white-space: nowrap !important;
-    text-overflow: ellipsis !important;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02) !important;
 }
 
 .semester-page-dual-list-select option {
-    padding: 0.6rem 0.8rem !important;
-    margin: 0.1rem 0 !important;
-    border-radius: 8px !important;
+    padding: 0.5rem 0.75rem !important;
+    margin: 0.15rem 0 !important;
+    border-radius: 6px !important;
     cursor: pointer !important;
+    background: transparent !important;
+    color: #333 !important;
     transition: all 0.2s ease !important;
-    text-align: left !important;
-    white-space: normal !important;
-    word-wrap: break-word !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
+    white-space: nowrap !important;
+    min-width: max-content !important;
 }
 
-/* Custom scrollbar for available courses */
+.semester-page-dual-list-select option:hover {
+    background: rgba(128, 0, 0, 0.05) !important;
+}
+
+.semester-page-dual-list-select option:checked {
+    background: #800000 !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
 .semester-page-dual-list-select:last-child {
     overflow-x: auto !important;
     padding-bottom: 0.8rem !important;
@@ -426,16 +438,6 @@
 .semester-page-dual-list-select:last-child option {
     min-width: max-content !important;
     padding-right: 2rem !important;
-}
-
-.semester-page-dual-list-select option:hover {
-    background-color: #fbe9e7 !important;
-}
-
-.semester-page-dual-list-select option:checked {
-    background: linear-gradient(135deg, #fff5f5 0%, #fff 100%) !important;
-    color: #800000 !important;
-    font-weight: 600 !important;
 }
 
 .semester-page-dual-list-select::-webkit-scrollbar {
@@ -496,7 +498,7 @@
 }
 
 .semester-page-modal-footer {
-    margin-top: 0 !important;
+    margin-top: auto !important;
     padding: 1rem !important;
     background: #f8f9fa !important;
     border-top: 1px solid #e3e8ee !important;
@@ -508,7 +510,7 @@
     gap: 1rem !important;
     position: sticky !important;
     bottom: 0 !important;
-    z-index: 10 !important;
+    z-index: 101 !important;
 }
 
 .semester-page-modal-save-btn {
@@ -559,7 +561,7 @@
 
 .semester-page-course-counter {
     position: absolute !important;
-    top: -25px !important;
+    top: -20px !important;
     right: 0 !important;
     font-size: 0.9rem !important;
     color: #800000 !important;
@@ -576,17 +578,21 @@
 
 .selection-limit-warning {
     color: #d32f2f !important;
-    font-size: 1rem !important;
-    margin-top: 1rem !important;
+    font-size: 0.95rem !important;
+    margin: 0.75rem auto !important;
     font-weight: 600 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 0.5rem !important;
     background-color: #ffebee !important;
-    padding: 0.5rem 1rem !important;
+    padding: 0.6rem 1rem !important;
     border-radius: 8px !important;
     border: 1px solid #ffcdd2 !important;
+    width: 90% !important;
+    max-width: 400px !important;
+    z-index: 100 !important;
+    position: static !important;
 }
 
 .selection-limit-warning i {
@@ -651,4 +657,35 @@
     .semester-page-cards-container {
         grid-template-columns: 1fr !important;
     }
+}
+
+/* Firefox specific styles */
+@-moz-document url-prefix() {
+    .semester-page-dual-list-select option:checked {
+        background-color: #800000 !important;
+        color: #fff !important;
+        box-shadow: 0 0 0 3px #800000 inset !important;
+    }
+}
+
+/* Webkit specific styles */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .semester-page-dual-list-select option:checked {
+        background: #800000 !important;
+        color: #fff !important;
+    }
+}
+
+/* Custom scrollbar for the card */
+.semester-page-card::-webkit-scrollbar {
+    width: 6px !important;
+}
+
+.semester-page-card::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+
+.semester-page-card::-webkit-scrollbar-thumb {
+    background: rgba(128, 0, 0, 0.2) !important;
+    border-radius: 3px !important;
 }

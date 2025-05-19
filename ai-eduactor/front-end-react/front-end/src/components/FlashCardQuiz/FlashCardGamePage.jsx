@@ -203,13 +203,11 @@ const FlashCardGamePage = () => {
             </div>
         ) : (
             <div className={`flashcard-game-container fade-in ${showEndScreen ? 'has-end-screen' : ''}`}>
-              <header className="hero-header">
-                <div className="hero-title">
-                  <h1>Flash Cards Game</h1>
-                  <h2 className="hero-subtitle">for {courseTitle}</h2>
-                  <p>Challenge your memory and boost your knowledge with every card you flip.</p>
-                </div>
-              </header>
+              <div className="flashcards-title" style={{textAlign: 'center', marginBottom: 20}}>
+                <h1 style={{fontWeight: 800, fontSize: '2rem', marginBottom: 6}}>Flash Cards Quiz</h1>
+                {courseTitle && <div style={{fontSize: '1.1rem', color: '#800000', marginBottom: 6}}>for {courseTitle}</div>}
+                <div style={{fontSize: '1rem', color: '#333'}}>Challenge your memory and boost your knowledge</div>
+              </div>
 
               {!loading && cards.length > 0 && !showEndScreen && (
                 <div className="quiz-progress-bar-container">

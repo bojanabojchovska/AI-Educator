@@ -1,316 +1,351 @@
 .coursepage-root {
-    min-height: 100vh;
-    background: linear-gradient(120deg, #fff, #fff9f9 100%);
-    padding-bottom: 2rem;
-    font-family: 'Segoe UI', 'Arial', sans-serif;
-    margin-top: 0;
-    padding-top: 0;
+    min-height: 100vh !important;
+    background: linear-gradient(120deg, #fff, #fff9f9 100%) !important;
+    padding-bottom: 2rem !important;
+    font-family: 'Segoe UI', 'Arial', sans-serif !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
 }
 
-.course-details-section,
-.upload-container,
-.attachments-section {
-    max-width: 900px;
-    margin: 2.5rem auto;
-    background: linear-gradient(145deg, #fff5f5, #fff);
-    border-radius: 2rem;
-    box-shadow: 0 10px 40px rgba(159, 43, 43, 0.08);
-    border: 1px solid rgba(159, 43, 43, 0.08);
-    padding: 2.5rem 2.5rem 2rem 2.5rem;
+.course-details-section {
+    width: 100% !important;
+    padding: 4rem 2rem 3rem !important;
+    margin-bottom: 2rem !important;
+    background: linear-gradient(
+        rgba(255, 255, 255, 0.85),
+        rgba(255, 255, 255, 0.85)
+    ),
+    url('https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover !important;
+    text-align: center !important;
+    position: relative !important;
+    overflow: hidden !important;
+    border-radius: 0 0 30px 30px !important;
+    box-shadow: 0 4px 20px rgba(128, 0, 0, 0.1) !important;
+    min-height: 280px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
 }
 
-.course-details-title,
-.upload-title,
-.attachments-section h2 {
-    font-weight: 800;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.7rem;
-    background: #800000;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    text-align: center;
+.course-details-section::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 4px !important;
+    background: linear-gradient(90deg, #800000, #a83232) !important;
+    z-index: 2 !important;
+}
+
+.course-details-title {
+    font-size: 3.2rem !important;
+    font-weight: 900 !important;
+    margin-bottom: 1.5rem !important;
+    background: linear-gradient(135deg, #800000, #a83232) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    letter-spacing: 0.5px !important;
+    text-align: center !important;
+    position: relative !important;
+    display: inline-block !important;
+}
+
+.course-details-title::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: -0.8rem !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 100px !important;
+    height: 4px !important;
+    background: linear-gradient(90deg, #800000, #a83232) !important;
+    border-radius: 2px !important;
+}
+
+.course-details-description {
+    font-size: 1.15rem !important;
+    max-width: 900px !important;
+    margin: 0 auto 1.5rem !important;
+    line-height: 1.6 !important;
+    color: #2d3748 !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    padding: 2rem 2.5rem !important;
+    border-radius: 20px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+.upload-container {
+    max-width: 900px !important;
+    margin: -4rem auto 2rem !important;
+    background: linear-gradient(to bottom right, #fff, #fff9f9) !important;
+    border-radius: 1.5rem !important;
+    box-shadow: 0 10px 40px rgba(159, 43, 43, 0.1) !important;
+    padding: 2rem !important;
+    position: relative !important;
+    z-index: 10 !important;
 }
 
 .upload-title {
-    font-size: 1.7rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.7rem !important;
+    font-weight: 900 !important;
+    margin-bottom: 1rem !important;
+    background: linear-gradient(135deg, #800000, #a83232) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    letter-spacing: 0.5px !important;
+    text-align: center !important;
 }
 
-.attachments-section h2 {
-    font-size: 1.3rem;
-    margin-top: 1.5rem;
-}
-
-.uploaded-docs {
-    margin-top: 2rem;
-    font-size: 1.1rem;
-    color: #800000;
-    font-weight: 700;
-    letter-spacing: 0.2px;
-    text-align: center;
-}
-
-.course-details-description,
 .upload-subtitle {
-    color: #666;
-    font-size: 1.08rem;
-    margin-bottom: 1.2rem;
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-    font-weight: 500;
-    text-align: center;
+    font-size: 1.15rem !important;
+    max-width: 700px !important;
+    margin: 0 auto 1.5rem !important;
+    line-height: 1.6 !important;
+    color: #666 !important;
+    text-align: center !important;
 }
 
 .upload-box {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 1.2rem;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin-bottom: 1.2rem !important;
 }
 
 .custom-upload-label {
-    display: flex;
-    align-items: center;
-    background-color: #fff;
-    border: 2px dashed #80000033;
-    padding: 1.1rem 1.5rem;
-    border-radius: 1rem;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 1.08rem;
-    color: #800000;
-    gap: 0.7rem;
-    transition: all 0.2s;
-    box-shadow: 0 2px 8px rgba(159, 43, 43, 0.04);
+    display: flex !important;
+    align-items: center !important;
+    background-color: #fff !important;
+    border: 2px dashed #80000033 !important;
+    padding: 1.1rem 1.5rem !important;
+    border-radius: 1rem !important;
+    cursor: pointer !important;
+    font-weight: 600 !important;
+    font-size: 1.08rem !important;
+    color: #800000 !important;
+    gap: 0.7rem !important;
+    transition: all 0.2s !important;
+    box-shadow: 0 2px 8px rgba(159, 43, 43, 0.04) !important;
 }
 
 .custom-upload-label:hover {
-    background: #fff9f9;
-    border-color: #800000;
-    color: #800000;
-    transform: translateY(-2px);
-}
-
-input[type="file"] {
-    display: none;
-}
-
-.flashcards-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: center;
-    justify-content: center;
-    margin-top: 1rem;
-}
-
-.flashcards-button, .chatbot-button, .icon-button {
-    padding: 0.7rem 1.5rem;
-    font-size: 1.08rem;
-    border: none;
-    border-radius: 1rem;
-    background: #800000;
-    color: #fff;
-    cursor: pointer;
-    font-weight: 700;
-    box-shadow: 0 2px 8px rgba(159, 43, 43, 0.07);
-    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.flashcards-button:hover:not(:disabled),
-.icon-button:hover {
-    background: #a10000;
-    transform: translateY(-2px) scale(1.03);
-    box-shadow: 0 6px 20px rgba(159, 43, 43, 0.13);
-}
-
-.flashcards-button:disabled {
-    background: #ededed !important;
-    color: #b0b0b0 !important;
-    cursor: not-allowed !important;
-    box-shadow: none !important;
-    border: 1.5px solid #cccccc !important;
-}
-
-.flashcards-button[title="Delete button"] {
-    display: none;
-}
-
-.chatbot-button {
-    background: #fff !important;
-    color: #800000 !important;
-    border: 2px solid #800000 !important;
-    border-radius: 2rem;
-    font-weight: bold;
-    box-shadow: 0 4px 12px rgba(159, 43, 43, 0.10);
-    transition: all 0.2s;
-    gap: 0.7rem;
-    display: inline-flex;
-    align-items: center;
-}
-
-.chatbot-button .fa-robot,
-.chatbot-button svg {
-    color: #800000 !important;
-    transition: color 0.2s;
-}
-
-.chatbot-button:hover {
-    background: #800000 !important;
-    color: #fff !important;
+    background: #fff9f9 !important;
     border-color: #800000 !important;
+    transform: translateY(-2px) !important;
 }
 
-.chatbot-button:hover .fa-robot,
-.chatbot-button:hover svg {
-    color: #fff !important;
+.attachments-section {
+    max-width: 900px !important;
+    margin: 2rem auto !important;
+    background: linear-gradient(to bottom right, #fff, #fff9f9) !important;
+    border-radius: 1.5rem !important;
+    box-shadow: 0 10px 40px rgba(159, 43, 43, 0.1) !important;
+    padding: 2rem !important;
 }
 
-.icon-button {
-    background: #800000;
-    color: #fff;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    margin-left: 0.3rem;
-    border: 2px solid #fff5f5;
-    box-shadow: 0 2px 8px rgba(159, 43, 43, 0.04);
-    display: inline-flex;
-    font-size: 1.1rem;
-}
-
-.icon-button:hover {
-    background: #a10000;
-    color: #fff;
-    border-color: #a10000;
-}
-
-.icon-button .button-tooltip {
-    visibility: hidden;
-    width: max-content;
-    background-color: #800000;
-    color: #fff;
-    text-align: center;
-    padding: 4px 10px;
-    border-radius: 5px;
-    position: absolute;
-    z-index: 1;
-    top: 110%;
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-    font-size: 0.95rem;
-    opacity: 0;
-    transition: opacity 0.2s;
-    pointer-events: none;
-}
-
-.icon-button:hover .button-tooltip {
-    visibility: visible;
-    opacity: 1;
-    pointer-events: auto;
+.uploaded-docs {
+    font-size: 1.7rem !important;
+    font-weight: 900 !important;
+    margin-bottom: 1rem !important;
+    background: linear-gradient(135deg, #800000, #a83232) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    letter-spacing: 0.5px !important;
+    text-align: center !important;
 }
 
 .attachment-list {
-    list-style: none;
-    padding: 0;
-    margin-top: 1.5rem;
+    list-style: none !important;
+    padding: 0 !important;
+    margin-top: 1.5rem !important;
 }
 
 .attachment-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1.5rem;
-    background-color: #fff;
-    margin-bottom: 1rem;
-    padding: 1.1rem 1.5rem;
-    border: 1.5px solid #ffe5e5;
-    border-radius: 1.2rem;
-    transition: background 0.2s, box-shadow 0.2s;
-    box-shadow: 0 2px 8px rgba(159, 43, 43, 0.04);
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 1.5rem !important;
+    background: linear-gradient(145deg, #fff5f5, #fff) !important;
+    margin-bottom: 1rem !important;
+    padding: 1.1rem 1.5rem !important;
+    border: 1px solid rgba(159, 43, 43, 0.1) !important;
+    border-radius: 1.2rem !important;
+    transition: all 0.2s !important;
+    box-shadow: 0 4px 15px rgba(159, 43, 43, 0.08) !important;
 }
 
 .attachment-item:hover {
-    background: #fff9f9;
-    box-shadow: 0 6px 20px rgba(159, 43, 43, 0.10);
-}
-
-.attachment-item span {
-    flex: 0 0 50%;
-    font-size: 1.05rem;
-    color: #800000;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-right: 1rem;
-    font-weight: 600;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(159, 43, 43, 0.12) !important;
 }
 
 .attachment-item div {
-    flex: 1;
-    display: flex;
-    gap: 0.5rem;
-    justify-content: flex-end;
-    align-items: center;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    flex-wrap: wrap !important;
 }
 
 .pdf-link {
-    display: inline-flex;
-    align-items: center;
-    text-decoration: none;
-    font-size: 1.05rem;
-    padding: 8px 16px;
-    border-radius: 8px;
-    background: #fff5f5;
-    box-shadow: 0 2px 8px rgba(159, 43, 43, 0.04);
-    color: #800000;
-    font-weight: 700;
-    transition: background 0.2s, color 0.2s;
-    gap: 0.6rem;
+    display: inline-flex !important;
+    align-items: center !important;
+    text-decoration: none !important;
+    font-size: 1.05rem !important;
+    padding: 0.8rem 1.2rem !important;
+    border-radius: 0.8rem !important;
+    background: #fff !important;
+    color: #800000 !important;
+    font-weight: 600 !important;
+    transition: all 0.2s !important;
+    gap: 0.6rem !important;
+    border: 2px solid rgba(159, 43, 43, 0.1) !important;
 }
 
 .pdf-link:hover {
-    background: #ffe5e5;
-    color: #b33434;
-}
-
-.pdf-icon {
-    margin-right: 8px;
-    color: #b33434;
-    font-size: 22px;
-    transition: color 0.2s;
+    background: #fff9f9 !important;
+    color: #a83232 !important;
+    border-color: #800000 !important;
 }
 
 input[type="number"] {
-    margin-right: 0.5rem;
-    width: 60px;
-    padding: 0.4rem 0.7rem;
-    border: 2px solid #ffe5e5;
-    border-radius: 8px;
-    font-size: 1.05rem;
-    background: #fff9f9;
-    transition: border 0.2s;
-    font-weight: 600;
-    color: #800000;
+    width: 60px !important;
+    padding: 0.4rem 0.7rem !important;
+    border: 2px solid rgba(159, 43, 43, 0.2) !important;
+    border-radius: 0.8rem !important;
+    font-size: 1rem !important;
+    background: #fff !important;
+    color: #800000 !important;
+    font-weight: 600 !important;
+    transition: all 0.2s !important;
 }
 
 input[type="number"]:focus {
-    border: 2px solid #800000;
-    outline: none;
-    background: #fff;
+    outline: none !important;
+    border-color: #800000 !important;
+    background: #fff9f9 !important;
+}
+
+.flashcards-button, .icon-button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    border: none !important;
+    border-radius: 1rem !important;
+    background: #800000 !important;
+    color: #fff !important;
+    padding: 0.9rem 1.5rem !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+    box-shadow: 0 4px 15px rgba(159, 43, 43, 0.2) !important;
+}
+
+.icon-button {
+    padding: 0.7rem !important;
+    border-radius: 50% !important;
+    width: 40px !important;
+    height: 40px !important;
+    margin: 0 0.25rem !important;
+}
+
+.flashcards-button:hover,
+.icon-button:hover {
+    transform: translateY(-2px) !important;
+    background: #a83232 !important;
+    box-shadow: 0 6px 20px rgba(159, 43, 43, 0.25) !important;
+}
+
+.flashcards-button:disabled {
+    background: #ccc !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
 }
 
 .spinner-border {
-    margin-left: 0.5rem;
-    vertical-align: middle;
+    margin-left: 0.5rem !important;
+}
+
+.chatbot-button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.7rem !important;
+    padding: 0.9rem 1.5rem !important;
+    border-radius: 2rem !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    transition: all 0.2s !important;
+    box-shadow: 0 4px 15px rgba(159, 43, 43, 0.15) !important;
+}
+
+.flashcards-buttons {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    margin-top: 1rem !important;
+}
+
+.button-tooltip {
+    position: absolute !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+    color: white !important;
+    padding: 0.4rem 0.8rem !important;
+    border-radius: 0.5rem !important;
+    font-size: 0.85rem !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+    transition: opacity 0.2s !important;
+    bottom: 100% !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    white-space: nowrap !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.icon-button:hover .button-tooltip {
+    opacity: 1 !important;
+}
+
+@media (max-width: 768px) {
+    .course-details-section {
+        padding: 2rem 1rem !important;
+        min-height: 200px !important;
+    }
+
+    .course-details-title {
+        font-size: 2rem !important;
+    }
+
+    .course-details-description {
+        font-size: 1rem !important;
+        padding: 1.5rem !important;
+    }
+
+    .upload-container,
+    .attachments-section {
+        margin: 1rem !important;
+        padding: 1.5rem !important;
+    }
+
+    .attachment-item {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 1rem !important;
+    }
+
+    .attachment-item div {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(40px, auto)) !important;
+        gap: 0.5rem !important;
+        justify-content: center !important;
+    }
+
+    .icon-button {
+        margin: 0 !important;
+    }
 }

@@ -42,14 +42,16 @@ const HomePage = () => {
                 />
               </h1>
               <p>
-                Your AI-powered academic consultant—guiding you in subject
-                selection, exam prep, and smarter studying.
+                Welcome to AI Educator, your intelligent academic companion powered by cutting-edge artificial intelligence. 
+                Experience personalized learning assistance that adapts to your needs - from smart course recommendations 
+                and dynamic flashcard generation to AI-powered study materials analysis. Let our advanced AI technology 
+                transform your educational journey and help you achieve academic excellence with less stress and better results.
               </p>
               <button
                   onClick={() => handleNavigate("/subject-recommendation")}
                   className="btn-primary"
               >
-                Get Started
+                Start Your AI Learning Journey
               </button>
             </div>
           </section>
@@ -186,4 +188,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-

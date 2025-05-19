@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Modal} from 'react-bootstrap';
 import CustomNavbar from '../app-custom/CustomNavbar';
-import '../home/HomePage.css';
+import '../HomePage/HomePage.css';
 import './SemesterPage.css';
 import {createSemester, deleteSemester, getCourses, getSemesters} from '../../services/api';
 import {useNavigate} from 'react-router-dom';
@@ -44,6 +44,7 @@ const SemesterPage = () => {
 
     const handleCreate = () => {
         setShowModal(true);
+        setNotification({ message: '', type: '' }); // Clear any existing notifications
     };
 
     const closeModal = () => {
@@ -132,18 +133,16 @@ const SemesterPage = () => {
 
     const handleDelete = async (id) => {
         try {
-
             await deleteSemester(id);
             await fetchSemesters();
             setNotification({
-                message: 'Semester deleted successfully.',
-                type: 'success',
+                message: 'Semester deleted successfully!',
+                type: 'success'
             });
         } catch (error) {
-
             setNotification({
                 message: 'Failed to delete semester. Please try again.',
-                type: 'error',
+                type: 'error'
             });
         }
     };
@@ -158,27 +157,31 @@ const SemesterPage = () => {
                     onClose={() => setNotification({message: '', type: ''})}
                 />
             )}
-            <div className="homepage-container">
+            <div className="semester-page-container">
                 <header className="hero-header">
                     <div className="hero-title">
                         <h1>Semester Planning</h1>
-                        <p>
-                            Organize your academic journey efficiently by planning
-                            <br/>
-                            each semester with your selected subjects.
-                        </p>
+                        <h6>
+                            Welcome to your Semester Planning hub! Here you can create and manage your academic semesters 
+                            with ease. Organize up to five courses per semester, track your progress, and plan your 
+                            educational journey effectively. Whether you're starting a new semester or modifying an existing one, 
+                            our intuitive interface helps you make informed decisions about your course selection.
+                        </h6>
                     </div>
                 </header>
 
                 <div className="semester-page-create-btn-wrapper">
-                    <button className="btn semester-page-create-btn" onClick={handleCreate}>
+                    <button className="semester-page-create-btn" onClick={handleCreate}>
+                        <i className="fas fa-plus-circle me-2"></i>
                         Create Semester
                     </button>
                 </div>
 
                 <div className="semester-page-cards-container">
                     {loading ? (
-                        <p>Loading semesters...</p>
+                        <div className="no-semesters-message">
+                            <p>Loading semesters...</p>
+                        </div>
                     ) : semesters.length > 0 ? (
                         semesters.map((semester) => (
                             <div key={semester.id} className="semester-page-card">
@@ -196,25 +199,31 @@ const SemesterPage = () => {
                                             </li>
                                         ))
                                     ) : (
-                                        <li>No courses added.</li>
+                                        <li>No courses added yet</li>
                                     )}
                                 </ul>
                                 <div className="semester-page-card-buttons">
-                                    <button className="semester-page-action-btn semester-page-edit-btn"
-                                            onClick={() => handleEdit(semester.id)}>
-                                        <i className="fas fa-pen me-1"></i> Edit
+                                    <button
+                                        className="semester-page-action-btn semester-page-edit-btn"
+                                        onClick={() => handleEdit(semester.id)}
+                                    >
+                                        <i className="fas fa-edit"></i>
+                                        Edit
                                     </button>
-                                    <button className="semester-page-action-btn semester-page-delete-btn"
-                                            onClick={() => handleDelete(semester.id)}>
-                                        <i className="fas fa-trash-alt me-1"></i> Delete
+                                    <button
+                                        className="semester-page-action-btn semester-page-delete-btn"
+                                        onClick={() => handleDelete(semester.id)}
+                                    >
+                                        <i className="fas fa-trash-alt"></i>
+                                        Delete
                                     </button>
                                 </div>
-
                             </div>
                         ))
                     ) : (
-                        <div>
-                            <p>You don't have any semesters.</p>
+                        <div className="no-semesters-message">
+                            <p>You don't have any semesters yet.</p>
+                            <p>Create one to start organizing your courses!</p>
                         </div>
                     )}
                 </div>
@@ -341,8 +350,18 @@ const SemesterPage = () => {
                                     await createSemester(semesterData, email);
                                     await fetchSemesters();
                                     closeModal();
+                                    setNotification({
+                                        message: editingSemesterId
+                                            ? 'Semester updated successfully!'
+                                            : 'New semester created successfully!',
+                                        type: 'success'
+                                    });
                                 } catch (error) {
                                     console.error('Failed to save semester:', error);
+                                    setNotification({
+                                        message: 'Failed to save semester. Please try again.',
+                                        type: 'error'
+                                    });
                                 }
                             }}
                         >

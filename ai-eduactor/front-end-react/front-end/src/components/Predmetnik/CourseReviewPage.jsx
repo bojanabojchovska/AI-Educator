@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import {FaFilePdf} from 'react-icons/fa';
 import { FaStar, FaArrowLeft, FaTrash, FaCommentAlt, FaArrowDown, FaArrowUp } from 'react-icons/fa';
@@ -44,12 +44,27 @@ const CourseReviewPage = () => {
 
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
+    const [ratingError, setRatingError] = useState('');
+    const [commentError, setCommentError] = useState('');
 
     useEffect(() => {
         fetchCourseData();
         fetchReviews();
         fetchCourseFlashCards();
     }, [courseId]);
+
+    useEffect(() => {
+        if (successMessage || error || commentError || ratingError) {
+            const timer = setTimeout(() => {
+                setSuccessMessage('');
+                setError('');
+                setCommentError('');
+                setRatingError('');
+            }, 5000); // Messages will disappear after 5 seconds
+
+            return () => clearTimeout(timer);
+        }
+    }, [successMessage, error, commentError, ratingError]);
 
     const fetchCourseData = async () => {
         try {
@@ -92,32 +107,27 @@ const CourseReviewPage = () => {
     }
 
     const handleSubmitReview = async (e) => {
-        console.log(">>> Submitting REVIEW with rating + feedback");
         e.preventDefault();
+        setRatingError('');
+        setError(null);
 
-        // Validation
         if (!newReview.rating || newReview.rating < 1) {
-            setError('Please provide a rating (1-5 stars)');
+            setRatingError('Please select a rating between 1 and 5 stars');
             return;
         }
 
         setIsSubmittingReview(true);
-        setError(null);
         setSuccessMessage('');
 
         try {
-            // Make sure courseId is treated as a number
             await submitSubjectReview(courseId, {
                 rating: newReview.rating,
                 feedback: newReview.feedback,
                 isReview: "true"
             });
 
-            // Reset form and show success message
             setNewReview({rating: 0, feedback: ''});
             setSuccessMessage('Your review was submitted successfully!');
-
-            // Refresh reviews to show the new one
             await fetchReviews();
         } catch (err) {
             console.error('Error submitting review:', err);
@@ -128,16 +138,16 @@ const CourseReviewPage = () => {
     };
 
     const handleSubmitComment = async (e) => {
-        console.log(">>> Submitting COMMENT");
         e.preventDefault();
+        setCommentError('');
+        setError(null);
 
-        if (!commentFeedback) {
-            setError('Please provide a comment');
+        if (!commentFeedback.trim()) {
+            setCommentError('Please write a comment before submitting');
             return;
         }
 
         setIsSubmittingComment(true);
-        setError(null);
         setSuccessMessage('');
 
         try {
@@ -147,13 +157,9 @@ const CourseReviewPage = () => {
                 formData.append('attachments', file);
             });
 
-            const comment = await submitSubjectComment(courseId, formData);
-
+            await submitSubjectComment(courseId, formData);
             setCommentFeedback('');
-            setSuccessMessage('Your comment was submitted successfully!');
-
             setSelectedFiles([]);
-            setAttachmentsMap({});
             setSuccessMessage('Your comment was submitted successfully!');
             await fetchReviews();
         } catch (err) {
@@ -211,6 +217,12 @@ const CourseReviewPage = () => {
         setSelectedFiles(Array.from(e.target.files));
     };
 
+    const handleRemoveFile = (indexToRemove) => {
+        setSelectedFiles(prevFiles => 
+            prevFiles.filter((_, index) => index !== indexToRemove)
+        );
+    };
+
     const toggleAttachments = async (commentId) => {
         const newExpanded = new Set(expandedComments);
 
@@ -241,11 +253,8 @@ const CourseReviewPage = () => {
                     className="back-button"
                     onClick={() => navigate('/course-reviews')}
                 >
-                    <FaArrowLeft /> Back to Courses
+                    <FaArrowLeft /> Back to Course Hub
                 </button>
-
-                {error && <div className="error-message">{error}</div>}
-                {successMessage && <div className="success-message">{successMessage}</div>}
 
                 <div className="course-info">
                     <h2>{courseName}</h2>
@@ -295,12 +304,14 @@ const CourseReviewPage = () => {
                     <button
                         className={activeTab === 'reviews' ? 'active' : ''}
                         onClick={() => setActiveTab('reviews')}
+                        data-tab="reviews"
                     >
                         Reviews
                     </button>
                     <button
                         className={activeTab === 'comments' ? 'active' : ''}
                         onClick={() => setActiveTab('comments')}
+                        data-tab="comments"
                     >
                         Comments
                     </button>
@@ -344,6 +355,13 @@ const CourseReviewPage = () => {
                             >
                                 {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
                             </button>
+                            {(successMessage || error || ratingError) && activeTab === 'reviews' && (
+                                <div className="notifications">
+                                    {successMessage && <div className="success-message">{successMessage}</div>}
+                                    {error && <div className="error-message">{error}</div>}
+                                    {ratingError && <div className="error-tooltip">{ratingError}</div>}
+                                </div>
+                            )}
                         </form>
 
                         <div className="reviews-list">
@@ -415,6 +433,7 @@ const CourseReviewPage = () => {
                                     onChange={(e) => setCommentFeedback(e.target.value)}
                                     rows="6"
                                 />
+                                {commentError && <div className="error-tooltip">{commentError}</div>}
                             </div>
 
                             <div className="file-upload-container">
@@ -436,10 +455,25 @@ const CourseReviewPage = () => {
 
                             {selectedFiles.length > 0 && (
                                 <div className="selected-files-list">
-                                    <p>Selected files:</p>
+                                    <div className="selected-files-header">
+                                        <span>Selected files</span>
+                                        <span className="file-count">{selectedFiles.length} file(s)</span>
+                                    </div>
                                     <ul>
                                         {selectedFiles.map((file, idx) => (
-                                            <li key={idx}>{file.name}</li>
+                                            <li key={idx} className="selected-file-item">
+                                                <div className="file-info">
+                                                    <FaFilePdf className="file-icon" />
+                                                    <span className="file-name">{file.name}</span>
+                                                </div>
+                                                <button 
+                                                    className="remove-file-btn"
+                                                    onClick={() => handleRemoveFile(idx)}
+                                                    title="Remove file"
+                                                >
+                                                    ×
+                                                </button>
+                                            </li>
                                         ))}
                                     </ul>
                                 </div>
@@ -447,11 +481,17 @@ const CourseReviewPage = () => {
 
                             <button
                                 type="submit"
-                                className="submit-btn"
+                                className="submit-btn blue-theme"
                                 disabled={isSubmittingComment}
                             >
                                 {isSubmittingComment ? 'Submitting...' : 'Submit Comment'}
                             </button>
+                            {(successMessage || error) && activeTab === 'comments' && (
+                                <div className="notifications">
+                                    {successMessage && <div className="success-message">{successMessage}</div>}
+                                    {error && <div className="error-message">{error}</div>}
+                                </div>
+                            )}
                         </form>
 
                         <div className="comments-list">
@@ -541,4 +581,3 @@ const CourseReviewPage = () => {
 };
 
 export default CourseReviewPage;
-

@@ -51,14 +51,19 @@ const SubjectRecommendation = () => {
     return (
         <div className="recommendation-page">
             <CustomNavbar/>
-            <main className="recommendation-main">
-                <h1>Subject Recommendation</h1>
-                <p>
-                    Select subjects you know best and get
-                    <br/>
-                    <span className="highlighted">AI-generated suggestions</span> based on your profile.
-                </p>
+            <div className="recommendation-hero">
+                <div className="recommendation-main">
+                    <h1>Subject Recommendation</h1>
+                    <p>
+                        Experience personalized course recommendations powered by AI. Select the subjects 
+                        you excel in, and let our intelligent system analyze your preferences to suggest 
+                        complementary courses that align with your academic strengths and interests. 
+                        Discover new learning opportunities tailored just for you.
+                    </p>
+                </div>
+            </div>
 
+            <div className="recommendation-content">
                 <div className="lists-container">
                     <div className="list-box">
                         <h4>Select subjects you know best</h4>
@@ -132,12 +137,11 @@ const SubjectRecommendation = () => {
                 </div>
 
                 <button className="submit-button" onClick={fetchRecommendations}>
-                    Submit and get Recommended subjects
+                    Get AI Recommendations
                 </button>
-            </main>
+            </div>
         </div>
     );
 };
 
 export default SubjectRecommendation;
-

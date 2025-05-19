@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './CourseReviews.css';
+import './CourseHub.css';
 import CustomNavbar from '../app-custom/CustomNavbar';
 import {
     addCourseToFavorites,
@@ -11,7 +11,7 @@ import {
 import { FaHeart, FaRegHeart } from "react-icons/fa6";
 import StarRatings from 'react-star-ratings';
 
-const CourseReviews = () => {
+const CourseHub = () => {
     const [subjects, setSubjects] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [error, setError] = useState(null);
@@ -101,32 +101,33 @@ const CourseReviews = () => {
                     Here, you can mark your favorite courses for easy access, rate and review them based on your experience,
                     and share valuable feedback with your peers. The hub also allows you to upload and access study materials,
                     enabling file-sharing between students. Plus, you can take default quizzes created from the flashcards contributed
-                    by other students in your course – making learning more dynamic and collective.
-                </p>
-                <div className="header-controls">
-                    <div className="filter-toggle-container">
-                        <button
-                            className={`favorites-toggle-btn ${showOnlyFavorites ? 'active' : ''}`}
-                            onClick={() => setShowOnlyFavorites(prev => !prev)}
-                        >
-                            {showOnlyFavorites ? 'Show All Courses' : 'Show Favorites Only'}
-                        </button>
-                    </div>
-                    <div className="search-container">
-                        <input
-                            type="text"
-                            placeholder="Search courses..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="search-input"
-                        />
-                    </div>
+                    by other students in your course – making learning more dynamic and collective.</p>
+            </div>
+
+            {/* Search bar moved below hero/header */}
+            <div className="coursehub-searchbar-wrapper">
+                <div className="search-container">
+                    <input
+                        type="text"
+                        placeholder="Search courses..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="search-input"
+                    />
                 </div>
             </div>
 
             {error && <div className="global-error-message">{error}</div>}
 
             <div className="subject-reviews-container">
+                <div className="filter-toggle-container">
+                    <button
+                        className={`favorites-toggle-btn ${showOnlyFavorites ? 'active' : ''}`}
+                        onClick={() => setShowOnlyFavorites(prev => !prev)}
+                    >
+                        {showOnlyFavorites ? 'Show All Courses' : 'Show Favorites Only'}
+                    </button>
+                </div>
                 <div className="subjects-grid">
                     {sortedSubjects.length > 0 ? (
                         sortedSubjects.map(subject => (
@@ -179,4 +180,4 @@ const CourseReviews = () => {
     );
 };
 
-export default CourseReviews;
+export default CourseHub;

@@ -249,7 +249,13 @@ const FlashCardGamePage = () => {
                                 </div>
                               </div>
                               <div className="flashcard-content">
-                                <p>{cards[currentIndex].question}</p>
+                                <p className={`
+                                  ${cards[currentIndex].question.length > 200 ? 'very-long-text' : 
+                                    cards[currentIndex].question.length > 100 ? 'long-text' : ''
+                                  }`}
+                                >
+                                  {cards[currentIndex].question}
+                                </p>
                                 <button
                                   className="ai-flashcard-delete-btn"
                                   onClick={(e) => {
@@ -272,7 +278,13 @@ const FlashCardGamePage = () => {
                                 </div>
                               </div>
                               <div className="flashcard-content">
-                                <p>{cards[currentIndex].answer}</p>
+                                <p className={`
+                                  ${cards[currentIndex].answer.length > 200 ? 'very-long-text' : 
+                                    cards[currentIndex].answer.length > 100 ? 'long-text' : ''
+                                  }`}
+                                >
+                                  {cards[currentIndex].answer}
+                                </p>
                                 <button
                                   className="ai-flashcard-delete-btn"
                                   onClick={(e) => {

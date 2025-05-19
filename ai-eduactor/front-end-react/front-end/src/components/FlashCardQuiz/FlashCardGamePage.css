@@ -108,7 +108,7 @@
 }
 
 .flashcard-front {
-    background: linear-gradient(145deg, #990000, #800000) !important;
+    background: linear-gradient(145deg, #800000, #4a0000) !important;
     transform: rotateY(0deg) !important;
 }
 
@@ -163,14 +163,15 @@
     padding: 0 1.5rem 1.5rem !important;
     position: relative !important;
     z-index: 1 !important;
+    overflow: hidden !important;
 }
 
 .flashcard-content p {
     flex: 1 !important;
     display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
     font-size: 1.2rem !important;
     line-height: 1.6 !important;
     color: white !important;
@@ -179,11 +180,45 @@
     background: rgba(255, 255, 255, 0.1) !important;
     border-radius: 16px !important;
     backdrop-filter: blur(10px) !important;
+    overflow-y: auto !important;
+    max-height: 250px !important;
+    word-break: break-word !important;
+}
+
+.flashcard-content p::-webkit-scrollbar {
+    width: 8px !important;
+}
+
+.flashcard-content p::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 4px !important;
+}
+
+.flashcard-content p::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3) !important;
+    border-radius: 4px !important;
+}
+
+.flashcard-back .flashcard-content p::-webkit-scrollbar-track {
+    background: rgba(128, 0, 0, 0.05) !important;
+}
+
+.flashcard-back .flashcard-content p::-webkit-scrollbar-thumb {
+    background: rgba(128, 0, 0, 0.2) !important;
 }
 
 .flashcard-back .flashcard-content p {
-    color: #333 !important;
+    color: #4a0000 !important;  /* Changed to dark maroon */
     background: rgba(128, 0, 0, 0.05) !important;
+    font-weight: 500 !important;  /* Added for better readability */
+}
+
+.flashcard-content p.long-text {
+    font-size: 1rem !important;
+}
+
+.flashcard-content p.very-long-text {
+    font-size: 0.95rem !important;
 }
 
 .ai-flashcard-delete-btn {
@@ -782,7 +817,17 @@
     }
 
     .flashcard-content p {
-        font-size: 1rem !important;
+        font-size: 1.1rem !important;
+        padding: 1.2rem !important;
+        max-height: 200px !important;
+    }
+
+    .flashcard-content p.long-text {
+        font-size: 0.95rem !important;
+    }
+
+    .flashcard-content p.very-long-text {
+        font-size: 0.9rem !important;
     }
 }
 
@@ -827,7 +872,17 @@
     }
 
     .flashcard-content p {
+        font-size: 1rem !important;
+        padding: 1rem !important;
+        max-height: 180px !important;
+    }
+
+    .flashcard-content p.long-text {
         font-size: 0.9rem !important;
+    }
+
+    .flashcard-content p.very-long-text {
+        font-size: 0.85rem !important;
     }
 
     .delete-btn.question-label-style {

@@ -3,14 +3,14 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {FiUpload, FiZap, FiDownload} from 'react-icons/fi';
 import {FaPlay} from 'react-icons/fa';
 import {Spinner} from "react-bootstrap";
-import CustomNavbar from './app-custom/CustomNavbar';
-import Notification from './app-custom/Notification';
+import CustomNavbar from '../app-custom/CustomNavbar';
+import Notification from '../app-custom/Notification';
 import {
     getCourses,
     uploadCourseAttachment,
     generateFlashCards,
     exportFlashCards
-} from '../services/api';
+} from '../../services/api';
 import './FlashcardCourseSelector.css';
 
 const FlashcardCourseSelector = () => {

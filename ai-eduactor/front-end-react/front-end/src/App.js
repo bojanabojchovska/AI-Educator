@@ -12,8 +12,8 @@ import CoursePage from './components/CoursePage/CoursePage';
 import CourseHub from "./components/Predmetnik/CourseHub";
 import CourseReviewPage from './components/Predmetnik/CourseReviewPage';
 // Flashcards
-import FlashCardGamePage from "./components/FlashCardGamePage";
-import FlashcardCourseSelector from "./components/FlashcardCourseSelector";
+import FlashCardGamePage from "./components/FlashCardQuiz/FlashCardGamePage";
+import FlashcardCourseSelector from "./components/FlashCardGeneratorForm/FlashcardCourseSelector";
 // Other components
 import SubjectRecommendation from "./components/Recommendations/SubjectRecommendation";
 import ChatBot from "./components/ChatBot/ChatBot";

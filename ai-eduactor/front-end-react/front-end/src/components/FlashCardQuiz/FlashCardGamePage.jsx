@@ -6,8 +6,8 @@ import {
   getFlashCardsByCourse,
   getCourses,
   getFlashCardsForAttachment
-} from "../services/api";
-import CustomNavbar from "./app-custom/CustomNavbar";
+} from "../../services/api";
+import CustomNavbar from "../app-custom/CustomNavbar";
 import { FaRedo, FaArrowLeft } from "react-icons/fa";
 import "./FlashCardGamePage.css";
 

@@ -34,10 +34,13 @@
 
 .hero-header {
     width: 100% !important;
-    padding: 3.5rem 2rem !important;
+    padding: 4rem 2rem !important;
     margin-bottom: 2rem !important;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)),
-                url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover !important;
+    background: linear-gradient(
+        rgba(255, 255, 255, 0.85), 
+        rgba(255, 255, 255, 0.85)
+    ),
+    url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover !important;
     text-align: center !important;
     position: relative !important;
     overflow: hidden !important;
@@ -56,52 +59,67 @@
 }
 
 .hero-title {
-    max-width: 1000px !important;
+    max-width: 1200px !important;
     margin: 0 auto !important;
 }
 
 .hero-title h1 {
-    font-size: 3.2rem !important;
+    font-size: 3.8rem !important;
     font-weight: 900 !important;
-    margin-bottom: 1rem !important;
+    margin-bottom: 1.8rem !important;
     background: linear-gradient(135deg, #800000, #a83232) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
-    text-shadow: none !important;
+    letter-spacing: 0.5px !important;
 }
 
 .hero-title p {
     font-size: 1.2rem !important;
-    color: #4a5568 !important;
     max-width: 900px !important;
     margin: 0 auto !important;
     line-height: 1.7 !important;
-    background: rgba(255, 255, 255, 0.9) !important;
-    padding: 1.5rem 2rem !important;
+    background: rgba(255, 255, 255, 0.8) !important;
+    padding: 1.8rem 2rem !important;
     border-radius: 15px !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+    color: #2d3748 !important;
+}
+
+.no-semesters-message {
+    text-align: center !important;
+    grid-column: 1 / -1 !important;
+    padding: 3rem 1rem !important;
+    color: #666 !important;
+    font-size: 1.2rem !important;
+    background: #f8f9fa !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+    margin: 2rem auto !important;
+    max-width: 500px !important;
+    border: 1px solid rgba(128, 0, 0, 0.1) !important;
 }
 
 .semester-page-cards-container {
     display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
-    gap: 1.5rem !important;
+    grid-template-columns: repeat(4, minmax(300px, 1fr)) !important;
+    gap: 2rem !important;
     padding: 2rem !important;
     max-width: 1400px !important;
     margin: 0 auto !important;
-    background: linear-gradient(135deg, #f8fafc 0%, #fff 100%) !important;
+    justify-content: center !important;
 }
 
 .semester-page-card {
     background: linear-gradient(145deg, #ffffff, #f8fafc) !important;
-    padding: 1.5rem !important;
+    padding: 1.8rem !important;
     border-radius: 20px !important;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
     border: 1px solid rgba(128, 0, 0, 0.1) !important;
     display: flex !important;
     flex-direction: column !important;
-    min-height: 260px !important;
+    min-height: 280px !important;
     transition: all 0.2s ease !important;
+    width: 100% !important;
 }
 
 .semester-page-card:hover {
@@ -111,9 +129,9 @@
 
 .semester-page-card h3 {
     text-align: center !important;
-    font-size: 1.6rem !important;
+    font-size: 1.8rem !important;
     color: #800000 !important;
-    margin-bottom: 1.5rem !important;
+    margin-bottom: 1.8rem !important;
     padding-bottom: 0.75rem !important;
     border-bottom: 2px solid rgba(128, 0, 0, 0.1) !important;
 }
@@ -130,18 +148,23 @@
 .semester-page-card-buttons {
     display: flex !important;
     justify-content: center !important;
-    gap: 1rem !important;
+    gap: 1.2rem !important;
     margin-top: auto !important;
-    padding-top: 1rem !important;
+    padding-top: 1.5rem !important;
     border-top: 1px solid #edf2f7 !important;
 }
 
 .semester-page-action-btn {
-    height: 38px !important;
-    min-height: 38px !important;
-    font-size: 0.95rem !important;
-    padding: 0.6rem 1.5rem !important;
+    min-width: 120px !important;
+    height: 42px !important;
+    font-size: 1rem !important;
+    padding: 0 1.5rem !important;
     border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    white-space: nowrap !important;
 }
 
 .semester-page-edit-btn {
@@ -177,20 +200,21 @@
 
 .semester-page-course-btn {
     width: 100% !important;
-    text-align: left !important;
-    padding: 0.8rem 1.2rem !important;
-    margin: 0.4rem 0 !important;
+    text-align: center !important;
+    padding: 0.9rem 1.2rem !important;
+    margin: 0.5rem 0 !important;
     border-radius: 12px !important;
     font-size: 1rem !important;
     background: #fff !important;
     border: 1px solid rgba(128, 0, 0, 0.1) !important;
     font-weight: 600 !important;
     transition: all 0.3s ease !important;
-    position: relative !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    max-width: 100% !important;
+    color: #333 !important;
+    display: block !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    min-height: 45px !important;
+    line-height: 1.4 !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02) !important;
 }
 
@@ -291,7 +315,7 @@
 }
 
 .semester-page-modal-body {
-    padding: 2rem !important;
+    padding: 1.5rem !important;
     overflow-y: auto !important;
     width: 100% !important;
     box-sizing: border-box !important;
@@ -303,7 +327,7 @@
 .semester-page-modal-label {
     font-weight: 700 !important;
     color: #800000 !important;
-    margin-bottom: 0.5rem !important;
+    margin-bottom: 0.3rem !important;
     display: block !important;
     text-align: center !important;
 }
@@ -312,7 +336,7 @@
     width: 100% !important;
     max-width: 400px !important;
     padding: 0.8rem !important;
-    margin: 0 auto 1.5rem !important;
+    margin: 0 auto 1rem !important;
     border: 1.5px solid #e0e0e0 !important;
     border-radius: 10px !important;
     transition: border-color 0.2s !important;
@@ -329,7 +353,7 @@
 }
 
 .semester-page-dual-list-container {
-    margin: 1.5rem 0 2rem 0 !important;
+    margin: 1rem 0 1.5rem 0 !important;
     position: relative !important;
     width: 100% !important;
 }
@@ -339,7 +363,7 @@
     flex-direction: row !important;
     align-items: stretch !important;
     justify-content: center !important;
-    gap: 1rem !important;
+    gap: 0.75rem !important;
     width: 100% !important;
     max-width: 700px !important;
     margin: 0 auto !important;
@@ -351,8 +375,8 @@
 .semester-page-dual-list-header {
     font-weight: 700 !important;
     color: #800000 !important;
-    margin-bottom: 0.4rem !important;
-    font-size: 1.05rem !important;
+    margin-bottom: 0.3rem !important;
+    font-size: 1rem !important;
     text-align: center !important;
 }
 
@@ -360,10 +384,10 @@
     width: 100% !important;
     min-width: 90px !important;
     max-width: 100% !important;
-    height: 300px !important;
+    height: 250px !important;
     border: 1px solid #e2e8f0 !important;
     border-radius: 15px !important;
-    padding: 0.6rem !important;
+    padding: 0.5rem !important;
     background: linear-gradient(135deg, #f8fafc 0%, #fff 100%) !important;
     font-size: 0.95rem !important;
     box-sizing: border-box !important;
@@ -379,8 +403,8 @@
 }
 
 .semester-page-dual-list-select option {
-    padding: 0.8rem 1rem !important;
-    margin: 0.2rem 0 !important;
+    padding: 0.6rem 0.8rem !important;
+    margin: 0.1rem 0 !important;
     border-radius: 8px !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
@@ -535,12 +559,12 @@
 
 .semester-page-course-counter {
     position: absolute !important;
-    top: -30px !important;
+    top: -25px !important;
     right: 0 !important;
-    font-size: 1rem !important;
+    font-size: 0.9rem !important;
     color: #800000 !important;
     font-weight: 600 !important;
-    padding: 0.3rem 0.8rem !important;
+    padding: 0.25rem 0.7rem !important;
     border-radius: 20px !important;
     background-color: #fbe9e7 !important;
     border: 1px solid rgba(128, 0, 0, 0.2) !important;
@@ -569,9 +593,34 @@
     font-size: 1.1rem !important;
 }
 
+@media (max-width: 1400px) {
+    .semester-page-cards-container {
+        grid-template-columns: repeat(3, minmax(300px, 1fr)) !important;
+    }
+}
+
+@media (max-width: 1200px) {
+    .semester-page-cards-container {
+        grid-template-columns: repeat(3, minmax(240px, 1fr)) !important;
+    }
+}
+
+@media (max-width: 1100px) {
+    .semester-page-cards-container {
+        grid-template-columns: repeat(2, minmax(300px, 1fr)) !important;
+    }
+}
+
+@media (max-width: 900px) {
+    .semester-page-cards-container {
+        grid-template-columns: repeat(2, minmax(240px, 1fr)) !important;
+    }
+}
+
 @media (max-width: 768px) {
     .semester-page-cards-container {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important;
+        grid-template-columns: 1fr !important;
+        max-width: 500px !important;
         padding: 1rem !important;
         gap: 1rem !important;
     }
@@ -594,6 +643,12 @@
     }
 
     .semester-page-card {
-        padding: 1rem !important;
+        padding: 1.5rem !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .semester-page-cards-container {
+        grid-template-columns: 1fr !important;
     }
 }

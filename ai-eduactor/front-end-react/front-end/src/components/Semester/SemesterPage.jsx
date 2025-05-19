@@ -213,8 +213,9 @@ const SemesterPage = () => {
                             </div>
                         ))
                     ) : (
-                        <div>
-                            <p>You don't have any semesters.</p>
+                        <div className="no-semesters-message">
+                            <p>You don't have any semesters yet.</p>
+                            <p>Create one to start organizing your courses!</p>
                         </div>
                     )}
                 </div>

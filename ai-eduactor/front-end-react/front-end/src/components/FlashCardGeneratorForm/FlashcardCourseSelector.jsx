@@ -123,15 +123,19 @@ const FlashcardCourseSelector = () => {
                     onClose={() => setNotification(null)}
                 />
             )}
-
-            <div className="fc-main-wrapper">
+            
+            <div className="fc-hero-section">
                 <h1 className="fc-heading">
-                    Generate your flash cards here!
+                    AI Flashcard Generator
                 </h1>
                 <p className="fc-instructions">
-                    Please upload your notes or learning material as a PDF and select the number of flashcards you'd
-                    like to create.
+                    Transform your study materials into interactive flashcards with the power of AI. 
+                    Simply upload your PDF notes, select how many flashcards you want to create, and let our 
+                    advanced AI technology generate targeted study materials tailored to your course content.
                 </p>
+            </div>
+
+            <div className="fc-main-wrapper">
                 <div className="fc-content-grid">
                     <div className="fc-upload-container">
                         <div className="fc-dropdown-box">

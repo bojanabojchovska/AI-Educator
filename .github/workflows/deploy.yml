@@ -1,0 +1,53 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Login to Docker Hub
+      run: echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+
+    - name: Build and push backend
+      run: |
+        docker build -t $DOCKERHUB_USERNAME/ai-edu-backend:$IMAGE_TAG ./backend
+        docker push $DOCKERHUB_USERNAME/ai-edu-backend:$IMAGE_TAG
+
+    - name: Build and push frontend
+      run: |
+        docker build -t $DOCKERHUB_USERNAME/ai-edu-frontend:$IMAGE_TAG ./frontend
+        docker push $DOCKERHUB_USERNAME/ai-edu-frontend:$IMAGE_TAG
+
+    - name: Build and push python-api
+      run: |
+        docker build -t $DOCKERHUB_USERNAME/ai-edu-python-api:$IMAGE_TAG ./python-api
+        docker push $DOCKERHUB_USERNAME/ai-edu-python-api:$IMAGE_TAG
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v3
+      
+    - name: Configure Kubernetes
+      run: |
+        mkdir -p ~/.kube
+        echo "$KUBE_CONFIG" > ~/.kube/config
+        
+    - name: Deploy to Kubernetes
+      run: |
+        kubectl apply -f kubernetes/

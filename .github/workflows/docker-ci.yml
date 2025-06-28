@@ -25,20 +25,20 @@ jobs:
       - name: Build & Push Frontend
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend
+          context: ./ai-eduactor/frontend
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/ai-frontend:latest
 
       - name: Build & Push Backend
         uses: docker/build-push-action@v5
         with:
-          context: ./backend
+          context: ./ai-eduactor/backend
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/ai-backend:latest
 
       - name: Build & Push AI Service
         uses: docker/build-push-action@v5
         with:
-          context: ./ai
+          context: ./ai-eduactor/ai
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/ai-service:latest

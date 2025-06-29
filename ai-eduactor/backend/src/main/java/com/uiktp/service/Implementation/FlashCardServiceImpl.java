@@ -303,7 +303,7 @@ public class FlashCardServiceImpl implements FlashCardService {
         document.close();
         writer.flush();
 
-        return "http://localhost:8080/files/" + uniqueFilename;
+        return "https://ai-backend-latest.onrender.com/files/" + uniqueFilename;
     }
 
     @Override
@@ -371,7 +371,7 @@ public class FlashCardServiceImpl implements FlashCardService {
         document.close();
         writer.flush();
 
-        return "http://localhost:8080/files/" + uniqueFilename;
+        return "https://ai-backend-latest.onrender.com/files/" + uniqueFilename;
     }
 
     @Override

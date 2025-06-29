@@ -36,7 +36,7 @@ public class CommentAttachmentServiceImpl implements CommentAttachmentService {
     private final CommentRepository commentRepository;
     private final CourseRepository courseRepository;
     private static final String UPLOAD_DIR_PATH = "uploads/comments/";
-    private static final String UPLOAD_URL = "http://localhost:8080/comments/files/";
+    private static final String UPLOAD_URL = "https://ai-backend-latest.onrender.com/comments/files/";
 
     public CommentAttachmentServiceImpl(CommentAttachmentRepository commentAttachmentRepository, CommentRepository commentRepository, CourseRepository courseRepository) {
         this.commentAttachmentRepository = commentAttachmentRepository;

@@ -109,7 +109,7 @@ public class UserCourseAttachmentServiceImpl implements UserCourseAttachmentServ
         attachment.setSavedFileName(uniqueFilename);
         //filepath will be for example uploads/test.pdf while the url to access the file will be localhost:8080/files/test.pdf
         attachment.setFilePath(filePath.toAbsolutePath().toString());
-        attachment.setFileUrl("http://localhost:8080/files/" + uniqueFilename);
+        attachment.setFileUrl("https://ai-backend-latest.onrender.com/files/" + uniqueFilename);
 
         attachment.setFileType("pdf");
         attachment.setUploadedAt(LocalDateTime.now());

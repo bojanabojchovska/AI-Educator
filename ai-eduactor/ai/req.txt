@@ -2,6 +2,7 @@ fastapi
 uvicorn
 langchain
 python-dotenv
+python-multipart
 tiktoken
 langchain-pinecone
 langchain_community

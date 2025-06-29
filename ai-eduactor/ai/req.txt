@@ -6,7 +6,7 @@ tiktoken
 langchain_community
 langchain_experimental
 langchain-huggingface
-pinecone-client
+pinecone
 pypdf
 sentence-transformers
 numpy

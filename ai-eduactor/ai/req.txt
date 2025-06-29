@@ -3,6 +3,7 @@ uvicorn
 langchain
 python-dotenv
 tiktoken
+langchain-pinecone
 langchain_community
 langchain_experimental
 langchain-huggingface

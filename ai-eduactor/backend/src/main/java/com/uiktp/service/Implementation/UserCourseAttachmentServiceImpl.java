@@ -19,6 +19,7 @@ import com.uiktp.service.Interface.AuthenticationService;
 import com.uiktp.service.Interface.UserCourseAttachmentService;
 import lombok.RequiredArgsConstructor;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -49,6 +50,10 @@ public class UserCourseAttachmentServiceImpl implements UserCourseAttachmentServ
     private final CourseRepository courseRepository;
     private final AuthenticationService authenticationService;
     private static final String UPLOAD_DIR_PATH = "uploads";
+
+    @Value("${ai.service.url}")
+    private String aiServiceUrl;
+
 
     @Override
     public UserCourseAttachment uploadAttachment(UserCourseAttachmentRequestDTO dto) {
@@ -163,7 +168,7 @@ public class UserCourseAttachmentServiceImpl implements UserCourseAttachmentServ
         });
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-        String fastApiUrl = "http://localhost:8000/upload_file";
+        String fastApiUrl = aiServiceUrl + "/upload_file";
         try {
             ResponseEntity<AttachmentIDResponseDTO> response = restTemplate.postForEntity(fastApiUrl, requestEntity,
                     AttachmentIDResponseDTO.class);
@@ -189,7 +194,7 @@ public class UserCourseAttachmentServiceImpl implements UserCourseAttachmentServ
         body.put("pdf_id", pdfId);
 
         HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(body, headers);
-        String fastApiUrl = "http://localhost:8000/ask";
+        String fastApiUrl = aiServiceUrl + "/ask";
         try {
             ResponseEntity<AskQuestionResponseDTO> response = restTemplate.postForEntity(fastApiUrl, requestEntity,
                     AskQuestionResponseDTO.class);

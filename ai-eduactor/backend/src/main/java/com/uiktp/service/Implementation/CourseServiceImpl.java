@@ -18,6 +18,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -45,6 +46,10 @@ public class CourseServiceImpl implements CourseService {
     private final UserRepository userRepository;
     private final RatingService ratingService;
     private final AuthenticationService authenticationService;
+
+    @Value("${ai.service.url}")
+    private String aiServiceUrl;
+
 
     public CourseServiceImpl(CourseRepository courseRepository, UserRepository userRepository, RatingService ratingService, AuthenticationService authenticationService) {
         this.courseRepository = courseRepository;
@@ -171,7 +176,7 @@ public class CourseServiceImpl implements CourseService {
             }
             HttpEntity<CourseRecommendationRequestDTO> entity = new HttpEntity<>(request, headers);
             ResponseEntity<CourseTitlesResponseDTO> response = restTemplate.postForEntity(
-                    "http://localhost:8000/recommend_courses", entity, CourseTitlesResponseDTO.class);
+                  aiServiceUrl + "/recommend_courses", entity, CourseTitlesResponseDTO.class);
 
             List<String> recommendedTitles = response.getBody().getRecommended_courses();
             List<String> lowercaseTitles = recommendedTitles.stream().map(i -> i.toLowerCase())

@@ -17,6 +17,7 @@ import com.uiktp.repository.UserRepository;
 import com.uiktp.service.Interface.FlashCardService;
 import com.uiktp.service.Interface.UserCourseAttachmentService;
 import jakarta.persistence.PersistenceException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.*;
@@ -48,6 +49,10 @@ public class FlashCardServiceImpl implements FlashCardService {
     private final UserCourseAttachmentService userCourseAttachmentService;
     private static final String UPLOAD_DIR_PATH = "uploads";
 
+    @Value("${ai.service.url}")
+    private String aiServiceUrl;
+
+
     public FlashCardServiceImpl(FlashCardRepository flashCardRepository, CourseRepository courseRepository, UserRepository userRepository, UserCourseAttachmentService userCourseAttachmentService) {
         this.flashCardRepository = flashCardRepository;
         this.courseRepository = courseRepository;
@@ -74,7 +79,7 @@ public class FlashCardServiceImpl implements FlashCardService {
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestMap, headers);
 
         ResponseEntity<RemoveDuplicateFlashCardsRequestDTO> response = restTemplate.postForEntity(
-                "http://localhost:8000/remove-duplicates", requestEntity, RemoveDuplicateFlashCardsRequestDTO.class
+                aiServiceUrl + "/remove-duplicates", requestEntity, RemoveDuplicateFlashCardsRequestDTO.class
         );
 
         if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
@@ -194,7 +199,7 @@ public class FlashCardServiceImpl implements FlashCardService {
             body.add("num_flashcards", numFlashcards);
 
             HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(body, headers);
-            ResponseEntity<FlashCardResponseDTO> response = restTemplate.postForEntity("http://localhost:8000/", entity,
+            ResponseEntity<FlashCardResponseDTO> response = restTemplate.postForEntity(aiServiceUrl, entity,
                     FlashCardResponseDTO.class);
 
             List<Map<String, String>> pairs = Objects.requireNonNull(response.getBody()).getQuestion_answer_pairs();

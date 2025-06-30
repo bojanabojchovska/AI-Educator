@@ -12,7 +12,8 @@ export const login = async (email, password) => {
             localStorage.setItem("email", email);
             localStorage.setItem("name", name);
             localStorage.setItem("role", role );
-            document.cookie = `jwt=${token}; path=/`;
+            document.cookie = `jwt=${token}; path=/; SameSite=None; Secure`;
+
         }
     } catch (err) {
         console.log("Error while logging in", err);

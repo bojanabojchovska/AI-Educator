@@ -19,6 +19,9 @@ import SubjectRecommendation from "./components/Recommendations/SubjectRecommend
 import ChatBot from "./components/ChatBot/ChatBot";
 // Styles
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate } from "react-router-dom";
+
+const navigate = useNavigate();
 
 function App() {
     const checkAuthCookie = () => {
@@ -30,11 +33,11 @@ function App() {
             if (!isLoggedIn) {
                 console.log('Auth cookie expired or missing. Clearing localStorage.');
                 localStorage.clear();
-                window.location.href = '/login';
+                navigate('/login');
             }
         } catch (error) {
             console.error('Error checking authentication:', error);
-            window.location.href = '/login';
+            navigate('/login');
         }
     };
 

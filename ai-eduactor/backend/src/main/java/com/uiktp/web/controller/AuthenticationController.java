@@ -54,22 +54,33 @@ public class AuthenticationController {
 
             var user = (User) authentication.getPrincipal();
             var token = tokenService.generateToken(user);
-            Cookie jwtCookie = new Cookie("jwt", token);
-            jwtCookie.setHttpOnly(true);
-            jwtCookie.setPath("/");
-            response.addCookie(jwtCookie);
 
-            return ResponseEntity.ok().body(Map.of("token", token, "email", user.getEmail(), "name", user.getName(), "role", user.getRole()));
+            // Secure cookie for cross-origin (Render)
+            String secureCookie = String.format(
+                    "jwt=%s; Path=/; Max-Age=%d; HttpOnly; Secure; SameSite=None",
+                    token,
+                    2 * 60 * 60 // 2 hours
+            );
+            response.setHeader("Set-Cookie", secureCookie);
+
+            return ResponseEntity.ok().body(Map.of(
+                    "token", token,
+                    "email", user.getEmail(),
+                    "name", user.getName(),
+                    "role", user.getRole()
+            ));
 
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Incorrect password. Please try again.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred. Please try again later.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred. Please try again later.");
         }
     }
 
-    
+
+
     @PostMapping("/logout")
     @ResponseBody
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {

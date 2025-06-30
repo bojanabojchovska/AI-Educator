@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/semesters")
-@CrossOrigin(origins = "${frontend.url}", allowCredentials = "true")
+@CrossOrigin(origins = "https://ai-frontend-2831.onrender.com}", allowCredentials = "true")
 public class SemesterController {
 
     private final SemesterService semesterService;

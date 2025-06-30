@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.Optional;
 
-@CrossOrigin(origins = "${frontend.url}", allowCredentials = "true")
+@CrossOrigin(origins = "https://ai-frontend-2831.onrender.com", allowCredentials = "true")
 @RestController
 @RequestMapping( "/auth")
 public class AuthenticationController {

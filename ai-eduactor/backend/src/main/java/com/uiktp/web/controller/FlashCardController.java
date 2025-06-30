@@ -15,7 +15,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/flashcards")
-@CrossOrigin(origins = "${frontend.url}", allowCredentials = "true")
+@CrossOrigin(origins = "https://ai-frontend-2831.onrender.com", allowCredentials = "true")
 public class FlashCardController {
 
     private final FlashCardService flashCardService;
@@ -77,13 +77,13 @@ public class FlashCardController {
     }
 
     @GetMapping("/export/{courseId}")
-    @CrossOrigin(origins = "${frontend.url}", allowCredentials = "true")
+    @CrossOrigin(origins = "https://ai-frontend-2831.onrender.com}", allowCredentials = "true")
     public ResponseEntity<String> exportFlashCardsToPdf(@PathVariable Long courseId)
             throws DocumentException, IOException {
         return ResponseEntity.ok().body(flashCardService.exportFlashCardsToPdf(courseId));
     }
     @GetMapping("/export-for-attachment")
-    @CrossOrigin(origins = "${frontend.url}", allowCredentials = "true")
+    @CrossOrigin(origins = "https://ai-frontend-2831.onrender.com", allowCredentials = "true")
     public ResponseEntity<String> exportFlashCardsToPdf(@RequestParam("attachment_id") UUID attachmentId)
             throws DocumentException, IOException {
         System.out.println("Attachment ID: " + attachmentId);

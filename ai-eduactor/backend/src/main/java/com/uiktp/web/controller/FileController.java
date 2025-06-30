@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/files")
-@CrossOrigin(origins = "${frontend.url}")
+@CrossOrigin(origins = "${frontend.url}", allowCredentials = "true")
 public class FileController {
 
     private final CourseService courseService;

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { HashRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // Authentication
 import LoginPage from "./components/Authentication/LoginPage";
 import RegisterPage from "./components/Authentication/RegisterPage";
@@ -21,9 +21,9 @@ import ChatBot from "./components/ChatBot/ChatBot";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from "react-router-dom";
 
-const navigate = useNavigate();
 
 function App() {
+    const navigate = useNavigate();
     const checkAuthCookie = () => {
         try {
             const isLoggedIn = document.cookie

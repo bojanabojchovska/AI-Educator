@@ -1,53 +1,52 @@
-import React, { useEffect } from "react";
-import { HashRouter as Router, Routes, Route } from "react-router-dom";
-// Authentication
+import React from "react";
+import { HashRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import LoginPage from "./components/Authentication/LoginPage";
 import RegisterPage from "./components/Authentication/RegisterPage";
 import PrivateRoute from "./PrivateRoute";
-// Pages
 import HomePage from './components/HomePage/HomePage';
 import Admin from './components/Admin/Admin';
 import SemesterPage from "./components/Semester/SemesterPage";
 import CoursePage from './components/CoursePage/CoursePage';
 import CourseHub from "./components/Predmetnik/CourseHub";
 import CourseReviewPage from './components/Predmetnik/CourseReviewPage';
-// Flashcards
 import FlashCardGamePage from "./components/FlashCardQuiz/FlashCardGamePage";
 import FlashcardCourseSelector from "./components/FlashCardGeneratorForm/FlashcardCourseSelector";
-// Other components
 import SubjectRecommendation from "./components/Recommendations/SubjectRecommendation";
 import ChatBot from "./components/ChatBot/ChatBot";
-// Styles
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useNavigate } from "react-router-dom";
 
-
-function App() {
+function AuthChecker() {
     const navigate = useNavigate();
-    const checkAuthCookie = () => {
-        try {
-            const isLoggedIn = document.cookie
-                .split('; ')
-                .find((row) => row.startsWith('jwt='));
-
-            if (!isLoggedIn) {
-                console.log('Auth cookie expired or missing. Clearing localStorage.');
-                localStorage.clear();
-                navigate('/login');
-            }
-        } catch (error) {
-            console.error('Error checking authentication:', error);
-            navigate('/login');
-        }
-    };
 
     useEffect(() => {
+        const checkAuthCookie = () => {
+            try {
+                const isLoggedIn = document.cookie
+                    .split('; ')
+                    .find((row) => row.startsWith('jwt='));
+
+                if (!isLoggedIn) {
+                    console.log('Auth cookie expired or missing. Clearing localStorage.');
+                    localStorage.clear();
+                    navigate('/login');
+                }
+            } catch (error) {
+                console.error('Error checking authentication:', error);
+                navigate('/login');
+            }
+        };
+
         const interval = setInterval(checkAuthCookie, 5 * 60 * 1000);
         return () => clearInterval(interval);
-    }, []);
+    }, [navigate]);
 
+    return null;
+}
+
+function App() {
     return (
         <Router>
+            <AuthChecker />
             <div className="App">
                 <Routes>
                     <Route path="/" element={<PrivateRoute element={<HomePage />} />} />

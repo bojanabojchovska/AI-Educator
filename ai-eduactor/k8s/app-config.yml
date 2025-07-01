@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: aieducator
+data:
+  SPRING_DATASOURCE_URL: jdbc:postgresql://postgres.aieducator.svc.cluster.local:5432/ai_in_education
+  PYTHONUNBUFFERED: "1"

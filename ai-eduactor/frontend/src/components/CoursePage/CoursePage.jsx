@@ -414,7 +414,7 @@ const CoursePage = () => {
                       href={
                         attachment.fileUrl.startsWith("http")
                           ? attachment.fileUrl
-                          : `https://ai-backend-latest.onrender.com${attachment.fileUrl}`
+                          : `${attachment.fileUrl}`
                       }
                       target="_blank"
                       rel="noopener noreferrer"

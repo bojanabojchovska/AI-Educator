@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-export const AUTH_BASE_URL = 'https://ai-backend-latest.onrender.com/auth';
-export const API_URL = 'https://ai-backend-latest.onrender.com/api';
+export const AUTH_BASE_URL = '/auth';
+export const API_URL = '/api';
 
 export const login = async (email, password) => {
     try {
@@ -550,7 +550,7 @@ export const deleteFlashCard = async (id) => {
 export const getCourseAttachments = async (courseId) => {
     try {
         const res = await axios.get(
-            `https://ai-backend-latest.onrender.com/api/attachments`, {
+            `/api/attachments`, {
                 withCredentials: true,
                 params: {
                     courseId: courseId
@@ -573,7 +573,7 @@ export const exportPdfFlashcards = async (attachmentId) => {
     try {
         console.log("IDDDD", attachmentId);
         const res = await axios.get(
-            `https://ai-backend-latest.onrender.com/api/flashcards/export-for-attachment?attachment_id=${attachmentId}`, {
+            `/api/flashcards/export-for-attachment?attachment_id=${attachmentId}`, {
                 withCredentials: true,
             });
         return res.data;
@@ -590,7 +590,7 @@ export const exportPdfFlashcards = async (attachmentId) => {
 
 export const uploadCourseAttachment = async (formData) => {
     try {
-        const response = await axios.post('https://ai-backend-latest.onrender.com/api/attachments/upload', formData, {
+        const response = await axios.post('/api/attachments/upload', formData, {
             withCredentials: true,
             headers: {
                 'Content-Type': 'multipart/form-data',

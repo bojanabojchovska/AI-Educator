@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.Optional;
 
-@CrossOrigin(origins = "https://ai-frontend-2831.onrender.com", allowCredentials = "true")
+@CrossOrigin(origins = "http://aieducator.local", allowCredentials = "true")
 @RestController
 @RequestMapping( "/auth")
 public class AuthenticationController {

@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/files")
-@CrossOrigin(origins = "https://ai-frontend-2831.onrender.com", allowCredentials = "true")
+@CrossOrigin(origins = "http://aieducator.local", allowCredentials = "true")
 public class FileController {
 
     private final CourseService courseService;

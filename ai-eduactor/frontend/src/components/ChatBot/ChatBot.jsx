@@ -91,17 +91,14 @@ const ChatBot = () => {
         )
       );
 
-      const response = await fetch(
-        "https://ai-service-latest-7lsb.onrender.com/ask",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            question: userMessage.text,
-            pdf_id: selectedAttachmentId,
-          }),
-        }
-      );
+      const response = await fetch("api/ai/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: userMessage.text,
+          pdf_id: selectedAttachmentId,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to get answer from chatbot");

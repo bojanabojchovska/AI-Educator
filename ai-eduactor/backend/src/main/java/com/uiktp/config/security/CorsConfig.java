@@ -13,8 +13,8 @@ import java.util.List;
 @Configuration
 public class CorsConfig {
 
-    @Value("${ai.service.url}")
-    private String aiServiceUrl;
+//    @Value("${ai.service.url}")
+//    private String aiServiceUrl;
 
     @Value("${frontend.url}")
     private String frontendUrl;
@@ -23,7 +23,7 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of(frontendUrl, aiServiceUrl));
+        configuration.setAllowedOrigins(List.of(frontendUrl));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

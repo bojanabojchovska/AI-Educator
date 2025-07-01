@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/courses")
-@CrossOrigin(origins = "https://ai-frontend-2831.onrender.com", allowCredentials = "true")
+@CrossOrigin(origins = "http://aieducator.local", allowCredentials = "true")
 public class CourseController {
 
     private final CourseService courseService;
